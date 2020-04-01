@@ -1,10 +1,28 @@
 {
-    "require": {
-        "symfony/framework-bundle": "^5.0"
-    },
+	"name": "delvesoft/psr15-symfony-bundle",
+	"keywords": [
+		"psr-15",
+		"symfony",
+		"bundle",
+		"middleware",
+		"handler"
+	],
+	"authors": [
+		{
+			"name": "Matej Bádal",
+			"email": "matejbadal@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">= 7.3",
+		"symfony/framework-bundle": "^5.0"
+	},
 	"autoload": {
 		"psr-4": {
-			"Delvesoft\\Psr15Bundle\\": "src/"
+			"Delvesoft\\Symfony\\Psr15Bundle\\": "src/"
 		}
+	},
+	"require-dev": {
+		"phpstan/phpstan": "^0.12.18"
 	}
 }
