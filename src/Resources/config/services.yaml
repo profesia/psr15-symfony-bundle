@@ -1,0 +1,20 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    #Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\ControllerWrappingSubscriber:
+    #    tags:
+    #        - { name: kernel.event_subscriber }
+
+    Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory:
+        public: true
+        arguments:
+            $serverRequestFactory: '@nyholm.psr7.psr17_factory'
+            $streamFactory: '@nyholm.psr7.psr17_factory'
+            $uploadedFileFactory: '@nyholm.psr7.psr17_factory'
+            $responseFactory: '@nyholm.psr7.psr17_factory'
+
+    Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory:
+        public: true

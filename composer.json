@@ -13,9 +13,16 @@
 			"email": "matejbadal@gmail.com"
 		}
 	],
+	"repositories": [
+		{
+			"type": "git",
+			"url": "git@github.com:mbadal/psr15.git"
+		}
+	],
 	"require": {
 		"php": ">= 7.3",
-		"symfony/framework-bundle": "^5.0"
+		"symfony/framework-bundle": "^5.0",
+		"delvesoft/psr15": "^1.1"
 	},
 	"autoload": {
 		"psr-4": {
