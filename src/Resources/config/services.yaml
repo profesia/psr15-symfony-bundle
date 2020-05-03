@@ -4,10 +4,6 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    #Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\ControllerWrappingSubscriber:
-    #    tags:
-    #        - { name: kernel.event_subscriber }
-
     Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory:
         public: true
         arguments:
@@ -17,4 +13,7 @@ services:
             $responseFactory: '@nyholm.psr7.psr17_factory'
 
     Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory:
+        public: true
+
+    Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver:
         public: true

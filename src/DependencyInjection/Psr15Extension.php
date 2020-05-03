@@ -24,7 +24,7 @@ class Psr15Extension extends Extension
             new Psr15Configuration(),
             $configs
         );
-        
-        $container->setParameter('psr15.middleware_groups', $config['middleware_groups']);
+
+        $container->setParameter('psr15', $config);
     }
 }

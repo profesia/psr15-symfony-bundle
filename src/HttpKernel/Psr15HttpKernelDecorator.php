@@ -2,12 +2,9 @@
 
 namespace Delvesoft\Symfony\Psr15Bundle\HttpKernel;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyKernelRequestHandler;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
@@ -133,6 +130,12 @@ class Psr15HttpKernelDecorator implements KernelInterface, RebootableInterface, 
 
     public function handle(Request $request, int $type = self::MASTER_REQUEST, bool $catch = true)
     {
+        $this->boot();
+
+        /** @var HttpRequestMiddlewareResolver $resolver */
+        $resolver        = $this->getContainer()->get(HttpRequestMiddlewareResolver::class);
+        $middlewareChain = $resolver->resolveMiddlewareChain($request);
+
         $handler = SymfonyKernelRequestHandler::createFromObjects(
             $this->foundationHttpFactory,
             $this->psrHttpFactory,
@@ -142,7 +145,9 @@ class Psr15HttpKernelDecorator implements KernelInterface, RebootableInterface, 
         );
 
         $psrRequest  = $this->psrHttpFactory->createRequest($request);
-        $psrResponse = $handler->handle($psrRequest);
+        $psrResponse = $middlewareChain !== null ?
+            $middlewareChain->process($psrRequest, $handler) :
+            $handler->handle($psrRequest);
 
         return $this->foundationHttpFactory->createResponse($psrResponse);
     }

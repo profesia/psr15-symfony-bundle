@@ -2,7 +2,6 @@
 
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -15,8 +14,7 @@ class Psr15Configuration implements ConfigurationInterface
         $rootNode = $builder->getRootNode();
         $rootNode->
             children()
-                ->arrayNode('middleware_groups')
-                    ->useAttributeAsKey('true')
+                ->arrayNode('middleware_chains')
                     ->arrayPrototype()
                         ->children()
                             ->arrayNode('middleware_chain_items')
@@ -29,6 +27,22 @@ class Psr15Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+                ->arrayNode('routing')
+                    ->arrayPrototype()
+                        ->children()
+                            ->scalarNode('middleware_chain')
+                            ->end()
+                            ->arrayNode('condition')
+                                ->children()
+                                    ->scalarNode('uri_pattern')
+                                        ->cannotBeEmpty()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $builder;
