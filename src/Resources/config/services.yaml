@@ -5,7 +5,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
     Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory:
-        public: true
+        public: false
         arguments:
             $serverRequestFactory: '@nyholm.psr7.psr17_factory'
             $streamFactory: '@nyholm.psr7.psr17_factory'
@@ -13,7 +13,48 @@ services:
             $responseFactory: '@nyholm.psr7.psr17_factory'
 
     Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory:
-        public: true
+        public: false
 
     Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver:
-        public: true
+        public: false
+        arguments:
+            $middlewareResolverChain: '@MiddlewareChainResolver'
+
+    Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter:
+        public: false
+        arguments:
+            $httpMiddlewareResolver: '@Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver'
+
+    Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber:
+        public: false
+        tags: ['kernel.event_subscriber']
+        arguments:
+            $symfonyControllerAdapter: '@Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter'
+
+    Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory:
+        public: false
+        arguments:
+            $serverRequestFactory: '@nyholm.psr7.psr17_factory'
+            $responseFactory: '@nyholm.psr7.psr17_factory'
+
+    Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver:
+        public: false
+        shared: false
+        arguments:
+            $middlewareChainItemFactory: '@Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory'
+            $router: '@router.default'
+
+    Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver:
+        public: false
+        shared: false
+        arguments:
+            $middlewareChainItemFactory: '@Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory'
+            $router: '@router.default'
+    Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory:
+        public: false
+
+    MiddlewareChainResolver:
+        class: 'Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver'
+        factory: ['@Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory', 'create']
+        arguments: [['@Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver', '@Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver']]
+

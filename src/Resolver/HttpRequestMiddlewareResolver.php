@@ -3,22 +3,32 @@
 namespace Delvesoft\Symfony\Psr15Bundle\Resolver;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\HttpFoundation\Request;
 
 class HttpRequestMiddlewareResolver
 {
-    /** @var AbstractMiddlewareChainItem[] */
-    private $registeredUriPatterns = [];
+    /** @var AbstractChainResolverItem */
+    private $middlewareResolverChain;
 
-    public function registerUriPatternMiddlewareChain(string $uriPattern, AbstractMiddlewareChainItem $chain): self
+    public function __construct(AbstractChainResolverItem $middlewareResolverChain)
     {
-        $this->registeredUriPatterns[$uriPattern] = $chain;
-
-        return $this;
+        $this->middlewareResolverChain = $middlewareResolverChain;
     }
 
-    public function resolveMiddlewareChain(Request $request): ?AbstractMiddlewareChainItem
+    public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
     {
-        return $this->registeredUriPatterns[$request->getPathInfo()] ?? null;
+        $routeName = $request->attributes->get('_route');
+
+        return $this->middlewareResolverChain->handle(
+            new MiddlewareResolvingRequest(
+                HttpMethod::createFromString(
+                    $request->getRealMethod()
+                ),
+                $routeName
+            )
+        );
     }
 }

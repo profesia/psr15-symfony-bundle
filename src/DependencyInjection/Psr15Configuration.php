@@ -2,6 +2,8 @@
 
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection;
 
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPathMatchingStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -33,10 +35,16 @@ class Psr15Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('middleware_chain')
                             ->end()
-                            ->arrayNode('condition')
-                                ->children()
-                                    ->scalarNode('uri_pattern')
-                                        ->cannotBeEmpty()
+                            ->arrayNode('conditions')
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('path')
+                                        ->end()
+                                        ->enumNode('method')
+                                            ->values(ConfigurationHttpMethod::getPossibleValues())
+                                        ->end()
+                                        ->scalarNode('route_name')
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()
