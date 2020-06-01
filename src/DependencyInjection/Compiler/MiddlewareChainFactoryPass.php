@@ -39,8 +39,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 }
 
                 if ($firstItemDefinition === null) {
-                    $configurationPathDefinition          = $container->getDefinition($serviceAlias);
-                    $firstItemDefinition = new Definition(
+                    $configurationPathDefinition = $container->getDefinition($serviceAlias);
+                    $firstItemDefinition         = new Definition(
                         $configurationPathDefinition->getClass(),
                         $configurationPathDefinition->getArguments()
                     );
@@ -70,6 +70,25 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
+            $selectedMiddleware = $middlewareChains[$middlewareChainName];
+            if (array_key_exists('append', $conditionConfig)) {
+                foreach ($conditionConfig['append'] as $middlewareAlias) {
+                    if (!isset($namedRefs[$middlewareAlias])) {
+                        throw new RuntimeException(
+                            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+                        );
+                    }
+
+                    $configurationPathDefinition = $container->getDefinition($middlewareAlias);
+                    $middlewareDefinition        = new Definition(
+                        $configurationPathDefinition->getClass(),
+                        $configurationPathDefinition->getArguments()
+                    );
+
+                    $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
+                }
+            }
+
             foreach ($conditionConfig['conditions'] as $condition) {
                 $containsPath      = array_key_exists('path', $condition);
                 $containsRouteName = array_key_exists('route_name', $condition);
@@ -91,7 +110,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'registerRouteMiddleware',
                         [
                             $condition['route_name'],
-                            $middlewareChains[$middlewareChainName]
+                            $selectedMiddleware
                         ]
                     );
 
@@ -99,27 +118,28 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 }
 
                 if ($containsPath) {
-                    $hasMethod = array_key_exists('method', $condition);
-                    $argumentsArray = $hasMethod ? [$condition['method']]: [];
+                    $hasMethod                         = array_key_exists('method', $condition);
+                    $argumentsArray                    = $hasMethod ? [$condition['method']] : [];
                     $configurationHttpMethodDefinition = (new Definition(ConfigurationHttpMethod::class, $argumentsArray))
                         ->setShared(false)
                         ->setPublic(false);
                     if ($hasMethod) {
                         $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createFromString'));
                     } else {
-                        $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createDefault'));    
+                        $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createDefault'));
                     }
-                    
-                    $configurationPathDefinition = (new Definition(ConfigurationPath::class, [$configurationHttpMethodDefinition, $condition['path']]))
-                        ->setShared(false)
-                        ->setPublic(false)
-                        ->setFactory(sprintf('%s::%s', ConfigurationPath::class, 'createFromConfigurationHttpMethodAndString'));
+
+                    $configurationPathDefinition =
+                        (new Definition(ConfigurationPath::class, [$configurationHttpMethodDefinition, $condition['path']]))
+                            ->setShared(false)
+                            ->setPublic(false)
+                            ->setFactory(sprintf('%s::%s', ConfigurationPath::class, 'createFromConfigurationHttpMethodAndString'));
 
                     $compiledPathStrategyResolver->addMethodCall(
                         'registerPathMiddleware',
                         [
                             $configurationPathDefinition,
-                            $middlewareChains[$middlewareChainName]
+                            $selectedMiddleware
                         ]
                     );
                 }

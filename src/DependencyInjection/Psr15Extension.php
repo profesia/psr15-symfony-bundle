@@ -27,4 +27,9 @@ class Psr15Extension extends Extension
 
         $container->setParameter('psr15', $config);
     }
+
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Psr15Configuration();
+    }
 }

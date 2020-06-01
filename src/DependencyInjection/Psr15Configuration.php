@@ -3,7 +3,6 @@
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection;
 
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPathMatchingStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -24,7 +23,7 @@ class Psr15Configuration implements ConfigurationInterface
                                 ->scalarPrototype()->end()
                                 ->validate()
                                     ->ifEmpty()
-                                    ->thenInvalid('You need to added at least one middleware chain item class')
+                                    ->thenInvalid('You need to add at least one middleware chain item class')
                                 ->end()
                             ->end()
                         ->end()
@@ -34,6 +33,20 @@ class Psr15Configuration implements ConfigurationInterface
                     ->arrayPrototype()
                         ->children()
                             ->scalarNode('middleware_chain')
+                            ->end()
+                            ->arrayNode('prepend')
+                                ->scalarPrototype()->end()
+                                    ->validate()
+                                        ->ifEmpty()
+                                        ->thenInvalid('You need to add at least one middleware chain item class to prepend')
+                                ->end()
+                            ->end()
+                            ->arrayNode('append')
+                                ->scalarPrototype()->end()
+                                    ->validate()
+                                        ->ifEmpty()
+                                        ->thenInvalid('You need to add at least one middleware chain item class to append')
+                                ->end()
                             ->end()
                             ->arrayNode('conditions')
                                 ->arrayPrototype()
