@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Resolver;
 
@@ -8,7 +10,7 @@ use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\HttpFoundation\Request;
 
-class HttpRequestMiddlewareResolver
+class HttpRequestMiddlewareResolver implements RequestMiddlewareResolverInterface
 {
     /** @var AbstractChainResolverItem */
     private $middlewareResolverChain;

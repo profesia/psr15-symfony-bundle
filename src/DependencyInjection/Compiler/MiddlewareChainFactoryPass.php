@@ -1,18 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver;
+use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPathMatchingStrategy;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewareChainFactoryPass implements CompilerPassInterface
 {
@@ -24,8 +26,16 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             return;
         }
 
-        $namedRefs  = $this->findNamedServices($container);
-        $parameters = $container->getParameter('psr15');
+        $namedRefs         = $this->findNamedServices($container);
+        $parameters        = $container->getParameter('psr15');
+        $adapterDefinition = $container->getDefinition(SymfonyControllerAdapter::class);
+        if ($parameters['use_cache'] === true) {
+            $adapterDefinition->setArguments(
+                [
+                    new Reference('MiddlewareChainResolverProxy')
+                ]
+            );
+        }
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
         $middlewareChains = [];
@@ -70,8 +80,36 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware = $middlewareChains[$middlewareChainName];
-            if (array_key_exists('append', $conditionConfig)) {
+            $selectedMiddleware = null;
+            if (!empty($conditionConfig['prepend'])) {
+                foreach ($conditionConfig['prepend'] as $middlewareAlias) {
+                    if (!isset($namedRefs[$middlewareAlias])) {
+                        throw new RuntimeException(
+                            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+                        );
+                    }
+
+                    if ($selectedMiddleware === null) {
+                        $configurationPathDefinition = $container->getDefinition($middlewareAlias);
+                        $selectedMiddleware          = new Definition(
+                            $configurationPathDefinition->getClass(),
+                            $configurationPathDefinition->getArguments()
+                        );
+
+                        continue;
+                    }
+
+                    $selectedMiddleware->addMethodCall('append', [$namedRefs[$middlewareAlias]]);
+                }
+
+                $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
+            }
+
+            if ($selectedMiddleware === null) {
+                $selectedMiddleware = $middlewareChains[$middlewareChainName];
+            }
+
+            if (!empty($conditionConfig['append'])) {
                 foreach ($conditionConfig['append'] as $middlewareAlias) {
                     if (!isset($namedRefs[$middlewareAlias])) {
                         throw new RuntimeException(

@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Adapter;
 
 use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -20,18 +22,18 @@ class SymfonyControllerAdapter
     /** @var HttpMessageFactoryInterface */
     private $psrHttpFactory;
 
-    /** @var HttpRequestMiddlewareResolver */
+    /** @var RequestMiddlewareResolverInterface */
     private $httpMiddlewareResolver;
 
     /** @var callable */
     private $originalController;
 
-    public function __construct(HttpRequestMiddlewareResolver $httpMiddlewareResolver)
+    public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver)
     {
         $this->httpMiddlewareResolver = $httpMiddlewareResolver;
-        $this->foundationHttpFactory  = new HttpFoundationFactory();
-        $psr17Factory                 = new Psr17Factory();
-        $this->psrHttpFactory         = new PsrHttpFactory(
+        $this->foundationHttpFactory = new HttpFoundationFactory();
+        $psr17Factory                = new Psr17Factory();
+        $this->psrHttpFactory        = new PsrHttpFactory(
             $psr17Factory,
             $psr17Factory,
             $psr17Factory,

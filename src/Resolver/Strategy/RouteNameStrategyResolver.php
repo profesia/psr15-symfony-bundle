@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy;
 
@@ -11,7 +13,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class RouteNameStrategyResolver extends AbstractChainResolverItem
 {
-    /** @var array AbstractMiddlewareChainItem */
+    /** @var AbstractMiddlewareChainItem[] */
     private $registeredRouteMiddlewares = [];
 
     /** @var RouteCollection */
@@ -40,8 +42,6 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
 
     public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
     {
-        dump($this->registeredRouteMiddlewares);
-        exit;
         $routeName = $request->getRouteName();
         if (isset($this->registeredRouteMiddlewares[$routeName])) {
             return $this->registeredRouteMiddlewares[$routeName];

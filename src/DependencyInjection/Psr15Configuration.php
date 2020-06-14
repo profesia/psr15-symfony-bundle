@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection;
 
@@ -15,6 +17,9 @@ class Psr15Configuration implements ConfigurationInterface
         $rootNode = $builder->getRootNode();
         $rootNode->
             children()
+                ->booleanNode('use_cache')
+                    ->isRequired()
+                ->end()
                 ->arrayNode('middleware_chains')
                     ->arrayPrototype()
                         ->children()
