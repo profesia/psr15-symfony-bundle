@@ -65,5 +65,6 @@ services:
         arguments:
             $router: '@router.default'
             $resolver: '@Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver'
+            $cache: '@cache.system'
 
 

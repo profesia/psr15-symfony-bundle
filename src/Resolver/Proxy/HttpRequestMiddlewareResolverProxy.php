@@ -6,11 +6,11 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\VarExporter\Instantiator;
-use Symfony\Component\VarExporter\VarExporter;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInterface
 {
@@ -20,16 +20,31 @@ class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInt
     /** @var RequestMiddlewareResolverInterface */
     private $resolver;
 
-    public function __construct(RouterInterface $router, RequestMiddlewareResolverInterface $resolver)
+    /** @var CacheInterface */
+    private $cache;
+
+    public function __construct(RouterInterface $router, RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
     {
         $this->routeCollection = $router->getRouteCollection();
         $this->resolver        = $resolver;
+        $this->cache           = $cache;
     }
 
     public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
     {
-        //@todo cache
+        $routeName    = $request->attributes->get('_route');
+        $staticPrefix = $this->routeCollection->get($routeName)->compile()->getStaticPrefix();
+        $cacheKey     = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
 
-        return $this->resolver->resolveMiddlewareChain($request);
+        $cacheItem = $this->cache->getItem($cacheKey);
+        if ($cacheItem->isHit()) {
+            return $cacheItem->get();
+        }
+
+        $middleware = $this->resolver->resolveMiddlewareChain($request);
+        $cacheItem->set($middleware);
+        $this->cache->save($cacheItem);
+
+        return $middleware;
     }
 }
