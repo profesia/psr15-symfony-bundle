@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -20,9 +19,9 @@ class ListMiddlewareRulesCommand extends Command
     /** @var array */
     private $registeredPathMiddlewares = [];
 
-    public function registerPathMiddleware(ConfigurationPath $path, AbstractMiddlewareChainItem $middlewareChain): self
+    public function registerPathMiddleware(ConfigurationPath $path, array $middlewareChains, string $middlewareChainName): self
     {
-        $exportedConfiguration = $path->exportConfigurationForMiddleware($middlewareChain);
+        /*$exportedConfiguration = $path->exportConfigurationForMiddleware($middlewareChain);
         foreach ($exportedConfiguration as $pathLength => $registeredPaths) {
             if (!isset($this->registeredPathMiddlewares[$pathLength])) {
                 $this->registeredPathMiddlewares[$pathLength] = [];
@@ -41,7 +40,7 @@ class ListMiddlewareRulesCommand extends Command
                     $this->registeredPathMiddlewares[$pathLength][$path][$method] = $middlewareChain;
                 }
             }
-        }
+        }*/
 
         return $this;
     }

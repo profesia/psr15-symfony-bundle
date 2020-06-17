@@ -19,15 +19,12 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewareChainFactoryPass implements CompilerPassInterface
 {
-    use PriorityTaggedServiceTrait;
-
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasParameter('psr15')) {
             return;
         }
 
-        $namedRefs         = $this->findNamedServices($container);
         $parameters        = $container->getParameter('psr15');
         $adapterDefinition = $container->getDefinition(SymfonyControllerAdapter::class);
         if ($parameters['use_cache'] === true) {
@@ -47,26 +44,27 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             $firstItemDefinition             = null;
             $middlewareGroupInfo[$groupName] = [];
 
-            foreach ($groupConfig['middleware_chain_items'] as $serviceAlias) {
-                if (!isset($namedRefs[$serviceAlias])) {
-                    throw new RuntimeException("Middleware with service alias: [{$serviceAlias}] is not registered as a service");
+            foreach ($groupConfig['middleware_chain_items'] as $middlewareAlias) {
+                if (!$container->hasDefinition($middlewareAlias)) {
+                    throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-
-                $configurationPathDefinition       = $container->getDefinition($serviceAlias);
+                $originalDefinition                = $container->getDefinition($middlewareAlias);
+                $configurationPathDefinition       = static::createDefinition(
+                    $originalDefinition->getClass(),
+                    false,
+                    false,
+                    $originalDefinition->getArguments()
+                );
                 $middlewareGroupInfo[$groupName][] = $configurationPathDefinition->getClass();
 
                 if ($firstItemDefinition === null) {
-                    $firstItemDefinition = new Definition(
-                        $configurationPathDefinition->getClass(),
-                        $configurationPathDefinition->getArguments()
-                    );
-
+                    $firstItemDefinition = $configurationPathDefinition;
 
                     continue;
                 }
 
-                $firstItemDefinition->addMethodCall('append', [$namedRefs[$serviceAlias]]);
+                $firstItemDefinition->addMethodCall('append', [$configurationPathDefinition]);
             }
 
             $middlewareChains[$groupName] = $firstItemDefinition;
@@ -94,26 +92,30 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             if (!empty($conditionConfig['prepend'])) {
                 $startIndex = 0;
                 foreach ($conditionConfig['prepend'] as $middlewareAlias) {
-                    if (!isset($namedRefs[$middlewareAlias])) {
+                    if (!$container->hasDefinition($middlewareAlias)) {
                         throw new RuntimeException(
                             "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
                         );
                     }
 
-                    $configurationPathDefinition = $container->getDefinition($middlewareAlias);
+                    $originalDefinition          = $container->getDefinition($middlewareAlias);
+                    $configurationPathDefinition = static::createDefinition(
+                        $originalDefinition->getClass(),
+                        false,
+                        false,
+                        $originalDefinition->getArguments()
+                    );
+
                     array_splice($selectedMiddlewareChainInfo, $startIndex, 0, $configurationPathDefinition->getClass());
                     $startIndex++;
 
                     if ($selectedMiddleware === null) {
-                        $selectedMiddleware = new Definition(
-                            $configurationPathDefinition->getClass(),
-                            $configurationPathDefinition->getArguments()
-                        );
+                        $selectedMiddleware = $configurationPathDefinition;
 
                         continue;
                     }
 
-                    $selectedMiddleware->addMethodCall('append', [$namedRefs[$middlewareAlias]]);
+                    $selectedMiddleware->addMethodCall('append', [$configurationPathDefinition]);
                 }
 
                 $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
@@ -125,18 +127,22 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
             if (!empty($conditionConfig['append'])) {
                 foreach ($conditionConfig['append'] as $middlewareAlias) {
-                    if (!isset($namedRefs[$middlewareAlias])) {
+                    if (!$container->hasDefinition($middlewareAlias)) {
                         throw new RuntimeException(
                             "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
                         );
                     }
 
-                    $configurationPathDefinition = $container->getDefinition($middlewareAlias);
+                    $originalDefinition          = $container->getDefinition($middlewareAlias);
+                    $configurationPathDefinition = static::createDefinition(
+                        $originalDefinition->getClass(),
+                        false,
+                        false,
+                        $originalDefinition->getArguments()
+                    );
                     array_push($selectedMiddlewareChainInfo, $configurationPathDefinition->getClass());
 
-                    $middlewareReference = new Reference($configurationPathDefinition->getClass());
-
-                    $selectedMiddleware->addMethodCall('append', [$middlewareReference]);
+                    $selectedMiddleware->addMethodCall('append', [$configurationPathDefinition]);
                 }
             }
 
@@ -180,20 +186,27 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 if ($containsPath) {
                     $hasMethod                         = array_key_exists('method', $condition);
                     $argumentsArray                    = $hasMethod ? [$condition['method']] : [];
-                    $configurationHttpMethodDefinition = (new Definition(ConfigurationHttpMethod::class, $argumentsArray))
-                        ->setShared(false)
-                        ->setPublic(false);
+                    $configurationHttpMethodDefinition = static::createDefinition(
+                        ConfigurationHttpMethod::class,
+                        false,
+                        false,
+                        $argumentsArray
+                    );
+
                     if ($hasMethod) {
                         $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createFromString'));
                     } else {
                         $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createDefault'));
                     }
 
-                    $configurationPathDefinition =
-                        (new Definition(ConfigurationPath::class, [$configurationHttpMethodDefinition, $condition['path']]))
-                            ->setShared(false)
-                            ->setPublic(false)
-                            ->setFactory(sprintf('%s::%s', ConfigurationPath::class, 'createFromConfigurationHttpMethodAndString'));
+                    $configurationPathDefinition = static::createDefinition(
+                        ConfigurationPath::class,
+                        false,
+                        false,
+                        [$configurationHttpMethodDefinition, $condition['path']]
+                    )->setFactory(
+                        sprintf('%s::%s', ConfigurationPath::class, 'createFromConfigurationHttpMethodAndString')
+                    );
 
                     $compiledPathStrategyResolver->addMethodCall(
                         'registerPathMiddleware',
@@ -202,27 +215,22 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                             $selectedMiddleware
                         ]
                     );
-
-                    $listMiddlewareCommand->addMethodCall(
+                    /*$listMiddlewareCommand->addMethodCall(
                         'registerPathMiddleware',
                         [
                             $configurationPathDefinition,
                             $selectedMiddleware
                         ]
-                    );
+                    );*/
                 }
             }
         }
     }
 
-    private function findNamedServices(ContainerBuilder $container)
+    private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition
     {
-        $refs      = $this->findAndSortTaggedServices('psr15.middleware', $container);
-        $namedRefs = [];
-        foreach ($refs as $ref) {
-            $namedRefs[(string)$ref] = $ref;
-        }
-
-        return $namedRefs;
+        return (new Definition($className, $arguments))
+            ->setPublic($isPublic)
+            ->setShared($isShared);
     }
 }
