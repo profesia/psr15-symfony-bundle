@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler;
 
 use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
+use Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
@@ -38,22 +39,29 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
-        $middlewareChains = [];
+        $middlewareChains    = [];
+        $middlewareGroupInfo = [];
 
         foreach ($definitions as $groupName => $groupConfig) {
             /** @var Definition $firstItemDefinition */
-            $firstItemDefinition = null;
+            $firstItemDefinition             = null;
+            $middlewareGroupInfo[$groupName] = [];
+
             foreach ($groupConfig['middleware_chain_items'] as $serviceAlias) {
                 if (!isset($namedRefs[$serviceAlias])) {
                     throw new RuntimeException("Middleware with service alias: [{$serviceAlias}] is not registered as a service");
                 }
 
+
+                $configurationPathDefinition       = $container->getDefinition($serviceAlias);
+                $middlewareGroupInfo[$groupName][] = $configurationPathDefinition->getClass();
+
                 if ($firstItemDefinition === null) {
-                    $configurationPathDefinition = $container->getDefinition($serviceAlias);
-                    $firstItemDefinition         = new Definition(
+                    $firstItemDefinition = new Definition(
                         $configurationPathDefinition->getClass(),
                         $configurationPathDefinition->getArguments()
                     );
+
 
                     continue;
                 }
@@ -66,6 +74,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameStrategyResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathStrategyResolver::class);
+        $listMiddlewareCommand        = $container->getDefinition(ListMiddlewareRulesCommand::class);
         foreach ($routing as $conditionName => $conditionConfig) {
             $middlewareChainName = $conditionConfig['middleware_chain'];
             if (!isset($middlewareChains[$middlewareChainName])) {
@@ -80,8 +89,10 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware = null;
+            $selectedMiddleware          = null;
+            $selectedMiddlewareChainInfo = $middlewareGroupInfo[$middlewareChainName];
             if (!empty($conditionConfig['prepend'])) {
+                $startIndex = 0;
                 foreach ($conditionConfig['prepend'] as $middlewareAlias) {
                     if (!isset($namedRefs[$middlewareAlias])) {
                         throw new RuntimeException(
@@ -89,9 +100,12 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         );
                     }
 
+                    $configurationPathDefinition = $container->getDefinition($middlewareAlias);
+                    array_splice($selectedMiddlewareChainInfo, $startIndex, 0, $configurationPathDefinition->getClass());
+                    $startIndex++;
+
                     if ($selectedMiddleware === null) {
-                        $configurationPathDefinition = $container->getDefinition($middlewareAlias);
-                        $selectedMiddleware          = new Definition(
+                        $selectedMiddleware = new Definition(
                             $configurationPathDefinition->getClass(),
                             $configurationPathDefinition->getArguments()
                         );
@@ -118,12 +132,11 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     }
 
                     $configurationPathDefinition = $container->getDefinition($middlewareAlias);
-                    $middlewareDefinition        = new Definition(
-                        $configurationPathDefinition->getClass(),
-                        $configurationPathDefinition->getArguments()
-                    );
+                    array_push($selectedMiddlewareChainInfo, $configurationPathDefinition->getClass());
 
-                    $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
+                    $middlewareReference = new Reference($configurationPathDefinition->getClass());
+
+                    $selectedMiddleware->addMethodCall('append', [$middlewareReference]);
                 }
             }
 
@@ -152,6 +165,15 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         ]
                     );
 
+                    $listMiddlewareCommand->addMethodCall(
+                        'registerRouteMiddleware',
+                        [
+                            $condition['route_name'],
+                            $selectedMiddlewareChainInfo,
+                            $middlewareChainName
+                        ]
+                    );
+
                     continue;
                 }
 
@@ -174,6 +196,14 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                             ->setFactory(sprintf('%s::%s', ConfigurationPath::class, 'createFromConfigurationHttpMethodAndString'));
 
                     $compiledPathStrategyResolver->addMethodCall(
+                        'registerPathMiddleware',
+                        [
+                            $configurationPathDefinition,
+                            $selectedMiddleware
+                        ]
+                    );
+
+                    $listMiddlewareCommand->addMethodCall(
                         'registerPathMiddleware',
                         [
                             $configurationPathDefinition,

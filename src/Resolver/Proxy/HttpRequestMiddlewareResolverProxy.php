@@ -7,6 +7,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
@@ -30,6 +31,12 @@ class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInt
         $this->cache           = $cache;
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return AbstractMiddlewareChainItem
+     * @throws InvalidArgumentException
+     */
     public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
     {
         $routeName    = $request->attributes->get('_route');

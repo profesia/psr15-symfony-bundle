@@ -45,8 +45,14 @@ services:
         arguments:
             $middlewareChainItemFactory: '@Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory'
             $router: '@router.default'
+
     Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory:
         public: false
+
+    Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand:
+        public: false
+        tags:
+            - { name: 'console.command' }
 
     MiddlewareChainResolver:
         class: 'Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver'
