@@ -27,6 +27,20 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
 
     public function registerRouteMiddleware(string $routeName, AbstractMiddlewareChainItem $middlewareChain): self
     {
+        if ($routeName === '*') {
+            if (!empty($this->registeredRouteMiddlewares)) {
+                return $this;
+            }
+
+            $this->registeredRouteMiddlewares['*'] = $middlewareChain;
+
+            return $this;
+        }
+
+        if (array_key_exists('*', $this->registeredRouteMiddlewares)) {
+            return $this;
+        }
+
         if (array_key_exists($routeName, $this->registeredRouteMiddlewares)) {
             return $this;
         }
@@ -42,8 +56,6 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
 
     public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
     {
-        dump($this->registeredRouteMiddlewares);
-        exit;
         $routeName = $request->getRouteName();
         if (isset($this->registeredRouteMiddlewares[$routeName])) {
             return $this->registeredRouteMiddlewares[$routeName];

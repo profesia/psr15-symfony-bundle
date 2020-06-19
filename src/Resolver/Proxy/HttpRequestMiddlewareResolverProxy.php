@@ -43,14 +43,14 @@ class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInt
         $staticPrefix = $this->routeCollection->get($routeName)->compile()->getStaticPrefix();
         $cacheKey     = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
 
-        /*$cacheItem = $this->cache->getItem($cacheKey);
+        $cacheItem = $this->cache->getItem($cacheKey);
         if ($cacheItem->isHit()) {
             return $cacheItem->get();
-        }*/
+        }
 
         $middleware = $this->resolver->resolveMiddlewareChain($request);
-        /*$cacheItem->set($middleware);
-        $this->cache->save($cacheItem);*/
+        $cacheItem->set($middleware);
+        $this->cache->save($cacheItem);
 
         return $middleware;
     }

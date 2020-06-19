@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Default configuration for services in *this* file -->
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" public="false">
+            <argument key="$serverRequestFactory" type="service" id="nyholm.psr7.psr17_factory" />
+            <argument key="$streamFactory" type="service" id="nyholm.psr7.psr17_factory" />
+            <argument key="$uploadedFileFactory" type="service" id="nyholm.psr7.psr17_factory" />
+            <argument key="$responseFactory" type="service" id="nyholm.psr7.psr17_factory" />
+        </service>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" public="false" />
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" public="false">
+            <argument key="$httpMiddlewareResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber" public="false">
+            <tag name="kernel.event_subscriber" />
+            <argument key="$symfonyControllerAdapter" type="service" id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory" public="false">
+            <argument key="$serverRequestFactory" type="service" id="nyholm.psr7.psr17_factory" />
+            <argument key="$responseFactory" type="service" id="nyholm.psr7.psr17_factory" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver" public="false" shared="false">
+            <argument key="$middlewareChainItemFactory" type="service" id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory" />
+            <argument key="$router" type="service" id="router.default" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver" public="false" shared="false">
+            <argument key="$middlewareChainItemFactory" type="service" id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory" />
+            <argument key="$router" type="service" id="router.default" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" public="false" />
+
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand" public="false" >
+            <tag name="console.command" />
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand" public="false" >
+            <tag name="console.command" />
+            <argument type="service" id="router.default" />
+            <argument type="service" id="MiddlewareChainResolverProxy" />
+        </service>
+
+        <service id="MiddlewareChainResolver" public="false" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver">
+            <factory service="Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" method="create" />
+            <argument type="collection">
+                <argument type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver" />
+                <argument type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver" />
+            </argument>
+        </service>
+
+        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver" public="false" >
+            <argument key="$middlewareResolverChain" type="service" id="MiddlewareChainResolver" />
+        </service>
+
+        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\HttpRequestMiddlewareResolverProxy" public="false">
+            <argument key="$router" type="service" id="router.default" />
+            <argument key="$resolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver" />
+            <argument key="$cache" type="service" id="cache.system" />
+        </service>
+    </services>
+</container>
