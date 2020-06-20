@@ -51,7 +51,7 @@ class ListMiddlewareRulesCommand extends Command
 
         $table = new Table($output);
         $table->setHeaderTitle('Path rules');
-        $table->setHeaders(['Path', 'HTTP Method', 'Middleware list']);
+        $table->setHeaders(['Path pattern', 'HTTP Method', 'Middleware chain']);
         static::fillTableWithMiddlewareData(
             $table,
             $this->compiledPathStrategyResolver->exportRules()

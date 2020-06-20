@@ -48,17 +48,18 @@ class WarmUpMiddlewareCacheCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
-        $table->setHeaders(['Route', 'HTTP method', 'Middleware chain items']);
+        $table->setHeaders(['Route', 'Static Path', 'HTTP method', 'Middleware chain items']);
         $index = 1;
         foreach ($this->routes as $routeName => $route) {
-            $innerIndex = 1;
+            $innerIndex   = 1;
+            $staticPrefix = $route->compile()->getStaticPrefix();
             foreach ($route->getMethods() as $httpMethod) {
                 $request = new Request();
                 $request->attributes->set('_route', $routeName);
                 $request->setMethod($httpMethod);
 
                 $middleware = $this->resolverCacheProxy->resolveMiddlewareChain($request);
-                $table->addRow([$routeName, $httpMethod, implode("\n", $middleware->listChainClassNames())]);
+                $table->addRow([$routeName, $staticPrefix, $httpMethod, implode("\n", $middleware->listChainClassNames())]);
 
                 if ($innerIndex !== sizeof($route->getMethods())) {
                     $table->addRow(new TableSeparator());
