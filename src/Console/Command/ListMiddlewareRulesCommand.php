@@ -72,8 +72,8 @@ class ListMiddlewareRulesCommand extends Command
         foreach ($exportedRules as $exportedMiddleware) {
             $table->addRow(
                 [
-                    $exportedMiddleware->getRouteName(),
-                    $exportedMiddleware->getHttpMethod()->toString(),
+                    $exportedMiddleware->getIdentifier(),
+                    $exportedMiddleware->getHttpMethods()->listMethods(' | '),
                     implode(
                         "\n",
                         $exportedMiddleware->listMiddlewareChainItems()

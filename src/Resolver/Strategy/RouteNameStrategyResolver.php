@@ -8,7 +8,7 @@ use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use RuntimeException;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
@@ -80,15 +80,12 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
             $route        = $this->routeCollection->get($routeName);
             $httpMethods  = $route->getMethods();
             $compiledPath = $route->compile()->getStaticPrefix();
-
-            foreach ($httpMethods as $httpMethod) {
-                $middlewareArray[] = new ExportedMiddleware(
-                    $middlewareChain,
-                    HttpMethod::createFromString($httpMethod),
-                    $compiledPath,
-                    $routeName
-                );
-            }
+            $middlewareArray[] = new ExportedMiddleware(
+                $middlewareChain,
+                CompoundHttpMethod::createFromStrings($httpMethods),
+                $compiledPath,
+                $routeName
+            );
         }
 
         return $middlewareArray;

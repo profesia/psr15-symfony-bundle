@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 
 class ExportedMiddleware
 {
@@ -15,16 +15,20 @@ class ExportedMiddleware
     /** @var string|null */
     private $routeName;
 
-    /** @var HttpMethod */
-    private $httpMethod;
+    /** @var CompoundHttpMethod */
+    private $httpMethods;
 
     /** @var string */
     private $path;
 
-    public function __construct(AbstractMiddlewareChainItem $middlewareChain, HttpMethod $httpMethod, string $path, ?string $routeName = null)
-    {
+    public function __construct(
+        AbstractMiddlewareChainItem $middlewareChain,
+        CompoundHttpMethod $httpMethods,
+        string $path,
+        ?string $routeName = null
+    ) {
         $this->middlewareChain = $middlewareChain;
-        $this->httpMethod      = $httpMethod;
+        $this->httpMethods     = $httpMethods;
         $this->routeName       = $routeName;
         $this->path            = $path;
     }
@@ -37,18 +41,13 @@ class ExportedMiddleware
         return $this->middlewareChain->listChainClassNames();
     }
 
-    public function getRouteName(): ?string
+    public function getIdentifier(): string
     {
-        return $this->routeName;
+        return $this->routeName ?? $this->path;
     }
 
-    public function getHttpMethod(): HttpMethod
+    public function getHttpMethods(): CompoundHttpMethod
     {
-        return $this->httpMethod;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
+        return $this->httpMethods;
     }
 }
