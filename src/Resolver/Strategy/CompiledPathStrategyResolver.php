@@ -95,10 +95,11 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
         $middlewareArray = [];
         foreach ($this->registeredPathMiddlewares as $patternLength => $patterns) {
             foreach ($patterns as $pattern => $httpMethods) {
-                $httpMethods       = array_keys($httpMethods);
                 $middlewareArray[] = new ExportedMiddleware(
                     current($httpMethods),
-                    CompoundHttpMethod::createFromStrings($httpMethods),
+                    CompoundHttpMethod::createFromStrings(
+                        array_keys($httpMethods)
+                    ),
                     $pattern
                 );
             }
