@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
 
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -13,53 +15,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMiddlewareRulesCommand extends Command
 {
-    /** @var array[] */
-    private $registeredRouteMiddlewares = [];
+    /** @var RouteNameStrategyResolver $routeNameStrategyResolver */
+    private $routeNameStrategyResolver;
 
-    /** @var array */
-    private $registeredPathMiddlewares = [];
+    /** @var CompiledPathStrategyResolver */
+    private $compiledPathStrategyResolver;
 
-    public function registerPathMiddleware(ConfigurationPath $path, array $middlewareChains, string $middlewareChainName): self
+    public function __construct(RouteNameStrategyResolver $routeNameStrategyResolver, CompiledPathStrategyResolver $compiledPathStrategyResolver)
     {
-        /*$exportedConfiguration = $path->exportConfigurationForMiddleware($middlewareChain);
-        foreach ($exportedConfiguration as $pathLength => $registeredPaths) {
-            if (!isset($this->registeredPathMiddlewares[$pathLength])) {
-                $this->registeredPathMiddlewares[$pathLength] = [];
-            }
+        $this->routeNameStrategyResolver    = $routeNameStrategyResolver;
+        $this->compiledPathStrategyResolver = $compiledPathStrategyResolver;
 
-            foreach ($registeredPaths as $path => $pathConfiguration) {
-                if (!isset($this->registeredPathMiddlewares[$pathLength][$path])) {
-                    $this->registeredPathMiddlewares[$pathLength][$path] = [];
-                }
-
-                foreach ($pathConfiguration as $method => $middlewareChain) {
-                    if (isset($this->registeredPathMiddlewares[$pathLength][$path][$method])) {
-                        continue;
-                    }
-
-                    $this->registeredPathMiddlewares[$pathLength][$path][$method] = $middlewareChain;
-                }
-            }
-        }*/
-
-        return $this;
+        parent::__construct();
     }
 
-    public function registerRouteMiddleware(string $routeName, array $middlewareChain, string $middlewareChainName): self
-    {
-        if (array_key_exists($routeName, $this->registeredRouteMiddlewares)) {
-            return $this;
-        }
 
-        $this->registeredRouteMiddlewares[$routeName] = [
-            'groupName' => $middlewareChainName,
-            'chain'     => $middlewareChain
-        ];
-
-        return $this;
-    }
-
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('psr15:middleware:list-rules')
@@ -67,29 +38,54 @@ class ListMiddlewareRulesCommand extends Command
             ->setHelp('This commands lists all the registered rules for middlewares');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
         $table->setHeaderTitle('Route rules');
-        $table->setHeaders(['Route name', 'Middleware chain name', 'Middleware list']);
-        $index = 1;
-        $sizeOfTable = sizeof($this->registeredRouteMiddlewares);
-        foreach ($this->registeredRouteMiddlewares as $routeName => $routeConfig) {
-            $middlewareChainName = $routeConfig['groupName'];
-            $table->addRow([$routeName, $middlewareChainName, implode("\n", $routeConfig['chain'])]);
+        $table->setHeaders(['Route name', 'HTTP method', 'Middleware list']);
+        static::fillTableWithMiddlewareData(
+            $table,
+            $this->routeNameStrategyResolver->exportRules()
+        );
+        $table->render();
+
+        $table = new Table($output);
+        $table->setHeaderTitle('Path rules');
+        $table->setHeaders(['Path', 'HTTP Method', 'Middleware list']);
+        static::fillTableWithMiddlewareData(
+            $table,
+            $this->compiledPathStrategyResolver->exportRules()
+        );
+        $table->render();
+
+        return 1;
+    }
+
+    /**
+     * @param Table                $table
+     * @param ExportedMiddleware[] $exportedRules
+     */
+    private static function fillTableWithMiddlewareData(Table $table, array $exportedRules)
+    {
+        $index                      = 1;
+        $sizeOfTable                = sizeof($exportedRules);
+        foreach ($exportedRules as $exportedMiddleware) {
+            $table->addRow(
+                [
+                    $exportedMiddleware->getRouteName(),
+                    $exportedMiddleware->getHttpMethod()->toString(),
+                    implode(
+                        "\n",
+                        $exportedMiddleware->listMiddlewareChainItems()
+                    )
+                ]
+            );
+
             if ($index !== $sizeOfTable) {
                 $table->addRow(new TableSeparator());
             }
 
             $index++;
         }
-        $table->render();
-
-        $table = new Table($output);
-        $table->setHeaderTitle('Path rules');
-        $table->setHeaders(['Path', 'HTTP Method', 'Middleware chain name', 'Middleware list']);
-        $table->render();
-
-        return 1;
     }
 }

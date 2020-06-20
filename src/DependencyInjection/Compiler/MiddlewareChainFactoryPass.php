@@ -35,29 +35,26 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
-        $middlewareChains    = [];
-        $middlewareGroupInfo = [];
+        $middlewareChains = [];
 
         foreach ($definitions as $groupName => $groupConfig) {
             /** @var Definition $firstItemDefinition */
-            $firstItemDefinition             = null;
-            $middlewareGroupInfo[$groupName] = [];
+            $firstItemDefinition = null;
 
             foreach ($groupConfig['middleware_chain_items'] as $middlewareAlias) {
                 if (!$container->hasDefinition($middlewareAlias)) {
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-                $originalDefinition                = $container->getDefinition($middlewareAlias);
-                $configurationPathDefinition       = static::createDefinition(
+                $originalDefinition          = $container->getDefinition($middlewareAlias);
+                $configurationPathDefinition = static::createDefinition(
                     $originalDefinition->getClass(),
                     false,
                     false,
                     $originalDefinition->getArguments()
                 );
-                $middlewareGroupInfo[$groupName][] = $configurationPathDefinition->getClass();
 
-                if ($firstItemDefinition === null) {
+                if (!($firstItemDefinition instanceof Definition)) {
                     $firstItemDefinition = $configurationPathDefinition;
 
                     continue;
@@ -71,7 +68,6 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameStrategyResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathStrategyResolver::class);
-        $listMiddlewareCommand        = $container->getDefinition(ListMiddlewareRulesCommand::class);
         foreach ($routing as $conditionName => $conditionConfig) {
             $middlewareChainName = $conditionConfig['middleware_chain'];
             if (!isset($middlewareChains[$middlewareChainName])) {
@@ -86,10 +82,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware          = null;
-            $selectedMiddlewareChainInfo = $middlewareGroupInfo[$middlewareChainName];
+            $selectedMiddleware = null;
             if (!empty($conditionConfig['prepend'])) {
-                $startIndex = 0;
                 foreach ($conditionConfig['prepend'] as $middlewareAlias) {
                     if (!$container->hasDefinition($middlewareAlias)) {
                         throw new RuntimeException(
@@ -105,8 +99,6 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         $originalDefinition->getArguments()
                     );
 
-                    array_splice($selectedMiddlewareChainInfo, $startIndex, 0, $configurationPathDefinition->getClass());
-                    $startIndex++;
 
                     if ($selectedMiddleware === null) {
                         $selectedMiddleware = $configurationPathDefinition;
@@ -132,16 +124,18 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         );
                     }
 
-                    $originalDefinition          = $container->getDefinition($middlewareAlias);
-                    $configurationPathDefinition = static::createDefinition(
-                        $originalDefinition->getClass(),
-                        false,
-                        false,
-                        $originalDefinition->getArguments()
+                    $originalDefinition = $container->getDefinition($middlewareAlias);
+                    $selectedMiddleware->addMethodCall(
+                        'append',
+                        [
+                            static::createDefinition(
+                                $originalDefinition->getClass(),
+                                false,
+                                false,
+                                $originalDefinition->getArguments()
+                            )
+                        ]
                     );
-                    array_push($selectedMiddlewareChainInfo, $configurationPathDefinition->getClass());
-
-                    $selectedMiddleware->addMethodCall('append', [$configurationPathDefinition]);
                 }
             }
 
@@ -167,15 +161,6 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         [
                             $condition['route_name'],
                             $selectedMiddleware
-                        ]
-                    );
-
-                    $listMiddlewareCommand->addMethodCall(
-                        'registerRouteMiddleware',
-                        [
-                            $condition['route_name'],
-                            $selectedMiddlewareChainInfo,
-                            $middlewareChainName
                         ]
                     );
 
@@ -214,18 +199,19 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                             $selectedMiddleware
                         ]
                     );
-                    /*$listMiddlewareCommand->addMethodCall(
-                        'registerPathMiddleware',
-                        [
-                            $configurationPathDefinition,
-                            $selectedMiddleware
-                        ]
-                    );*/
                 }
             }
         }
     }
 
+    /**
+     * @param string       $className
+     * @param bool         $isShared
+     * @param bool         $isPublic
+     * @param array<mixed> $arguments
+     *
+     * @return Definition
+     */
     private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition
     {
         return (new Definition($className, $arguments))

@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection;
 
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Psr15Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $builder = new TreeBuilder('psr15');
 

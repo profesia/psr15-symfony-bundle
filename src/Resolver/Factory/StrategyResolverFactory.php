@@ -21,11 +21,11 @@ class StrategyResolverFactory
         /** @var AbstractChainResolverItem $previous */
         $previous = null;
         foreach ($strategyResolverItems as $strategyResolverItem) {
-            if ($first === null) {
+            if (!($first instanceof AbstractChainResolverItem)) {
                 $first = $strategyResolverItem;
             }
 
-            if ($previous !== null) {
+            if ($previous instanceof AbstractChainResolverItem) {
                 $previous->setNext($strategyResolverItem);
             }
 

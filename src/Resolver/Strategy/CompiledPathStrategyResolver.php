@@ -7,7 +7,9 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -74,8 +76,6 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
                     $extractedMiddleware = $request->getHttpMethod()->extractMiddleware($methodsConfig);
 
                     if ($extractedMiddleware !== null) {
-                        //@todo cache result
-
                         return $extractedMiddleware;
                     }
                 }
@@ -87,4 +87,24 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
         return $this->handleNext($request);
     }
 
+    /**
+     * @return ExportedMiddleware[]
+     */
+    public function exportRules(): array
+    {
+        $middlewareArray = [];
+        foreach ($this->registeredPathMiddlewares as $patternLength => $patterns) {
+            foreach ($patterns as $pattern => $httpMethods) {
+                foreach ($httpMethods as $httpMethod => $middlewareChain) {
+                    $middlewareArray[] = new ExportedMiddleware(
+                        $middlewareChain,
+                        HttpMethod::createFromString($httpMethod),
+                        $pattern
+                    );
+                }
+            }
+        }
+
+        return $middlewareArray;
+    }
 }

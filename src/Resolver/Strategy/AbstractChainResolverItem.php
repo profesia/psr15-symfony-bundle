@@ -7,6 +7,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 
 abstract class AbstractChainResolverItem
 {
@@ -29,6 +30,11 @@ abstract class AbstractChainResolverItem
     }
 
     public abstract function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem;
+
+    /**
+     * @return ExportedMiddleware[]
+     */
+    public abstract function exportRules(): array;
 
     protected function handleNext(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
     {

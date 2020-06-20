@@ -37,7 +37,7 @@ class WarmUpMiddlewareCacheCommand extends Command
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('psr15:middleware:warm-up')
@@ -45,14 +45,7 @@ class WarmUpMiddlewareCacheCommand extends Command
             ->setHelp('The command iterates over registered routes and resolves middleware for every registered route');
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int
-     * @throws InvalidArgumentException
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $table = new Table($output);
         $table->setHeaders(['Route', 'HTTP method', 'Middleware chain items']);
