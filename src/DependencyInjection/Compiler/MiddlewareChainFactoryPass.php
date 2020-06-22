@@ -48,7 +48,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
                 $originalDefinition          = $container->getDefinition($middlewareAlias);
                 $configurationPathDefinition = static::createDefinition(
-                    $originalDefinition->getClass(),
+                    (string)$originalDefinition->getClass(),
                     false,
                     false,
                     $originalDefinition->getArguments()
@@ -93,7 +93,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
                     $originalDefinition          = $container->getDefinition($middlewareAlias);
                     $configurationPathDefinition = static::createDefinition(
-                        $originalDefinition->getClass(),
+                        (string)$originalDefinition->getClass(),
                         false,
                         false,
                         $originalDefinition->getArguments()
@@ -129,7 +129,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'append',
                         [
                             static::createDefinition(
-                                $originalDefinition->getClass(),
+                                (string)$originalDefinition->getClass(),
                                 false,
                                 false,
                                 $originalDefinition->getArguments()

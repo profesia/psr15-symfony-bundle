@@ -15,6 +15,11 @@ class ConfigurationHttpMethod extends AbstractHttpMethod
         return new self(static::METHOD_ANY);
     }
 
+    /**
+     * @param AbstractMiddlewareChainItem $middlewareChain
+     *
+     * @return AbstractMiddlewareChainItem[]
+     */
     public function assignMiddlewareChainToHttpMethods(AbstractMiddlewareChainItem $middlewareChain): array
     {
         if ($this->getValue() !== static::METHOD_ANY) {
@@ -42,6 +47,9 @@ class ConfigurationHttpMethod extends AbstractHttpMethod
         return $this->getValue();
     }
 
+    /**
+     * @return string[]
+     */
     public static function getPossibleValues(): array
     {
         return array_merge(

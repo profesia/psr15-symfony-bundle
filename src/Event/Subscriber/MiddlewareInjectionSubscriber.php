@@ -36,6 +36,9 @@ class MiddlewareInjectionSubscriber implements EventSubscriberInterface
         );
     }
 
+    /**
+     * @return array<string, array>
+     */
     public static function getSubscribedEvents(): array
     {
         return [

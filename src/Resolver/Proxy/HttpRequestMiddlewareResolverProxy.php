@@ -11,7 +11,6 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInterface
 {
@@ -21,7 +20,7 @@ class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInt
     /** @var RequestMiddlewareResolverInterface */
     private $resolver;
 
-    /** @var CacheInterface */
+    /** @var CacheItemPoolInterface */
     private $cache;
 
     public function __construct(RouterInterface $router, RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)

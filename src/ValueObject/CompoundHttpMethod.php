@@ -17,6 +17,11 @@ class CompoundHttpMethod
         $this->httpMethods = $httpMethods;
     }
 
+    /**
+     * @param array<string, string> $httpMethods
+     *
+     * @return self
+     */
     public static function createFromStrings(array $httpMethods): self
     {
         $methodValueObjects = [];

@@ -24,7 +24,7 @@ class ConfigurationPath
     public static function createFromConfigurationHttpMethodAndString(ConfigurationHttpMethod $httpMethod, string $path): self
     {
         $pathLength = strlen($path);
-        if ($pathLength < 1 || ($pathLength >= 1 && strpos($path, '/') !== 0)) {
+        if ($pathLength < 1 || strpos($path, '/') !== 0) {
             throw new InvalidArgumentException("Path should be a string composed at least of the '/' character");
         }
 
@@ -34,6 +34,11 @@ class ConfigurationPath
         );
     }
 
+    /**
+     * @param AbstractMiddlewareChainItem $middlewareChain
+     *
+     * @return array<int, array>
+     */
     public function exportConfigurationForMiddleware(AbstractMiddlewareChainItem $middlewareChain): array
     {
         return [

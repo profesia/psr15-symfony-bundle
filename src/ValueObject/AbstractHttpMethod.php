@@ -31,6 +31,9 @@ abstract class AbstractHttpMethod
         return $this->value;
     }
 
+    /**
+     * @return string[]
+     */
     public static function getPossibleValues(): array
     {
         return [
@@ -46,6 +49,11 @@ abstract class AbstractHttpMethod
         ];
     }
 
+    /**
+     * @param string $value
+     *
+     * @return static
+     */
     public static function createFromString(string $value): self
     {
         $upperCasedValue = strtoupper($value);

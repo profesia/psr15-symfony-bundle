@@ -65,10 +65,10 @@ class ListMiddlewareRulesCommand extends Command
      * @param Table                $table
      * @param ExportedMiddleware[] $exportedRules
      */
-    private static function fillTableWithMiddlewareData(Table $table, array $exportedRules)
+    private static function fillTableWithMiddlewareData(Table $table, array $exportedRules): void
     {
-        $index                      = 1;
-        $sizeOfTable                = sizeof($exportedRules);
+        $index       = 1;
+        $sizeOfTable = sizeof($exportedRules);
         foreach ($exportedRules as $exportedMiddleware) {
             $table->addRow(
                 [
