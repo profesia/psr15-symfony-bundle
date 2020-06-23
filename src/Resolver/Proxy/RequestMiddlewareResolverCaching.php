@@ -6,13 +6,14 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class HttpRequestMiddlewareResolverProxy implements RequestMiddlewareResolverInterface
+class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachingInterface
 {
     /** @var RouteCollection */
     private $routeCollection;

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\HttpRequestMiddlewareResolverProxy;
-use Psr\Cache\InvalidArgumentException;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -20,10 +19,10 @@ class WarmUpMiddlewareCacheCommand extends Command
     /** @var Route[] */
     private $routes;
 
-    /** @var HttpRequestMiddlewareResolverProxy */
+    /** @var RequestMiddlewareResolverCachingInterface */
     private $resolverCacheProxy;
 
-    public function __construct(RouterInterface $router, HttpRequestMiddlewareResolverProxy $resolverCacheProxy)
+    public function __construct(RouterInterface $router, RequestMiddlewareResolverCachingInterface $resolverCacheProxy)
     {
         $this->routes             = array_filter(
             $router->getRouteCollection()->all(),

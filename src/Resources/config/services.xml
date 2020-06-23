@@ -18,7 +18,7 @@
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" public="false"/>
 
         <service id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" public="false">
-            <argument key="$httpMiddlewareResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver"/>
+            <argument key="$httpMiddlewareResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
         </service>
 
         <service id="Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber" public="false">
@@ -56,7 +56,7 @@
         <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand" public="false">
             <tag name="console.command"/>
             <argument type="service" id="router.default"/>
-            <argument type="service" id="MiddlewareChainResolverProxy"/>
+            <argument type="service" id="MiddlewareChainResolverDecorator"/>
         </service>
 
         <service id="MiddlewareChainResolver" public="false" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver">
@@ -67,15 +67,31 @@
             </argument>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver" public="false">
+        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver" public="false">
             <argument key="$middlewareResolverChain" type="service" id="MiddlewareChainResolver"/>
         </service>
 
-        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\HttpRequestMiddlewareResolverProxy"
+        <service id="cache.psr15-middleware" class="Symfony\Component\Cache\Adapter\TraceableAdapter" public="false">
+            <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache" />
+            <tag name="cache.pool" clearer="cache.system_clearer" reset="reset" />
+            <tag name="monolog.logger" channel="cache" />
+            <argument />
+            <argument>0</argument>
+            <argument />
+            <argument>%kernel.cache_dir%/pools</argument>
+            <argument type="service" id="logger"/>
+        </service>
+
+        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\f"
                  public="false">
             <argument key="$router" type="service" id="router.default"/>
-            <argument key="$resolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\HttpRequestMiddlewareResolver"/>
-            <argument key="$cache" type="service" id="cache.system"/>
+            <argument key="$resolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+            <argument key="$cache" type="service" id="cache.psr15-middleware"/>
+        </service>
+
+        <service id="MiddlewareChainResolverDecorator" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCacheRemoval" public="false">
+            <argument key="$decoratedObject" type="service" id="MiddlewareChainResolverProxy" />
+            <argument key="$cache" type="service" id="cache.psr15-middleware" />
         </service>
     </services>
 </container>
