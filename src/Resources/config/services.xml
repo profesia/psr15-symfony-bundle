@@ -82,7 +82,7 @@
             <argument type="service" id="logger"/>
         </service>
 
-        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\f"
+        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching"
                  public="false">
             <argument key="$router" type="service" id="router.default"/>
             <argument key="$resolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
