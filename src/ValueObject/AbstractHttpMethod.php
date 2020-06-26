@@ -21,7 +21,7 @@ abstract class AbstractHttpMethod
     /** @var string */
     protected $value;
 
-    protected function __construct(string $value)
+    protected final function __construct(string $value)
     {
         $this->value = $value;
     }

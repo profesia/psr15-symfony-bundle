@@ -18,7 +18,7 @@ class CompoundHttpMethod
     }
 
     /**
-     * @param array<string, string> $httpMethods
+     * @param array<int, string> $httpMethods
      *
      * @return self
      */

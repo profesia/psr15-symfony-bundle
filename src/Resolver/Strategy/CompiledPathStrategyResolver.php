@@ -10,6 +10,7 @@ use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use RuntimeException;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -55,11 +56,13 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
 
     public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
     {
+        $route = $this->routeCollection->get($request->getRouteName());
+        if ($route === null) {
+            throw new RuntimeException("Route: [{$request->getRouteName()}] is not registered");
+        }
+
         $staticPrefix =
-            $this->routeCollection
-                ->get(
-                    $request->getRouteName()
-                )
+            $route
                 ->compile()
                 ->getStaticPrefix();
         $pathLength   = strlen($staticPrefix);

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler;
 
 use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
-use Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
@@ -205,10 +204,10 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
     }
 
     /**
-     * @param string       $className
-     * @param bool         $isShared
-     * @param bool         $isPublic
-     * @param array<mixed> $arguments
+     * @param string  $className
+     * @param bool    $isShared
+     * @param bool    $isPublic
+     * @param mixed[] $arguments
      *
      * @return Definition
      */

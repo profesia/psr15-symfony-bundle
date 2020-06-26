@@ -77,9 +77,13 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
     {
         $middlewareArray = [];
         foreach ($this->registeredRouteMiddlewares as $routeName => $middlewareChain) {
-            $route        = $this->routeCollection->get($routeName);
-            $httpMethods  = $route->getMethods();
-            $compiledPath = $route->compile()->getStaticPrefix();
+            $route             = $this->routeCollection->get($routeName);
+            if ($route === null) {
+                throw new RuntimeException("Route: [{$routeName}] is not registered");
+            }
+
+            $httpMethods       = $route->getMethods();
+            $compiledPath      = $route->compile()->getStaticPrefix();
             $middlewareArray[] = new ExportedMiddleware(
                 $middlewareChain,
                 CompoundHttpMethod::createFromStrings($httpMethods),

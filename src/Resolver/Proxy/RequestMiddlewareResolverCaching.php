@@ -9,6 +9,7 @@ use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
@@ -39,8 +40,13 @@ class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachi
      */
     public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
     {
-        $routeName    = $request->attributes->get('_route');
-        $staticPrefix = $this->routeCollection->get($routeName)->compile()->getStaticPrefix();
+        $routeName = $request->attributes->get('_route');
+        $route     = $this->routeCollection->get($routeName);
+        if ($route === null) {
+            throw new RuntimeException("Route: [{$routeName}] is not registered");
+        }
+
+        $staticPrefix = $route->compile()->getStaticPrefix();
         $cacheKey     = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
 
         $cacheItem = $this->cache->getItem($cacheKey);
