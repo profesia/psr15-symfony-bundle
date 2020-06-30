@@ -10,6 +10,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SymfonyControllerRequestHandler implements RequestHandlerInterface
 {
@@ -18,6 +19,9 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
 
     /** @var HttpMessageFactoryInterface */
     private $psrHttpFactory;
+
+    /** @var RequestStack */
+    private $requestStack;
 
     /** @var callable */
     private $symfonyCallable;
@@ -28,11 +32,13 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     private function __construct(
         HttpFoundationFactoryInterface $foundationHttpFactory,
         HttpMessageFactoryInterface $psrHttpFactory,
+        RequestStack $requestStack,
         callable $symfonyCallable,
         array $symfonyCallableArguments
     ) {
         $this->foundationHttpFactory    = $foundationHttpFactory;
         $this->psrHttpFactory           = $psrHttpFactory;
+        $this->requestStack             = $requestStack;
         $this->symfonyCallable          = $symfonyCallable;
         $this->symfonyCallableArguments = $symfonyCallableArguments;
     }
@@ -41,15 +47,26 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     public static function createFromObjects(
         HttpFoundationFactoryInterface $foundationHttpFactory,
         HttpMessageFactoryInterface $psrHttpFactory,
+        RequestStack $requestStack,
         callable $symfonyCallable,
         array $symfonyCallableArguments = []
     ): self {
-        return new self($foundationHttpFactory, $psrHttpFactory, $symfonyCallable, $symfonyCallableArguments);
+        return new self($foundationHttpFactory, $psrHttpFactory, $requestStack, $symfonyCallable, $symfonyCallableArguments);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $symfonyRequest                    = $this->foundationHttpFactory->createRequest($request);
+        $symfonyRequest = $this->foundationHttpFactory->createRequest($request);
+        $requests       = [];
+        while (($request = $this->requestStack->pop()) !== null) {
+            $requests[] = $request;
+        }
+
+        $requests[sizeof($requests) - 1] = $symfonyRequest;
+        foreach ($requests as $request) {
+            $this->requestStack->push($request);
+        }
+
         $symfonyResponse = call_user_func_array(
             $this->symfonyCallable,
             array_map(

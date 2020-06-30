@@ -12,10 +12,14 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyControllerAdapter
 {
+    /** @var RequestStack */
+    private $requestStack;
+
     /** @var HttpFoundationFactoryInterface */
     private $foundationHttpFactory;
 
@@ -31,12 +35,13 @@ class SymfonyControllerAdapter
     /** @var Request */
     private $request;
 
-    public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver)
+    public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver, RequestStack $requestStack)
     {
+        $this->requestStack           = $requestStack;
         $this->httpMiddlewareResolver = $httpMiddlewareResolver;
-        $this->foundationHttpFactory = new HttpFoundationFactory();
-        $psr17Factory                = new Psr17Factory();
-        $this->psrHttpFactory        = new PsrHttpFactory(
+        $this->foundationHttpFactory  = new HttpFoundationFactory();
+        $psr17Factory                 = new Psr17Factory();
+        $this->psrHttpFactory         = new PsrHttpFactory(
             $psr17Factory,
             $psr17Factory,
             $psr17Factory,
@@ -57,6 +62,7 @@ class SymfonyControllerAdapter
         $handler = SymfonyControllerRequestHandler::createFromObjects(
             $this->foundationHttpFactory,
             $this->psrHttpFactory,
+            $this->requestStack,
             $this->originalController,
             func_get_args()
         );

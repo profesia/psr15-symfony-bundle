@@ -27,6 +27,10 @@ class MiddlewareInjectionSubscriber implements EventSubscriberInterface
             return;
         }
 
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
         $this->symfonyControllerAdapter->setOriginalResources($controller, $event->getRequest());
         $event->setController(
             [

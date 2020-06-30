@@ -19,6 +19,7 @@
 
         <service id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" public="false">
             <argument key="$httpMiddlewareResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+            <argument key="$requestStack" type="service" id="request_stack" />
         </service>
 
         <service id="Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber" public="false">
