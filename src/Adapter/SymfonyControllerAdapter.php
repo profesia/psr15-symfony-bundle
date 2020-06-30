@@ -11,11 +11,15 @@ use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyControllerAdapter
 {
+    /** @var ContainerInterface */
+    private $container;
+
     /** @var HttpFoundationFactoryInterface */
     private $foundationHttpFactory;
 
@@ -31,8 +35,9 @@ class SymfonyControllerAdapter
     /** @var Request */
     private $request;
 
-    public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver)
+    public function __construct(ContainerInterface $container, RequestMiddlewareResolverInterface $httpMiddlewareResolver)
     {
+        $this->container = $container;
         $this->httpMiddlewareResolver = $httpMiddlewareResolver;
         $this->foundationHttpFactory = new HttpFoundationFactory();
         $psr17Factory                = new Psr17Factory();
@@ -54,7 +59,8 @@ class SymfonyControllerAdapter
 
     public function __invoke(): Response
     {
-
+        dump($this->container);
+        exit;
         $handler = SymfonyControllerRequestHandler::createFromObjects(
             $this->foundationHttpFactory,
             $this->psrHttpFactory,
