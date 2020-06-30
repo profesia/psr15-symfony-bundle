@@ -28,6 +28,9 @@ class SymfonyControllerAdapter
     /** @var callable */
     private $originalController;
 
+    /** @var Request */
+    private $request;
+
     public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver)
     {
         $this->httpMiddlewareResolver = $httpMiddlewareResolver;
@@ -41,29 +44,26 @@ class SymfonyControllerAdapter
         );
     }
 
-    public function setOriginalController(callable $originalController): self
+    public function setOriginalResources(callable $originalController, Request $request): self
     {
         $this->originalController = $originalController;
+        $this->request            = $request;
 
         return $this;
     }
 
     public function __invoke(): Response
     {
-        $arguments = func_get_args();
-
-        /** @var Request $request */
-        $request = current($arguments);
 
         $handler = SymfonyControllerRequestHandler::createFromObjects(
             $this->foundationHttpFactory,
             $this->psrHttpFactory,
             $this->originalController,
-            $arguments
+            func_get_args()
         );
 
-        $middlewareChain = $this->httpMiddlewareResolver->resolveMiddlewareChain($request);
-        $psrRequest      = $this->psrHttpFactory->createRequest($request);
+        $middlewareChain = $this->httpMiddlewareResolver->resolveMiddlewareChain($this->request);
+        $psrRequest      = $this->psrHttpFactory->createRequest($this->request);
         $psrResponse     = $middlewareChain->process($psrRequest, $handler);
 
         return $this->foundationHttpFactory->createResponse($psrResponse);

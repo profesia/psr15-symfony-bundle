@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class SymfonyControllerRequestHandler implements RequestHandlerInterface
 {
@@ -49,10 +50,18 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $symfonyRequest                    = $this->foundationHttpFactory->createRequest($request);
-        $this->symfonyCallableArguments[0] = $symfonyRequest;
-        $symfonyResponse                   = call_user_func_array(
+        $symfonyResponse = call_user_func_array(
             $this->symfonyCallable,
-            $this->symfonyCallableArguments
+            array_map(
+                function ($item) use ($symfonyRequest) {
+                    if ($item instanceof Request) {
+                        return $symfonyRequest;
+                    }
+
+                    return $item;
+                },
+                $this->symfonyCallableArguments
+            )
         );
 
         return $this->psrHttpFactory->createResponse($symfonyResponse);
