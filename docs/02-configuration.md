@@ -19,7 +19,7 @@ psr15:
             middleware_chain: [Chain Name]
             conditions:
                 - {route_name: [Route Name]}
-                - {path: 'test', method: 'POST'}
+                - {path: '/test', method: 'POST'}
             prepend:
                 - [Other middleware service name]
                 - [Other different middleware service name]
@@ -54,7 +54,7 @@ conditions with a same definition as an already defined middleware chain will be
 You have to supply existing route name defined in your application. 
 Route name existence will be checked upon registration to middleware resolver.
 
-Magic:
+**Magic**:
 - Upon registering condition with route name `*` any route can be matched during the middleware resolving process. 
 Condition list has to be empty to accept magic route name, otherwise it will be ignored.
 All of the following route name rules will be ignored.
@@ -62,3 +62,6 @@ All of the following route name rules will be ignored.
 You have to supply application path start at which middleware chain should be triggered.
 Condition variant support usage of the `method` key for further specification of the HTTP method.
 If omitted, condition will be triggered on any HTTP method.
+
+**Configuration**:
+- Path configuration has to start with slash - `/` character.

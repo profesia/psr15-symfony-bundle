@@ -14,6 +14,7 @@ composer require delvesoft/psr15-symfony-bundle
 - [Configuration](docs/02-configuration.md)
 - [Middleware definition](docs/03-middlewares.md#definition)
 - [Middleware resolving](docs/03-middlewares.md#resolving)
+- [Middleware matching](docs/03-middlewares.md#matching)
 - [Architecture](docs/04-architecture.md)
 - [Limitations](docs/05-limitations.md)
 ## Author
