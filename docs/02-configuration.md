@@ -47,6 +47,7 @@ Options marked with * character are fully optional.
 The bundle currently supports 2 variants of assigning a specific middleware chain to application:
 - by **Route**
 - by **Path**
+
 For both variants the FCFS rule will be applied: 
 conditions with a same definition as an already defined middleware chain will be ignored.
 ### Route
