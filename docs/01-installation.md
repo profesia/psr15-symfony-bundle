@@ -1,6 +1,6 @@
 # Installing Bundle
 ## Installation
-- Install the latest version by running the command
+- Install the latest version by running the command:
 ```bash
 composer require delvesoft/psr15-symfony-bundle
 ```
