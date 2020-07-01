@@ -40,7 +40,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             /** @var Definition $firstItemDefinition */
             $firstItemDefinition = null;
 
-            foreach ($groupConfig['middleware_chain_items'] as $middlewareAlias) {
+            foreach ($groupConfig as $middlewareAlias) {
                 if (!$container->hasDefinition($middlewareAlias)) {
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
