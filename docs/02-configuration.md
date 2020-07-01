@@ -32,6 +32,7 @@ psr15:
 Disable caching during development, use cache in the production
 - `middleware_chains` - array of middleware chain items to be assigned to a single chain
     - `{Chain Name}` - name of the chain to be used in the _routing_ part of the config
+        - `{Service alias}` - array of service names
 - `routing` - list of conditions
     - `{Condition Name}` - name of the condition
         - `middleware_chain` - name of a desired middleware chain to be used
