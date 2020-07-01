@@ -47,14 +47,14 @@ The bundle currently supports 2 variants of assigning a specific middleware chai
 - by **Route**
 - by **Path**
 For both variants the FCFS rule will be applied: 
-conditions with a same definition as an already defined middleware chain will be discarded.
+conditions with a same definition as an already defined middleware chain will be ignored.
 ### Route
 You have to supply existing route name defined in your application. 
 Route name existence will be checked upon registration to middleware resolver.
 
 Magic:
 - Upon registering condition with route name `*` any route can be matched during the middleware resolving process. 
-Condition list has to be empty to accept this magic route name, otherwise it will be ignored.
+Condition list has to be empty to accept magic route name, otherwise it will be ignored.
 All of the following route name rules will be ignored.
 ### Path
 You have to supply application path start at which middleware chain should be triggered.
