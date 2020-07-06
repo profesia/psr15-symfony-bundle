@@ -38,8 +38,8 @@ Disable caching during development, use cache in the production
         - `middleware_chain` - name of a desired middleware chain to be used
         - `conditions` - configuration array for assigning of a certain previously referenced
         middleware chain to a specific route/application path with HTTP method
-        - `prepend * ` - array od middleware items to be prepended to the referenced middleware chain
-        - `append *` - array of middleware items to be appended to the referenced middleware chain
+        - `prepend * ` - array of middleware services to be prepended to the referenced middleware chain
+        - `append *` - array of middleware services to be appended to the referenced middleware chain
 
 Options marked with * character are fully optional.
 
