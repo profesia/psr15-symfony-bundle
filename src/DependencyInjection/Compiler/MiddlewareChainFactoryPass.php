@@ -50,7 +50,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     (string)$originalDefinition->getClass(),
                     false,
                     false,
-                    $originalDefinition->getArguments()
+                    $originalDefinition->getArguments(),
+                    $originalDefinition->getMethodCalls()
                 );
 
                 if (!($firstItemDefinition instanceof Definition)) {
@@ -95,7 +96,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         (string)$originalDefinition->getClass(),
                         false,
                         false,
-                        $originalDefinition->getArguments()
+                        $originalDefinition->getArguments(),
+                        $originalDefinition->getMethodCalls()
                     );
 
 
@@ -131,7 +133,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                                 (string)$originalDefinition->getClass(),
                                 false,
                                 false,
-                                $originalDefinition->getArguments()
+                                $originalDefinition->getArguments(),
+                                $originalDefinition->getMethodCalls()
                             )
                         ]
                     );
@@ -208,13 +211,25 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
      * @param bool    $isShared
      * @param bool    $isPublic
      * @param mixed[] $arguments
+     * @param mixed[] $methodCalls
      *
      * @return Definition
      */
-    private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition
-    {
-        return (new Definition($className, $arguments))
-            ->setPublic($isPublic)
-            ->setShared($isShared);
+    private static function createDefinition(
+        string $className,
+        bool $isShared,
+        bool $isPublic,
+        array $arguments = [],
+        array $methodCalls = []
+    ): Definition {
+        $definition =
+            (new Definition($className, $arguments))
+                ->setPublic($isPublic)
+                ->setShared($isShared);
+        foreach ($methodCalls as $call) {
+            $definition->addMethodCall($call[0], $call[1]);
+        }
+
+        return $definition;
     }
 }
