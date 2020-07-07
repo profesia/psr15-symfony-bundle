@@ -85,8 +85,8 @@ psr15:
 ```
 ## Matching
 Matching of an incoming requests takes place in two clasess:
-* [RouteNameStrategyResolver](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Resolver/Strategy/RouteNameStrategyResolver.php)
-* [CompiledPathStrategyResolver](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Resolver/Strategy/CompiledPathStrategyResolver.php)
+* [RouteNameStrategyResolver](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Resolver/Strategy/RouteNameStrategyResolver.php)
+* [CompiledPathStrategyResolver](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Resolver/Strategy/CompiledPathStrategyResolver.php)
 ### RouteNameStrategyResolver
 Matching of an incoming request is straightforward in this strategy:
 1. Actual route name is being searched in the registered route middleware chains.
@@ -129,7 +129,7 @@ psr15:
 ```
 The incoming static prefix is `/abde`. Matching has three iterations:
 1. Checking pattern `/abcd`. No match found.
-2 . Checking pattern `/abc`. No match found.
+2. Checking pattern `/abc`. No match found.
 3. Checking pattern `/ab`. Match found.
 Pattern is registered to all [HTTP methods](02-configuration.md#path).
 Middleware chain with name **Test1** is returned.
@@ -137,7 +137,23 @@ Middleware chain with name **Test1** is returned.
 Resolving of a middleware chain to be used consists of o two steps:
 * passing resolving request to **RouteNameStrategyResolver**
 * passing resolving request to **CompiledPathStrategyResolver**
-* returning [NullMiddleware](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Middleware/NullMiddleware.php) on no middleware chain resolved
+* returning [NullMiddleware](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Middleware/NullMiddleware.php) on no middleware chain resolved
 
 Each step will return middleware chain and stop resolving on match found.
 ## Caching
+As stated in the [configuration](02-configuration.md#config-options) section,
+key `use_cache` is used to enable bundle caching.
+Resolving of a middleware chain could have impact on performance (mainly on an extensive middleware and route config).
+In production caching of a resolved middleware is advised.
+On turned on cache are resolved middleware chains cached in the cache pool `cache.psr15-middleware`
+in the similar fashion as a container is being compiled and stored using PhpFilesAdapter.
+Location of a cache pool is set according to standard cache settings: `%kernel.cache_dir%/pools`.
+
+Cache pool can be automatically cleared by calling:
+```bash
+php bin/console cache:clear
+```
+or
+```bash
+php bin/console cache:pool:clear cache.psr15-middleware
+```
