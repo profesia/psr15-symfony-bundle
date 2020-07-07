@@ -84,5 +84,60 @@ psr15:
     ...
 ```
 ## Matching
+Matching of an incoming requests takes place in two clasess:
+* [RouteNameStrategyResolver](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Resolver/Strategy/RouteNameStrategyResolver.php)
+* [CompiledPathStrategyResolver](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Resolver/Strategy/CompiledPathStrategyResolver.php)
+### RouteNameStrategyResolver
+Matching of an incoming request is straightforward in this strategy:
+1. Actual route name is being searched in the registered route middleware chains.
+If found, middleware chain is returned.
+2. If no middleware chain is registered to route name,
+ strategy check whether there is a rule registered to magical route `*`.
+ If found, middleware chain is returned. 
+3. Resolving strategy passes a middleware resolving request to the following strategy.
+### CompiledPathStrategyResolver
+Matching of an incoming request is based on compiled static prefix of a route.
+Strategy tries to match static prefix accurately by checking the most potent rules firstly.
+Registered rules are grouped by their string length.
+Match is simply calculated by using `strpos` PHP function -
+a static prefix has to start with a registered pattern.
+After potentional match was found, HTTP method is beign checked.
+
+1. The compiled static prefix of the actual route is fetched.
+Its string length is calculated.
+2. Registered rules are being iterated.
+Matching starts at the exact length of the static path of an incoming request.
+If found, middleware chain is returned.
+3. If no middleware chain is matched,
+ resolving continues by decreasing length of searched patterns,
+ patterns with smaller length are being checked.
+ If found, middleware chain is returned.
+4. Upon reaching length 0 resolving strategy passes a middleware resolving request to the following strategy.
+
+**Example**:
+```yaml
+#psr15.yaml
+psr15:
+    ...
+    routing:
+        Condition1:
+            middleware_chain: 'Test1'
+            conditions:
+                - {path: '/ab'}
+                - {path: '/abc'}
+                - {path: '/abcd'}
+```
+The incoming static prefix is `/abde`. Matching has three iterations:
+1. Checking pattern `/abcd`. No match found.
+2 . Checking pattern `/abc`. No match found.
+3. Checking pattern `/ab`. Match found.
+Pattern is registered to all [HTTP methods](02-configuration.md#path).
+Middleware chain with name **Test1** is returned.
 ## Resolving
+Resolving of a middleware chain to be used consists of o two steps:
+* passing resolving request to **RouteNameStrategyResolver**
+* passing resolving request to **CompiledPathStrategyResolver**
+* returning [NullMiddleware](https://github.com/mbadal/psr15-middleware-bundle/blob/master/src/Middleware/NullMiddleware.php) on no middleware chain resolved
+
+Each step will return middleware chain and stop resolving on match found.
 ## Caching

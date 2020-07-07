@@ -57,7 +57,7 @@ Route name existence will be checked upon registration to middleware resolver.
 **Magic**:
 - Upon registering condition with route name `*` any route can be matched during the middleware resolving process. 
 Condition list has to be empty to accept magic route name, otherwise it will be ignored.
-All of the following route name rules will be ignored.
+All the following route name rules will be ignored.
 ### Path
 You have to supply application path start at which middleware chain should be triggered.
 Condition variant support usage of the `method` key for further specification of the HTTP method.

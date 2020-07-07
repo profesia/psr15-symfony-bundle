@@ -91,13 +91,19 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         );
                     }
 
-                    $originalDefinition          = $container->getDefinition($middlewareAlias);
+                    $originalDefinition = $container->getDefinition($middlewareAlias);
+                    $methodCalls        = $originalDefinition->getMethodCalls();
+                    if ($methodCalls !== []) {
+                        throw new RuntimeException(
+                            "Error in condition config: [{$conditionName}]. Middleware to prepend must not be a middleware chain"
+                        );
+                    }
+
                     $configurationPathDefinition = static::createDefinition(
                         (string)$originalDefinition->getClass(),
                         false,
                         false,
-                        $originalDefinition->getArguments(),
-                        $originalDefinition->getMethodCalls()
+                        $originalDefinition->getArguments()
                     );
 
 
@@ -126,6 +132,13 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     }
 
                     $originalDefinition = $container->getDefinition($middlewareAlias);
+                    $methodCalls        = $originalDefinition->getMethodCalls();
+                    if ($methodCalls !== []) {
+                        throw new RuntimeException(
+                            "Error in condition config: [{$conditionName}]. Middleware to append must not be a middleware chain"
+                        );
+                    }
+
                     $selectedMiddleware->addMethodCall(
                         'append',
                         [
@@ -133,8 +146,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                                 (string)$originalDefinition->getClass(),
                                 false,
                                 false,
-                                $originalDefinition->getArguments(),
-                                $originalDefinition->getMethodCalls()
+                                $originalDefinition->getArguments()
                             )
                         ]
                     );

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\Middleware\Factory;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddlewareChainItem;
+use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use InvalidArgumentException;
@@ -38,6 +38,6 @@ class MiddlewareChainItemFactory
 
     public function createNullChainItem(): AbstractMiddlewareChainItem
     {
-        return $this->createInstance(NullMiddlewareChainItem::class);
+        return $this->createInstance(NullMiddleware::class);
     }
 }
