@@ -44,4 +44,9 @@ class CompoundHttpMethod
             )
         );
     }
+
+    public function isEmpty(): bool
+    {
+        return ($this->httpMethods === []);
+    }
 }

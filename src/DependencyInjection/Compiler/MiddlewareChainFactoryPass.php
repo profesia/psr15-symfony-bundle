@@ -45,22 +45,18 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-                $originalDefinition          = $container->getDefinition($middlewareAlias);
-                $configurationPathDefinition = static::createDefinition(
-                    (string)$originalDefinition->getClass(),
-                    false,
-                    false,
-                    $originalDefinition->getArguments(),
-                    $originalDefinition->getMethodCalls()
-                );
+                $middlewareDefinition =
+                    static::copyDefinition(
+                        $container->getDefinition($middlewareAlias)
+                    );
 
                 if (!($firstItemDefinition instanceof Definition)) {
-                    $firstItemDefinition = $configurationPathDefinition;
+                    $firstItemDefinition = $middlewareDefinition;
 
                     continue;
                 }
 
-                $firstItemDefinition->addMethodCall('append', [$configurationPathDefinition]);
+                $firstItemDefinition->addMethodCall('append', [$middlewareDefinition]);
             }
 
             $middlewareChains[$groupName] = $firstItemDefinition;
@@ -99,28 +95,21 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         );
                     }
 
-                    $configurationPathDefinition = static::createDefinition(
-                        (string)$originalDefinition->getClass(),
-                        false,
-                        false,
-                        $originalDefinition->getArguments()
-                    );
-
-
+                    $middlewareDefinition = static::copyDefinition($originalDefinition);
                     if ($selectedMiddleware === null) {
-                        $selectedMiddleware = $configurationPathDefinition;
+                        $selectedMiddleware = $middlewareDefinition;
 
                         continue;
                     }
 
-                    $selectedMiddleware->addMethodCall('append', [$configurationPathDefinition]);
+                    $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
                 }
 
                 $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
             }
 
             if ($selectedMiddleware === null) {
-                $selectedMiddleware = $middlewareChains[$middlewareChainName];
+                $selectedMiddleware = static::copyDefinition($middlewareChains[$middlewareChainName]);
             }
 
             if (!empty($conditionConfig['append'])) {
@@ -142,12 +131,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     $selectedMiddleware->addMethodCall(
                         'append',
                         [
-                            static::createDefinition(
-                                (string)$originalDefinition->getClass(),
-                                false,
-                                false,
-                                $originalDefinition->getArguments()
-                            )
+                            static::copyDefinition($originalDefinition)
                         ]
                     );
                 }
@@ -218,30 +202,28 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
     }
 
+    private static function copyDefinition(Definition $originalDefinition): Definition
+    {
+        $newDefinition = clone $originalDefinition;
+        $newDefinition
+            ->setPublic(false)
+            ->setShared(false);
+
+        return $newDefinition;
+    }
+
     /**
      * @param string  $className
      * @param bool    $isShared
      * @param bool    $isPublic
      * @param mixed[] $arguments
-     * @param mixed[] $methodCalls
      *
      * @return Definition
      */
-    private static function createDefinition(
-        string $className,
-        bool $isShared,
-        bool $isPublic,
-        array $arguments = [],
-        array $methodCalls = []
-    ): Definition {
-        $definition =
+    private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition {
+        return
             (new Definition($className, $arguments))
                 ->setPublic($isPublic)
                 ->setShared($isShared);
-        foreach ($methodCalls as $call) {
-            $definition->addMethodCall($call[0], $call[1]);
-        }
-
-        return $definition;
     }
 }

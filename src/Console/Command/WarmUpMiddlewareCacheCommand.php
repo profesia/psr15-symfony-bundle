@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
 
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -52,7 +53,12 @@ class WarmUpMiddlewareCacheCommand extends Command
         foreach ($this->routes as $routeName => $route) {
             $innerIndex   = 1;
             $staticPrefix = $route->compile()->getStaticPrefix();
-            foreach ($route->getMethods() as $httpMethod) {
+            $httpMethods  = $route->getMethods();
+            if ($httpMethods === []) {
+                $httpMethods = HttpMethod::getPossibleValues();
+            }
+
+            foreach ($httpMethods as $httpMethod) {
                 $request = new Request();
                 $request->attributes->set('_route', $routeName);
                 $request->setMethod($httpMethod);

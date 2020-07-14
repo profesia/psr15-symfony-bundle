@@ -6,6 +6,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ExportedMiddleware
 {
@@ -48,6 +49,12 @@ class ExportedMiddleware
 
     public function getHttpMethods(): CompoundHttpMethod
     {
+        if ($this->httpMethods->isEmpty()) {
+            return CompoundHttpMethod::createFromStrings(
+                HttpMethod::getPossibleValues()
+            );
+        }
+
         return $this->httpMethods;
     }
 }
