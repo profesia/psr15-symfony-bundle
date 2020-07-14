@@ -34,8 +34,8 @@ class ListMiddlewareRulesCommand extends Command
     {
         $this
             ->setName('psr15:middleware:list-rules')
-            ->setDescription('Lists all registered middleware rules')
-            ->setHelp('This commands lists all the registered rules for middlewares');
+            ->setDescription('Lists all registered middleware chains routing rules')
+            ->setHelp('This commands lists all the registered routing rules for middleware chains');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
