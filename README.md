@@ -17,6 +17,7 @@ composer require delvesoft/psr15-symfony-bundle
 - [Middleware resolving](docs/03-middlewares.md#resolving)
 - [Middleware caching](docs/03-middlewares.md#caching)
 - [Architecture](docs/04-architecture.md)
+- [Console](docs/05-console.md)
 - [Limitations](docs/06-limitations.md)
 ## Author
 Matej Bádal - matejbadal@gmail.com
