@@ -107,6 +107,6 @@ The bundle offers two console commands as part of its infrastructure:
 +-------+-------------+-------------+----------------------------+
 ```
 ### Warning
-When defining routes use of key `methods` to limit available HTTP methods is advised.
-If there are none stated, the command takes resolves middleware to all HTTP methods.
+When defining routes, use of the key `methods` to limit available HTTP methods is advised.
+If there are none stated, the command resolves middleware to all HTTP methods.
 This can dramatically increase size of cache.
