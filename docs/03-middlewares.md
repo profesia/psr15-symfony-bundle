@@ -7,7 +7,7 @@ A Middleware implementation requires two constructor arguments of a type:
 
 Currently the bundle uses `nyholm/psr7` library for PSR-17 HTTP Factories implementation.
 ## Factory
-To ensure easier creation of middleware instance, you can use [MiddlewareChainItemFactory](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Middleware/Factory/MiddlewareChainItemFactory.php)
+To ensure easier creation of middleware instance, you can use [MiddlewareChainItemFactory](../src/Middleware/Factory/MiddlewareChainItemFactory.php)
 that is capable of creation of a middleware instance by its class name.
 ## Chain Definition
 Each middleware has to be defined as a service in the `services` file.
@@ -85,8 +85,8 @@ psr15:
 ```
 ## Matching
 Matching of an incoming requests takes place in two clasess:
-* [RouteNameStrategyResolver](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Resolver/Strategy/RouteNameStrategyResolver.php)
-* [CompiledPathStrategyResolver](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Resolver/Strategy/CompiledPathStrategyResolver.php)
+* [RouteNameStrategyResolver](../src/Resolver/Strategy/RouteNameStrategyResolver.php)
+* [CompiledPathStrategyResolver](../src/Resolver/Strategy/CompiledPathStrategyResolver.php)
 ### RouteNameStrategyResolver
 Matching of an incoming request is straightforward in this strategy:
 1. Actual route name is being searched in the registered route middleware chains.
@@ -137,7 +137,7 @@ Middleware chain with name **Test1** is returned.
 Resolving of a middleware chain to be used consists of o two steps:
 * passing resolving request to **RouteNameStrategyResolver**
 * passing resolving request to **CompiledPathStrategyResolver**
-* returning [NullMiddleware](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Middleware/NullMiddleware.php) on no middleware chain resolved
+* returning [NullMiddleware](../src/Middleware/NullMiddleware.php) on no middleware chain resolved
 
 Each step will return middleware chain and stop resolving on match found.
 ## Caching

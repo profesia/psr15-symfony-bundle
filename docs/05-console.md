@@ -1,7 +1,7 @@
 # Console
 The bundle offers two console commands as part of its infrastructure:
-* [ListMiddlewareRulesCommand](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Console/Command/ListMiddlewareRulesCommand.php)
-* [WarmUpMiddlewareCacheCommand](https://github.com/mbadal/psr15-symfony-bundle/blob/master/src/Console/Command/WarmUpMiddlewareCacheCommand.php)
+* [ListMiddlewareRulesCommand](../src/Console/Command/ListMiddlewareRulesCommand.php)
+* [WarmUpMiddlewareCacheCommand](../src/Console/Command/WarmUpMiddlewareCacheCommand.php)
 
 ## ListMiddlewareRulesCommand
 **Description**: Lists all registered middleware chains routing rules
