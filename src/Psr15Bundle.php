@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle;
 
+use DeepCopy\DeepCopy;
 use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
 use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -15,7 +16,11 @@ class Psr15Bundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new MiddlewareChainFactoryPass());
+        $container->addCompilerPass(
+            new MiddlewareChainFactoryPass(
+                new DeepCopy()
+            )
+        );
     }
 
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler;
 
+use DeepCopy\DeepCopy;
 use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
@@ -17,6 +18,14 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewareChainFactoryPass implements CompilerPassInterface
 {
+    /** @var DeepCopy */
+    private $cloner;
+
+    public function __construct(DeepCopy $cloner)
+    {
+        $this->cloner = $cloner;
+    }
+
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasParameter('psr15')) {
@@ -46,7 +55,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 }
 
                 $middlewareDefinition =
-                    static::copyDefinition(
+                    $this->copyDefinition(
                         $container->getDefinition($middlewareAlias)
                     );
 
@@ -95,7 +104,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         );
                     }
 
-                    $middlewareDefinition = static::copyDefinition($originalDefinition);
+                    $middlewareDefinition = $this->copyDefinition($originalDefinition);
                     if ($selectedMiddleware === null) {
                         $selectedMiddleware = $middlewareDefinition;
 
@@ -109,7 +118,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             }
 
             if ($selectedMiddleware === null) {
-                $selectedMiddleware = static::copyDefinition($middlewareChains[$middlewareChainName]);
+                $selectedMiddleware = $this->copyDefinition($middlewareChains[$middlewareChainName]);
             }
 
             if (!empty($conditionConfig['append'])) {
@@ -131,7 +140,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     $selectedMiddleware->addMethodCall(
                         'append',
                         [
-                            static::copyDefinition($originalDefinition)
+                            $this->copyDefinition($originalDefinition)
                         ]
                     );
                 }
@@ -202,9 +211,9 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
     }
 
-    private static function copyDefinition(Definition $originalDefinition): Definition
+    private function copyDefinition(Definition $originalDefinition): Definition
     {
-        $newDefinition = clone $originalDefinition;
+        $newDefinition = $this->cloner->copy($originalDefinition);
         $newDefinition
             ->setPublic(false)
             ->setShared(false);
