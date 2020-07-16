@@ -5,7 +5,7 @@ A middleware implementation requires two constructor arguments of a type:
 - [ServerRequestFactoryInterface](https://github.com/php-fig/http-factory/blob/master/src/ServerRequestFactoryInterface.php)
 - [ResponseFactoryInterface](https://github.com/php-fig/http-factory/blob/master/src/ResponseFactoryInterface.php)
 
-Currently the bundle uses `nyholm/psr7` library for PSR-17 HTTP Factories implementation.
+Currently the bundle uses [nyholm/psr7](https://github.com/Nyholm/psr7) library for PSR-17 HTTP Factories implementation.
 ## Factory
 To ensure easier creation of middleware instance, you can use [MiddlewareChainItemFactory](../src/Middleware/Factory/MiddlewareChainItemFactory.php)
 that is capable of creation of a middleware instance by its class name.
