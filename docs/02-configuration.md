@@ -44,7 +44,7 @@ Disable caching during development, use cache in the production
 Options marked with * character are fully optional.
 
 ## Condition config explained
-The bundle currently supports 2 variants of assigning a specific middleware chain to application:
+The bundle currently supports two variants of assigning a specific middleware chain to application:
 - by **Route**
 - by **Path**
 
