@@ -21,9 +21,9 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
     /** @var DeepCopy */
     private $cloner;
 
-    public function __construct()
+    public function __construct(DeepCopy $cloner)
     {
-        $this->cloner = new DeepCopy();
+        $this->cloner = $cloner;
     }
 
     public function process(ContainerBuilder $container): void
