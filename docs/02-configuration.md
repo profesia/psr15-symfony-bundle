@@ -51,7 +51,7 @@ The bundle currently supports two variants of assigning a specific middleware ch
 For both variants the FCFS rule will be applied: 
 conditions with a same definition as an already defined middleware chain will be ignored.
 ### Route
-You have to supply existing route name defined in your application. 
+Existing route name defined in your application has to be supplied. 
 Route name existence will be checked upon registration to middleware resolver.
 
 **Magic**:
@@ -59,7 +59,7 @@ Route name existence will be checked upon registration to middleware resolver.
 Condition list has to be empty to accept magic route name, otherwise it will be ignored.
 All the following route name rules will be ignored.
 ### Path
-You have to supply application path start at which middleware chain should be triggered.
+Application path start at which middleware chain should be triggered has to be supplied.
 Condition variant support usage of the `method` key for further specification of the HTTP method.
 If omitted, condition will be triggered on any HTTP method.
 
