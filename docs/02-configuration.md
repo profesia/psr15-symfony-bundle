@@ -1,7 +1,7 @@
 # Configuring Bundle
 Configuration for the bundle has to be stored in the `psr15.yaml` file.
 ## Config structure
-After successful installation you can dump the actual configuration by running:
+After successful installation the actual configuration template can be dumped by running:
 ```bash
 php bin/console debug:config Psr15Bundle
 ```
