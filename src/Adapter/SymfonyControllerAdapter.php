@@ -6,9 +6,6 @@ namespace Delvesoft\Symfony\Psr15Bundle\Adapter;
 
 use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +21,7 @@ class SymfonyControllerAdapter
     private $foundationHttpFactory;
 
     /** @var HttpMessageFactoryInterface */
-    private $psrHttpFactory;
+    private $psrRequestFactory;
 
     /** @var RequestMiddlewareResolverInterface */
     private $httpMiddlewareResolver;
@@ -35,24 +32,26 @@ class SymfonyControllerAdapter
     /** @var Request */
     private $request;
 
-    public function __construct(RequestMiddlewareResolverInterface $httpMiddlewareResolver, RequestStack $requestStack)
-    {
+    /** @var array */
+    private $controllerArguments;
+
+    public function __construct(
+        RequestMiddlewareResolverInterface $httpMiddlewareResolver,
+        RequestStack $requestStack,
+        HttpFoundationFactoryInterface $foundationFactory,
+        HttpMessageFactoryInterface $psrRequestFactory
+    ) {
         $this->requestStack           = $requestStack;
         $this->httpMiddlewareResolver = $httpMiddlewareResolver;
-        $this->foundationHttpFactory  = new HttpFoundationFactory();
-        $psr17Factory                 = new Psr17Factory();
-        $this->psrHttpFactory         = new PsrHttpFactory(
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory,
-            $psr17Factory
-        );
+        $this->foundationHttpFactory  = $foundationFactory;
+        $this->psrRequestFactory      = $psrRequestFactory;
     }
 
-    public function setOriginalResources(callable $originalController, Request $request): self
+    public function setOriginalResources(callable $originalController, Request $request, array $controllerArguments): self
     {
-        $this->originalController = $originalController;
-        $this->request            = $request;
+        $this->originalController  = $originalController;
+        $this->request             = $request;
+        $this->controllerArguments = $controllerArguments;
 
         return $this;
     }
@@ -61,14 +60,14 @@ class SymfonyControllerAdapter
     {
         $handler = SymfonyControllerRequestHandler::createFromObjects(
             $this->foundationHttpFactory,
-            $this->psrHttpFactory,
+            $this->psrRequestFactory,
             $this->requestStack,
             $this->originalController,
-            func_get_args()
+            $this->controllerArguments
         );
 
         $middlewareChain = $this->httpMiddlewareResolver->resolveMiddlewareChain($this->request);
-        $psrRequest      = $this->psrHttpFactory->createRequest($this->request);
+        $psrRequest      = $this->psrRequestFactory->createRequest($this->request);
         $psrResponse     = $middlewareChain->process($psrRequest, $handler);
 
         return $this->foundationHttpFactory->createResponse($psrResponse);

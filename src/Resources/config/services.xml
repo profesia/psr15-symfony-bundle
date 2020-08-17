@@ -8,12 +8,17 @@
         <!-- Default configuration for services in *this* file -->
         <defaults autowire="true" autoconfigure="true"/>
 
+        <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
+        <service id="Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface" alias="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
+
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" public="false">
             <argument key="$serverRequestFactory" type="service" id="nyholm.psr7.psr17_factory"/>
             <argument key="$streamFactory" type="service" id="nyholm.psr7.psr17_factory"/>
             <argument key="$uploadedFileFactory" type="service" id="nyholm.psr7.psr17_factory"/>
             <argument key="$responseFactory" type="service" id="nyholm.psr7.psr17_factory"/>
         </service>
+
+        <service id="Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface" alias="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
 
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" public="false"/>
 
