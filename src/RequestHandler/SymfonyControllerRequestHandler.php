@@ -27,9 +27,9 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     private $symfonyCallable;
 
     /** @var array */
-    private $symfonyCallableArguments = [];
+    private $symfonyCallableArguments;
 
-    private function __construct(
+    public function __construct(
         HttpFoundationFactoryInterface $foundationHttpFactory,
         HttpMessageFactoryInterface $psrHttpFactory,
         RequestStack $requestStack,
@@ -41,17 +41,6 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
         $this->requestStack             = $requestStack;
         $this->symfonyCallable          = $symfonyCallable;
         $this->symfonyCallableArguments = $symfonyCallableArguments;
-    }
-
-
-    public static function createFromObjects(
-        HttpFoundationFactoryInterface $foundationHttpFactory,
-        HttpMessageFactoryInterface $psrHttpFactory,
-        RequestStack $requestStack,
-        callable $symfonyCallable,
-        array $symfonyCallableArguments = []
-    ): self {
-        return new self($foundationHttpFactory, $psrHttpFactory, $requestStack, $symfonyCallable, $symfonyCallableArguments);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
