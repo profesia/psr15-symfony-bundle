@@ -6,7 +6,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use RuntimeException;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RequestMiddlewareResolverCachingInterface;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
