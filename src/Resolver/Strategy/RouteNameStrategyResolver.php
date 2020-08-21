@@ -58,13 +58,13 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
 
     public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
     {
+        if (isset($this->registeredRouteMiddlewares['*'])) {
+            return $this->registeredRouteMiddlewares['*'];
+        }
+
         $routeName = $request->getRouteName();
         if (isset($this->registeredRouteMiddlewares[$routeName])) {
             return $this->registeredRouteMiddlewares[$routeName];
-        }
-
-        if (isset($this->registeredRouteMiddlewares['*'])) {
-            return $this->registeredRouteMiddlewares['*'];
         }
 
         return $this->handleNext($request);
