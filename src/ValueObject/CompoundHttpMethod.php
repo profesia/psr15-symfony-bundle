@@ -26,7 +26,8 @@ class CompoundHttpMethod
     {
         $methodValueObjects = [];
         foreach ($httpMethods as $httpMethod) {
-            $methodValueObjects[$httpMethod] = HttpMethod::createFromString($httpMethod);
+            $httpMethodObject                                  = HttpMethod::createFromString($httpMethod);
+            $methodValueObjects[$httpMethodObject->toString()] = $httpMethodObject;
         }
 
         return new self($methodValueObjects);

@@ -66,6 +66,6 @@ abstract class AbstractHttpMethod
 
     public function equals(AbstractHttpMethod $methodToCompare): bool
     {
-        return $this->value === $methodToCompare->value;
+        return ($this->value === $methodToCompare->getValue());
     }
 }
