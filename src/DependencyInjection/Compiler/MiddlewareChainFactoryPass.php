@@ -157,7 +157,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 }
 
                 if ($containsRouteName) {
-                    if (array_key_exists('method', $condition) || array_key_exists('strategy', $condition)) {
+                    if (array_key_exists('method', $condition)) {
                         throw new RuntimeException(
                             "Error in condition config: [{$conditionName}]. Keys: 'method' and 'strategy' are redundant for condition with 'route_name'"
                         );
