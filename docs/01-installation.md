@@ -4,7 +4,7 @@
 ```bash
 composer require delvesoft/psr15-symfony-bundle
 ```
-- create `psr15.yaml` config file in the config directory.
+- create `psr15.yaml` config file in the config **packages** directory.
 - Do not forget to enable the installed bundle in the `bundles.php` file.
 ## Requirements
 - PHP 7.3+
