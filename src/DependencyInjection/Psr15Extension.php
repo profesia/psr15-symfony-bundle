@@ -14,6 +14,12 @@ class Psr15Extension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
+        $bundles = $container->getParameter('kernel.bundles');
+        if (!isset($bundles['Psr15Bundle'])) {
+            //prevent cache:clear crashing during instalation
+            return;
+        }
+
         $loader = new XmlFileLoader(
             $container,
             new FileLocator(
