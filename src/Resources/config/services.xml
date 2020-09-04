@@ -55,7 +55,6 @@
 
         <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" />
 
-
         <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand">
             <tag name="console.command"/>
             <argument key="$routeNameStrategyResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver"/>
