@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use DeepCopy\DeepCopy;
+use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
@@ -181,7 +182,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
                 );
         }
 
-        return ['container' => $container, 'deepCopy' => $deepCopy];
+        return ['container' => $container, 'deepCopy' => $deepCopy, 'middlewareChain' => $firstDefinition];
     }
 
     public function testCanDetectConfigurationKey()
@@ -513,6 +514,264 @@ class MiddlewareChainFactoryPassTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Error in condition config: [Condition]. At least one condition has to be specified');
+        $compilerPass->process($container);
+    }
+
+    public function testCanDetectInvalidConfigurationInRoutingConfig()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'conditions'       => [
+                    [
+                        'path' => '/test', 'route_name' => 'test'
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|Definition $newMiddlewareChain */
+        $newMiddlewareChain = Mockery::mock(Definition::class);
+        $newMiddlewareChain
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newMiddlewareChain
+            );
+
+        $newMiddlewareChain
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChain
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Error in condition config: [Condition]. Condition config has to have either 'route_name' or 'path' config");
+        $compilerPass->process($container);
+    }
+
+    public function testCanDetectInvalidConfigurationInRoutingRouteNameConfig()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'conditions'       => [
+                    [
+                        'route_name' => 'test', 'method' => 'test'
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|Definition $newMiddlewareChain */
+        $newMiddlewareChain = Mockery::mock(Definition::class);
+        $newMiddlewareChain
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newMiddlewareChain
+            );
+
+        $newMiddlewareChain
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChain
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Error in condition config: [Condition]. Key: 'method' is redundant for condition with 'route_name'");
+        $compilerPass->process($container);
+    }
+
+    public function testCanDetectNonExistingMiddlewareInPrependSection()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'prepend' => [
+                    'abcd'
+                ],
+                'conditions'       => [
+                    [
+                        'route_name' => 'test',
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    'abcd'
+                ]
+            )
+            ->andReturn(
+                false
+            );
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware with service alias: [abcd] is not registered as a service');
+        $compilerPass->process($container);
+    }
+
+    public function testCanDetectPrependingOfAOtherMiddlewareChain()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'prepend' => [
+                    '1'
+                ],
+                'conditions'       => [
+                    [
+                        'route_name' => 'test',
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '1'
+                ]
+            )
+            ->andReturn(
+                true
+            );
+
+
+        /** @var MockInterface|Definition $originalDefinition */
+        $originalDefinition = Mockery::mock(Definition::class);
+        $originalDefinition
+            ->shouldReceive('getMethodCalls')
+            ->once()
+            ->andReturn(
+                [
+                    'test'
+                ]
+            );
+
+        $container
+            ->shouldReceive('getDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '1'
+                ]
+            )
+            ->andReturn(
+                $originalDefinition
+            );
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware to prepend must not be a middleware chain');
         $compilerPass->process($container);
     }
 }

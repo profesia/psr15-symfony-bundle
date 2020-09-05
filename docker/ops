@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# directory where this script is located
+cd "$(dirname "$0")" || exit
+
+print_help () {
+    echo "Usage: $0 [command] [argument, ...]
+    up              - bring containers up
+    down            - shut containers down
+    php             - run PHP script
+    bash            - run shell command inside container
+    container		- run interactive container
+    "
+    exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+    print_help
+fi
+
+if [[ -f ./.env ]]; then
+  set -a
+  . ./.env
+  set +a
+fi
+
+COMPOSE="docker-compose"
+
+case "$1" in
+  up)
+    ${COMPOSE} down --remove-orphans && ${COMPOSE} pull && ${COMPOSE} up -d
+    ;;
+  down)
+    ${COMPOSE} down --remove-orphans
+    ;;
+  php)
+    shift 1
+    ${COMPOSE} exec php bash -c "php $*"
+    ;;
+  bash)
+    shift 1
+    ${COMPOSE} exec php bash -c "$*"
+    ;;
+  container)
+  	shift 1
+  	${COMPOSE} exec php "$@"
+  	;;
+  *)
+    print_help
+esac

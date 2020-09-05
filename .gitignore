@@ -3,4 +3,5 @@ composer.lock
 .*
 !.gitignore
 !.travis.yml
+!docker/.env.dist
 /build
