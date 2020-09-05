@@ -35,10 +35,9 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         $parameters        = $container->getParameter('psr15');
         $adapterDefinition = $container->getDefinition(SymfonyControllerAdapter::class);
         if ($parameters['use_cache'] === true) {
-            $adapterDefinition->setArguments(
-                [
-                    new Reference('MiddlewareChainResolverProxy')
-                ]
+            $adapterDefinition->replaceArgument(
+                '$httpMiddlewareResolver',
+                new Reference('MiddlewareChainResolverProxy')
             );
         }
 

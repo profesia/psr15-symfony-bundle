@@ -328,17 +328,15 @@ class MiddlewareChainFactoryPassTest extends TestCase
         /** @var MockInterface|Definition $definition */
         $definition = Mockery::mock(Definition::class);
         $definition
-            ->shouldReceive('setArguments')
+            ->shouldReceive('replaceArgument')
             ->once()
             ->withArgs(
-                function ($argument) {
-                    if (!is_array($argument)) {
+                function ($name, $argument) {
+                    if ($name !== '$httpMiddlewareResolver') {
                         return false;
                     }
 
-                    $currentArgument = current($argument);
-
-                    return ($currentArgument instanceof Reference && (string)$currentArgument === 'MiddlewareChainResolverProxy');
+                    return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverProxy');
                 }
             );
 

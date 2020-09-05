@@ -80,15 +80,8 @@
             <argument key="$middlewareResolverChain" type="service" id="MiddlewareChainResolver"/>
         </service>
 
-        <service id="cache.psr15-middleware" class="Symfony\Component\Cache\Adapter\TraceableAdapter">
-            <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache" />
-            <tag name="cache.pool" clearer="cache.system_clearer" reset="reset" />
-            <tag name="monolog.logger" channel="cache" />
-            <argument />
-            <argument>0</argument>
-            <argument />
-            <argument>%kernel.cache_dir%/pools</argument>
-            <argument type="service" id="logger"/>
+        <service id="cache.psr15-middleware" parent="cache.system" public="false">
+            <tag name="cache.pool" />
         </service>
 
         <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching">
