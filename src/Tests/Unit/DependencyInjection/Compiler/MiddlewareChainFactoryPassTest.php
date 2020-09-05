@@ -154,6 +154,9 @@ class MiddlewareChainFactoryPassTest extends TestCase
                     [
                         false
                     ]
+                )
+                ->andReturn(
+                    $newDefinition
                 );
 
             $newDefinitionArray[] = $newDefinition;
@@ -784,6 +787,227 @@ class MiddlewareChainFactoryPassTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware to prepend must not be a middleware chain');
         $compilerPass->process($container);
+    }
+
+    public function testCanCreateMiddlewareChainInPrependSection()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'prepend'          => [
+                    '4',
+                    '5'
+                ],
+                'conditions'       => [
+                    [
+                        'route_name' => 'test',
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '4'
+                ]
+            )
+            ->andReturn(
+                true
+            );
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '5'
+                ]
+            )
+            ->andReturn(
+                true
+            );
+
+
+        /** @var MockInterface|Definition $prependDefinition1 */
+        $prependDefinition1 = Mockery::mock(Definition::class);
+        $prependDefinition1
+            ->shouldReceive('getMethodCalls')
+            ->once()
+            ->andReturn(
+                []
+            );
+
+        $container
+            ->shouldReceive('getDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '4'
+                ]
+            )
+            ->andReturn(
+                $prependDefinition1
+            );
+
+        /** @var MockInterface|Definition $prependDefinition2 */
+        $prependDefinition2 = Mockery::mock(Definition::class);
+        $prependDefinition2
+            ->shouldReceive('getMethodCalls')
+            ->once()
+            ->andReturn(
+                []
+            );
+
+        $container
+            ->shouldReceive('getDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    '5'
+                ]
+            )
+            ->andReturn(
+                $prependDefinition2
+            );
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $newPrependDefinition1 */
+        $newPrependDefinition1 = Mockery::mock(Definition::class);
+        $newPrependDefinition1
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newPrependDefinition1
+            );
+
+        $newPrependDefinition1
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )
+            ->andReturn(
+                $newPrependDefinition1
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $prependDefinition1
+                ]
+            )
+            ->andReturn(
+                $newPrependDefinition1
+            );
+
+        /** @var MockInterface|Definition $newPrependDefinition2 */
+        $newPrependDefinition2 = Mockery::mock(Definition::class);
+        $newPrependDefinition2
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newPrependDefinition2
+            );
+
+        $newPrependDefinition2
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )
+            ->andReturn(
+                $newPrependDefinition2
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $prependDefinition2
+                ]
+            )
+            ->andReturn(
+                $newPrependDefinition2
+            );
+
+        $newPrependDefinition1
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                [
+                    'append',
+                    [
+                        $newPrependDefinition2
+                    ]
+                ]
+            )
+            ->andReturn($newPrependDefinition1);
+
+        $newPrependDefinition1
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                [
+                    'append',
+                    [
+                        $middlewareChain
+                    ]
+                ]
+            )
+            ->andReturn(
+                $newPrependDefinition1
+            );
+
+        /** @var MockInterface|Definition $routeNameStrategyResolver */
+        $routeNameStrategyResolver = $mocks['routeNameStrategyResolver'];
+        $routeNameStrategyResolver
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                [
+                    'registerRouteMiddleware',
+                    [
+                        'test',
+                        $newPrependDefinition1
+                    ]
+                ]
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $compilerPass->process($container);
+        $this->assertTrue(true);
     }
 
     public function testCanDetectNonExistingMiddlewareInAppendingSection()
