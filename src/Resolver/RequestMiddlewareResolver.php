@@ -23,6 +23,9 @@ class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
     public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
     {
         $routeName = $request->attributes->get('_route');
+        if ($request->attributes->has('_locale')) {
+            $routeName = "{$routeName}.{$request->attributes->get('_locale')}";
+        }
 
         return $this->middlewareResolverChain->handle(
             new MiddlewareResolvingRequest(

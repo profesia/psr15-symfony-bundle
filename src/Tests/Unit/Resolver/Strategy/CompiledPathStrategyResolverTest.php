@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
-class CompiledPathStrategyResolverTest
+use PHPUnit\Framework\TestCase;
+
+class CompiledPathStrategyResolverTest extends TestCase
 {
 
 }

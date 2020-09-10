@@ -50,13 +50,64 @@ class RequestMiddlewareResolverTest extends TestCase
         $middlewareResolverChain
             ->shouldReceive('handle')
             ->once()
-            ->withArgs(function ($argument) use ($routeName, $httpMethodValueObject) {
-                if (!($argument instanceof MiddlewareResolvingRequest)) {
-                    return false;
-                }
+            ->withArgs(
+                function ($argument) use ($routeName, $httpMethodValueObject) {
+                    if (!($argument instanceof MiddlewareResolvingRequest)) {
+                        return false;
+                    }
 
-                return ($argument->getRouteName() === $routeName && $argument->getHttpMethod()->equals($httpMethodValueObject));
-            }
+                    return ($argument->getRouteName() === $routeName && $argument->getHttpMethod()->equals($httpMethodValueObject));
+                }
+            )->andReturn(
+                $middleware
+            );
+
+        $resolver = new RequestMiddlewareResolver(
+            $middlewareResolverChain
+        );
+
+        $resolvedMiddleware = $resolver->resolveMiddlewareChain($request);
+        $this->assertEquals($middleware, $resolvedMiddleware);
+    }
+
+    public function testCanAddLocaleToRouteName()
+    {
+        $routeName  = 'test';
+        $locale     = 'en';
+        $httpMethod = 'POST';
+        $request    = new Request(
+            [],
+            [],
+            [
+                '_route' => $routeName,
+                '_locale' => $locale
+            ],
+            [],
+            [],
+            [
+                'REQUEST_METHOD' => $httpMethod
+            ]
+        );
+
+
+        $httpMethodValueObject = HttpMethod::createFromString($httpMethod);
+
+        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
+        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+
+        /** @var MockInterface|AbstractChainResolverItem $middlewareResolverChain */
+        $middlewareResolverChain = Mockery::mock(AbstractChainResolverItem::class);
+        $middlewareResolverChain
+            ->shouldReceive('handle')
+            ->once()
+            ->withArgs(
+                function ($argument) use ($routeName, $locale, $httpMethodValueObject) {
+                    if (!($argument instanceof MiddlewareResolvingRequest)) {
+                        return false;
+                    }
+
+                    return ($argument->getRouteName() === "{$routeName}.{$locale}" && $argument->getHttpMethod()->equals($httpMethodValueObject));
+                }
             )->andReturn(
                 $middleware
             );
