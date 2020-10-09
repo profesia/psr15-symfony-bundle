@@ -15,11 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMiddlewareRulesCommand extends Command
 {
-    /** @var RouteNameStrategyResolver $routeNameStrategyResolver */
-    private $routeNameStrategyResolver;
-
-    /** @var CompiledPathStrategyResolver */
-    private $compiledPathStrategyResolver;
+    private RouteNameStrategyResolver    $routeNameStrategyResolver;
+    private CompiledPathStrategyResolver $compiledPathStrategyResolver;
 
     public function __construct(RouteNameStrategyResolver $routeNameStrategyResolver, CompiledPathStrategyResolver $compiledPathStrategyResolver)
     {

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
+use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use RuntimeException;
@@ -16,14 +16,9 @@ use Symfony\Component\Routing\RouterInterface;
 
 class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachingInterface
 {
-    /** @var RouteCollection */
-    private $routeCollection;
-
-    /** @var RequestMiddlewareResolverInterface */
-    private $resolver;
-
-    /** @var CacheItemPoolInterface */
-    private $cache;
+    private RouteCollection                    $routeCollection;
+    private RequestMiddlewareResolverInterface $resolver;
+    private CacheItemPoolInterface             $cache;
 
     public function __construct(RouterInterface $router, RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
     {

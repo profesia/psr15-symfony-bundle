@@ -8,11 +8,8 @@ use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class MiddlewareResolvingRequest
 {
-    /** @var string */
-    private $routeName;
-
-    /** @var HttpMethod */
-    private $httpMethod;
+    private string     $routeName;
+    private HttpMethod $httpMethod;
 
     public function __construct(HttpMethod $httpMethod, string $routeName)
     {

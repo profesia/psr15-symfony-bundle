@@ -18,10 +18,8 @@ use Symfony\Component\Routing\RouterInterface;
 class WarmUpMiddlewareCacheCommand extends Command
 {
     /** @var Route[] */
-    private $routes;
-
-    /** @var RequestMiddlewareResolverCachingInterface */
-    private $resolverCacheProxy;
+    private array                                     $routes;
+    private RequestMiddlewareResolverCachingInterface $resolverCacheProxy;
 
     public function __construct(RouterInterface $router, RequestMiddlewareResolverCachingInterface $resolverCacheProxy)
     {

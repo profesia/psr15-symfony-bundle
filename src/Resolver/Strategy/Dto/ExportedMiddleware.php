@@ -10,17 +10,10 @@ use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ExportedMiddleware
 {
-    /** @var AbstractMiddlewareChainItem */
-    private $middlewareChain;
-
-    /** @var string|null */
-    private $routeName;
-
-    /** @var CompoundHttpMethod */
-    private $httpMethods;
-
-    /** @var string */
-    private $path;
+    private AbstractMiddlewareChainItem $middlewareChain;
+    private ?string                     $routeName;
+    private CompoundHttpMethod          $httpMethods;
+    private string                      $path;
 
     public function __construct(
         AbstractMiddlewareChainItem $middlewareChain,

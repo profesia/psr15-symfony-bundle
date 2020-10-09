@@ -14,20 +14,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SymfonyControllerRequestHandler implements RequestHandlerInterface
 {
-    /** @var HttpFoundationFactoryInterface */
-    private $foundationHttpFactory;
-
-    /** @var HttpMessageFactoryInterface */
-    private $psrHttpFactory;
-
-    /** @var RequestStack */
-    private $requestStack;
+    private HttpFoundationFactoryInterface $foundationHttpFactory;
+    private HttpMessageFactoryInterface    $psrHttpFactory;
+    private RequestStack                   $requestStack;
+    private array                          $symfonyCallableArguments;
 
     /** @var callable */
     private $symfonyCallable;
-
-    /** @var array */
-    private $symfonyCallableArguments;
 
     public function __construct(
         HttpFoundationFactoryInterface $foundationHttpFactory,

@@ -18,8 +18,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewareChainFactoryPass implements CompilerPassInterface
 {
-    /** @var DeepCopy */
-    private $cloner;
+    private DeepCopy $cloner;
 
     public function __construct(DeepCopy $cloner)
     {

@@ -13,26 +13,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyControllerAdapter
 {
-    /** @var HttpFoundationFactoryInterface */
-    private $foundationHttpFactory;
-
-    /** @var HttpMessageFactoryInterface */
-    private $psrRequestFactory;
-
-    /** @var RequestMiddlewareResolverInterface */
-    private $httpMiddlewareResolver;
-
-    /** @var SymfonyControllerRequestHandlerFactory */
-    private $controllerRequestHandlerFactory;
-
-    /** @var Request */
-    private $request;
+    private HttpFoundationFactoryInterface           $foundationHttpFactory;
+    private HttpMessageFactoryInterface              $psrRequestFactory;
+    private RequestMiddlewareResolverInterface       $httpMiddlewareResolver;
+    private SymfonyControllerRequestHandlerFactory   $controllerRequestHandlerFactory;
+    private Request                                  $request;
+    private array                                    $controllerArguments;
 
     /** @var callable */
     private $originalController;
 
-    /** @var array */
-    private $controllerArguments;
 
     public function __construct(
         RequestMiddlewareResolverInterface $httpMiddlewareResolver,

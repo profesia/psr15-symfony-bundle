@@ -12,8 +12,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class MiddlewareInjectionSubscriber implements EventSubscriberInterface
 {
-    /** @var SymfonyControllerAdapter */
-    private $symfonyControllerAdapter;
+    private SymfonyControllerAdapter $symfonyControllerAdapter;
 
     public function __construct(SymfonyControllerAdapter $symfonyControllerAdapter)
     {
