@@ -11,11 +11,8 @@ use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 
 abstract class AbstractChainResolverItem
 {
-    /** @var MiddlewareChainItemFactory */
-    private $middlewareChainItemFactory;
-
-    /** @var null|AbstractChainResolverItem */
-    private $next;
+    private MiddlewareChainItemFactory $middlewareChainItemFactory;
+    private ?AbstractChainResolverItem $next = null;
 
     public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory)
     {

@@ -7,7 +7,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\ValueObject;
 class CompoundHttpMethod
 {
     /** @var HttpMethod[] */
-    private $httpMethods;
+    private array $httpMethods;
 
     /**
      * @var HttpMethod[]

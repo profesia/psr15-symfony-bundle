@@ -16,10 +16,8 @@ use Symfony\Component\Routing\RouterInterface;
 class RouteNameStrategyResolver extends AbstractChainResolverItem
 {
     /** @var AbstractMiddlewareChainItem[] */
-    private $registeredRouteMiddlewares = [];
-
-    /** @var RouteCollection */
-    private $routeCollection;
+    private array           $registeredRouteMiddlewares = [];
+    private RouteCollection $routeCollection;
 
     public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory, RouterInterface $router)
     {
@@ -77,7 +75,7 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
     {
         $middlewareArray = [];
         foreach ($this->registeredRouteMiddlewares as $routeName => $middlewareChain) {
-            $route             = $this->routeCollection->get($routeName);
+            $route = $this->routeCollection->get($routeName);
             if ($route === null) {
                 throw new RuntimeException("Route: [{$routeName}] is not registered");
             }

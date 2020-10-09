@@ -5,14 +5,63 @@ declare(strict_types=1);
 namespace Delvesoft\Symfony\Psr15Bundle\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use InvalidArgumentException;
 
-class ConfigurationHttpMethod extends AbstractHttpMethod
+final class ConfigurationHttpMethod implements HttpMethodInterface
 {
     private const METHOD_ANY = 'ANY';
 
-    public static function createDefault(): self
+    private static array $possibleValues = [];
+    private array        $values;
+
+    private function __construct(array $values)
     {
-        return new self(static::METHOD_ANY);
+        $this->values = $values;
+    }
+
+    public static function createDefault(): ConfigurationHttpMethod
+    {
+        return new self(
+            [
+                static::METHOD_ANY
+            ]
+        );
+    }
+
+    public static function createFromString(string $value): ConfigurationHttpMethod
+    {
+        $explodedValues = explode('|', $value);
+        $possibleValues = static::getPossibleValues();
+        foreach ($explodedValues as $method) {
+            if (!in_array($method, $possibleValues)) {
+                throw new InvalidArgumentException("Value: [{$method}] is not supported");
+            }
+
+            if ($method === static::METHOD_ANY && sizeof($explodedValues) > 1) {
+                throw new InvalidArgumentException("HTTP method configuration is not valid. In case of 'ANY' any other HTTP methods are redundant");
+            }
+        }
+
+        return new self(
+            $explodedValues
+        );
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function getPossibleValues(): array
+    {
+        if (static::$possibleValues === []) {
+            static::$possibleValues = array_merge(
+                AbstractHttpMethod::getPossibleValues(),
+                [
+                    self::METHOD_ANY
+                ]
+            );
+        }
+
+        return static::$possibleValues;
     }
 
     /**
@@ -22,17 +71,25 @@ class ConfigurationHttpMethod extends AbstractHttpMethod
      */
     public function assignMiddlewareChainToHttpMethods(AbstractMiddlewareChainItem $middlewareChain): array
     {
-        if ($this->getValue() !== static::METHOD_ANY) {
-            return [
-                $this->toString() => $middlewareChain
-            ];
+        if ($this->toString() !== static::METHOD_ANY) {
+            $returnMap = [];
+            foreach ($this->values as $value) {
+                $returnMap[$value] = $middlewareChain;
+            }
+
+            return $returnMap;
         }
 
-        $possibleValues          = parent::getPossibleValues();
+        $possibleValues          = static::getPossibleValues();
         $assignedMiddlewareItems = [];
         foreach ($possibleValues as $possibleValue) {
+            if ($possibleValue === static::METHOD_ANY) {
+                continue;
+            }
+
             $assignedMiddlewareItems[$possibleValue] = $middlewareChain;
         }
+        
 
         return $assignedMiddlewareItems;
     }
@@ -44,19 +101,14 @@ class ConfigurationHttpMethod extends AbstractHttpMethod
 
     public function __toString(): string
     {
-        return $this->getValue();
+        return implode(
+            '|',
+            $this->getValue()
+        );
     }
 
-    /**
-     * @return string[]
-     */
-    public static function getPossibleValues(): array
+    private function getValue(): array
     {
-        return array_merge(
-            parent::getPossibleValues(),
-            [
-                self::METHOD_ANY
-            ]
-        );
+        return $this->values;
     }
 }

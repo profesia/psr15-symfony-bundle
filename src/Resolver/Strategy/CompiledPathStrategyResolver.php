@@ -17,10 +17,8 @@ use Symfony\Component\Routing\RouterInterface;
 class CompiledPathStrategyResolver extends AbstractChainResolverItem
 {
     /** @var array<int, array> */
-    private $registeredPathMiddlewares = [];
-
-    /** @var RouteCollection */
-    private $routeCollection;
+    private array           $registeredPathMiddlewares = [];
+    private RouteCollection $routeCollection;
 
     public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory, RouterInterface $router)
     {

@@ -6,7 +6,7 @@ namespace Delvesoft\Symfony\Psr15Bundle\ValueObject;
 
 use InvalidArgumentException;
 
-abstract class AbstractHttpMethod
+abstract class AbstractHttpMethod implements HttpMethodInterface
 {
     private const METHOD_GET     = 'GET';
     private const METHOD_POST    = 'POST';
@@ -18,8 +18,7 @@ abstract class AbstractHttpMethod
     private const METHOD_TRACE   = 'TRACE';
     private const METHOD_PATCH   = 'PATCH';
 
-    /** @var string */
-    protected $value;
+    protected string $value;
 
     protected final function __construct(string $value)
     {
@@ -49,16 +48,11 @@ abstract class AbstractHttpMethod
         ];
     }
 
-    /**
-     * @param string $value
-     *
-     * @return static
-     */
-    public static function createFromString(string $value): self
+    public static function createFromString(string $value): AbstractHttpMethod
     {
         $upperCasedValue = strtoupper($value);
         if (!in_array($upperCasedValue, static::getPossibleValues())) {
-            throw new InvalidArgumentException("String: [{$value}] is not a valid value for Configuration HTTP method");
+            throw new InvalidArgumentException("String: [{$value}] is not a valid value for HTTP method");
         }
 
         return new static($upperCasedValue);

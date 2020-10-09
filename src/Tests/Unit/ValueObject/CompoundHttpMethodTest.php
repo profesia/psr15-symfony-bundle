@@ -19,7 +19,7 @@ class CompoundHttpMethodTest extends TestCase
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('String: [abcd] is not a valid value for Configuration HTTP method');
+        $this->expectExceptionMessage('String: [abcd] is not a valid value for HTTP method');
         CompoundHttpMethod::createFromStrings($values);
     }
     
