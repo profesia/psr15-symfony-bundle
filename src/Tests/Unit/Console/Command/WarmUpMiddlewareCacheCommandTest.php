@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
@@ -40,7 +39,7 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
 
         /** @var RequestMiddlewareResolverCachingInterface|MockInterface $resolver */
         $resolver = Mockery::mock(RequestMiddlewareResolverCachingInterface::class);
-        $command  = new WarmUpMiddlewareCacheCommand(
+        new WarmUpMiddlewareCacheCommand(
             $router,
             $resolver
         );
