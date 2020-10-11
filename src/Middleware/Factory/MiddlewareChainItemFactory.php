@@ -6,17 +6,14 @@ namespace Delvesoft\Symfony\Psr15Bundle\Middleware\Factory;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use InvalidArgumentException;
 
 class MiddlewareChainItemFactory
 {
-    /** @var ServerRequestFactoryInterface */
-    private $serverRequestFactory;
-
-    /** @var ResponseFactoryInterface */
-    private $responseFactory;
+    private ServerRequestFactoryInterface $serverRequestFactory;
+    private ResponseFactoryInterface      $responseFactory;
 
     public function __construct(ServerRequestFactoryInterface $serverRequestFactory, ResponseFactoryInterface $responseFactory)
     {

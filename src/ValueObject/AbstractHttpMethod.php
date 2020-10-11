@@ -48,7 +48,12 @@ abstract class AbstractHttpMethod implements HttpMethodInterface
         ];
     }
 
-    public static function createFromString(string $value): AbstractHttpMethod
+    /**
+     * @param string $value
+     *
+     * @return static
+     */
+    public static function createFromString(string $value): self
     {
         $upperCasedValue = strtoupper($value);
         if (!in_array($upperCasedValue, static::getPossibleValues())) {

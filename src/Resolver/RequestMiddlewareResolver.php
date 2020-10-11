@@ -12,8 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
 {
-    /** @var AbstractChainResolverItem */
-    private $middlewareResolverChain;
+    private AbstractChainResolverItem $middlewareResolverChain;
 
     public function __construct(AbstractChainResolverItem $middlewareResolverChain)
     {
