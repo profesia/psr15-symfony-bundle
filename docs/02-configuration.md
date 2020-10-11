@@ -69,7 +69,7 @@ If omitted, condition will be triggered on any HTTP method.
 - {path: '/test'} #any HTTP method will be matched
 - {path: '/test', method: 'ANY'} #any HTTP method will be matched
 - {path: '/test', method: 'GET'} #only GET HTTP method will be matched
-- {path: '/test', method: 'GET|POST|PUT'} #any of GET,POST,PUT HTTP method will be matched
+- {path: '/test', method: 'GET|POST|PUT'} #any of GET,POST,PUT HTTP methods will be matched
 ```
 
 **Configuration**:
