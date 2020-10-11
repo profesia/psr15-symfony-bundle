@@ -19,7 +19,7 @@ psr15:
             middleware_chain: [Chain Name]
             conditions:
                 - {route_name: [Route Name]}
-                - {path: '/test', method: 'POST'}
+                - {path: '/test', method: 'GET|POST'}
             prepend:
                 - [Other middleware service name]
                 - [Other different middleware service name]
@@ -61,7 +61,16 @@ All the following route name rules will be ignored.
 ### Path
 Application path start at which middleware chain should be triggered has to be supplied.
 Condition variant support usage of the `method` key for further specification of the HTTP method.
+It is possible to enlist multiple HTTP methods delimited by the `|` character, or to enlist keyword `ANY`
+to ensure matching of any HTTP method. 
 If omitted, condition will be triggered on any HTTP method.
+**Examples**
+```yaml
+- {path: '/test'} #any HTTP method will be matched
+- {path: '/test', method: 'ANY'} #any HTTP method will be matched
+- {path: '/test', method: 'GET'} #only GET HTTP method will be matched
+- {path: '/test', method: 'GET|POST|PUT'} #any of GET,POST,PUT HTTP method will be matched
+```
 
 **Configuration**:
 - Path configuration has to start with slash - `/` character.
