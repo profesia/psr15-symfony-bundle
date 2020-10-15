@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
+
 use Delvesoft\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
 use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
+use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
@@ -66,10 +68,10 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
 
         $route1
             ->shouldReceive('compile')
-               ->once()
-               ->andReturn(
-                   $compiledRoute1
-               );
+            ->once()
+            ->andReturn(
+                $compiledRoute1
+            );
 
         $httpMethods = ['GET', 'POST'];
         $route1
@@ -129,7 +131,7 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
                         return false;
                     }
                     $index++;
-                    
+
                     return true;
                 }
             )->andReturn(
@@ -139,15 +141,15 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
                 )
             );
 
-        $command  = new WarmUpMiddlewareCacheCommand(
+        $command = new WarmUpMiddlewareCacheCommand(
             $router,
             $resolver
         );
 
-        $command->run(
-            new ArrayInput([]),
-            new NullOutput()
+        $tester     = new CommandTester(
+            $command
         );
-        $this->assertTrue(true);
+        $statusCode = $tester->execute([]);
+        $this->assertEquals(1, $statusCode);
     }
 }
