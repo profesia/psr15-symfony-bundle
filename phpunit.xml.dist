@@ -8,14 +8,16 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
+         stopOnError="false"
+         beStrictAboutChangesToGlobalState="true"
 >
     <testsuites>
         <testsuite name="all">
             <directory>./src/Tests</directory>
         </testsuite>
     </testsuites>
-    <coverage includeUncoveredFiles="true"
-              processUncoveredFiles="true"
+    <coverage includeUncoveredFiles="false"
+              processUncoveredFiles="false"
               cacheDirectory="build/cache"
     >
         <include>

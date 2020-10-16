@@ -11,14 +11,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SymfonyControllerRequestHandlerFactory
 {
-    /** @var HttpFoundationFactoryInterface */
-    private $foundationHttpFactory;
-
-    /** @var HttpMessageFactoryInterface */
-    private $psrHttpFactory;
-
-    /** @var RequestStack */
-    private $requestStack;
+    private HttpFoundationFactoryInterface $foundationHttpFactory;
+    private HttpMessageFactoryInterface    $psrHttpFactory;
+    private RequestStack                   $requestStack;
 
     public function __construct(
         HttpFoundationFactoryInterface $foundationHttpFactory,
