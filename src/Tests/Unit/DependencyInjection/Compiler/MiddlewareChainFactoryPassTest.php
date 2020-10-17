@@ -9,6 +9,8 @@ use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
@@ -1212,7 +1214,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ],
             [
                 'middleware_chain' => 'Test',
-                'append'          => [
+                'append'           => [
                     '4',
                     '5'
                 ],
@@ -1447,6 +1449,320 @@ class MiddlewareChainFactoryPassTest extends TestCase
                         $newMiddlewareChain
                     ]
                 ]
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $compilerPass->process($container);
+        $this->assertTrue(true);
+    }
+
+    public function testCanRegisterRouteMiddleware()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'conditions'       => [
+                    [
+                        'route_name' => 'test',
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $newMiddlewareChain */
+        $newMiddlewareChain = Mockery::mock(Definition::class);
+        $newMiddlewareChain
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newMiddlewareChain
+            );
+
+        $newMiddlewareChain
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChain
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        /** @var MockInterface|Definition $routeNameStrategyResolver */
+        $routeNameStrategyResolver = $mocks['routeNameStrategyResolver'];
+        $routeNameStrategyResolver
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                [
+                    'registerRouteMiddleware',
+                    [
+                        'test',
+                        $newMiddlewareChain
+                    ]
+                ]
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $compilerPass->process($container);
+        $this->assertTrue(true);
+    }
+
+    public function testCanRegisterPathMiddlewareWithoutMethod()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'conditions'       => [
+                    [
+                        'path' => '/test',
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $newMiddlewareChain */
+        $newMiddlewareChain = Mockery::mock(Definition::class);
+        $newMiddlewareChain
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newMiddlewareChain
+            );
+
+        $newMiddlewareChain
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChain
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        /** @var CompiledPathStrategyResolver|MockInterface $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = $mocks['compiledPathStrategyResolver'];
+        $compiledPathStrategyResolver
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                function (string $methodName, array $parameters) use ($newMiddlewareChain) {
+                    if ($methodName !== 'registerPathMiddleware') {
+                        return false;
+                    }
+
+                    /** @var Definition $configurationPathDefinition */
+                    $configurationPathDefinition = $parameters[0];
+                    $class                       = ConfigurationPath::class;
+                    if ($configurationPathDefinition->getFactory() !== [$class, 'createFromConfigurationHttpMethodAndString']) {
+                        return false;
+                    }
+
+                    $arguments = $configurationPathDefinition->getArguments();
+                    if ($arguments[1] !== '/test') {
+                        return false;
+                    }
+
+                    /** @var Definition $configurationHttpMethod */
+                    $configurationHttpMethod = $arguments[0];
+                    if ($configurationHttpMethod->getFactory() !== [ConfigurationHttpMethod::class, 'createDefault']) {
+                        return false;
+                    }
+
+                    if ($configurationHttpMethod->getArguments() !== []) {
+                        return false;
+                    }
+
+                    if ($parameters[1] !== $newMiddlewareChain) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            );
+
+        $compilerPass = new MiddlewareChainFactoryPass(
+            $deepCopy
+        );
+
+        $compilerPass->process($container);
+        $this->assertTrue(true);
+    }
+
+    public function testCanRegisterPathMiddlewareWithMethod()
+    {
+        $mocks = self::setUpStandardContainerExpectations(
+            [
+                '1',
+                '2',
+                '3',
+            ],
+            [
+                'middleware_chain' => 'Test',
+                'conditions'       => [
+                    [
+                        'path'   => '/test',
+                        'method' => 'GET|POST'
+                    ],
+                ],
+            ]
+        );
+
+        /** @var MockInterface|Definition $middlewareChain */
+        $middlewareChain = $mocks['middlewareChain'];
+
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = $mocks['container'];
+
+        /** @var MockInterface|DeepCopy $deepCopy */
+        $deepCopy = $mocks['deepCopy'];
+
+        /** @var MockInterface|Definition $newMiddlewareChain */
+        $newMiddlewareChain = Mockery::mock(Definition::class);
+        $newMiddlewareChain
+            ->shouldReceive('setPublic')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newMiddlewareChain
+            );
+
+        $newMiddlewareChain
+            ->shouldReceive('setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChain
+                ]
+            )
+            ->andReturn(
+                $newMiddlewareChain
+            );
+
+        /** @var CompiledPathStrategyResolver|MockInterface $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = $mocks['compiledPathStrategyResolver'];
+        $compiledPathStrategyResolver
+            ->shouldReceive('addMethodCall')
+            ->once()
+            ->withArgs(
+                function (string $methodName, array $parameters) use ($newMiddlewareChain) {
+                    if ($methodName !== 'registerPathMiddleware') {
+                        return false;
+                    }
+
+                    /** @var Definition $configurationPathDefinition */
+                    $configurationPathDefinition = $parameters[0];
+                    $class                       = ConfigurationPath::class;
+                    if ($configurationPathDefinition->getFactory() !== [$class, 'createFromConfigurationHttpMethodAndString']) {
+                        return false;
+                    }
+
+                    $arguments = $configurationPathDefinition->getArguments();
+                    if ($arguments[1] !== '/test') {
+                        return false;
+                    }
+                    
+                    /** @var Definition $configurationHttpMethod */
+                    $configurationHttpMethod = $arguments[0];
+                    if ($configurationHttpMethod->getFactory() !== [ConfigurationHttpMethod::class, 'createFromString']) {
+                        return false;
+                    }
+
+                    if ($configurationHttpMethod->getArguments() !== ['GET|POST']) {
+                        return false;
+                    }
+
+                    if ($parameters[1] !== $newMiddlewareChain) {
+                        return false;
+                    }
+
+                    return true;
+                }
             );
 
         $compilerPass = new MiddlewareChainFactoryPass(

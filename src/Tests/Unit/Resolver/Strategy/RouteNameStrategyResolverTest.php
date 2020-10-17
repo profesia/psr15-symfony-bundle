@@ -472,4 +472,59 @@ class RouteNameStrategyResolverTest extends TestCase
 
         $this->assertEquals($middleware, $resolvedMiddleware);
     }
+
+    public function testWillDetectNonExistingRouteDuringExport()
+    {
+        /** @var MockInterface|MiddlewareChainItemFactory $factory */
+        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
+
+        /** @var MockInterface|NullMiddleware $middleware1 */
+        $middleware = Mockery::mock(NullMiddleware::class);
+
+        $routeName = 'testing';
+
+        /** @var MockInterface|RouteCollection $routeCollection */
+        $routeCollection = Mockery::mock(RouteCollection::class);
+        $routeCollection
+            ->shouldReceive('get')
+            ->times(1)
+            ->withArgs(
+                [
+                    $routeName
+                ]
+            )
+            ->andReturn(
+                true
+            );
+        $routeCollection
+            ->shouldReceive('get')
+            ->times(1)
+            ->withArgs(
+                [
+                    $routeName
+                ]
+            )
+            ->andReturn(
+                null
+            );
+
+        /** @var MockInterface|RouterInterface $router */
+        $router = Mockery::mock(RouterInterface::class);
+        $router
+            ->shouldReceive('getRouteCollection')
+            ->once()
+            ->andReturn(
+                $routeCollection
+            );
+
+        $resolver = new RouteNameStrategyResolver(
+            $factory,
+            $router
+        );
+
+        $resolver->registerRouteMiddleware($routeName, $middleware);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("Route: [{$routeName}] is not registered");
+        $resolver->exportRules();
+    }
 }
