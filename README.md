@@ -3,7 +3,7 @@ Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ appl
 ## Installation
 Install the latest version by running the command
 ```bash
-composer require delvesoft/psr15-symfony-bundle
+composer require profesia/psr15-symfony-bundle
 ```
 ## Requirements
 - PHP 7.4+
