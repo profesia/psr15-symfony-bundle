@@ -1,5 +1,5 @@
 {
-	"name": "delvesoft/psr15-symfony-bundle",
+	"name": "profesia/psr15-symfony-bundle",
 	"keywords": [
 		"psr-15",
 		"symfony",
@@ -38,7 +38,7 @@
 	},
 	"scripts": {
 		"test": "./vendor/bin/phpunit",
-		"phpstan": "./vendor/bin/phpstan analyse"
+		"analyse": "./vendor/bin/phpstan analyse"
 	},
 	"license": "MIT"
 }

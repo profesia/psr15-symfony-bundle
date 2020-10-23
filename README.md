@@ -6,7 +6,7 @@ Install the latest version by running the command
 composer require delvesoft/psr15-symfony-bundle
 ```
 ## Requirements
-- PHP 7.3+
+- PHP 7.4+
 - Symfony 5+
 ## Documentation
 - [Installation](docs/01-installation.md#installation)
