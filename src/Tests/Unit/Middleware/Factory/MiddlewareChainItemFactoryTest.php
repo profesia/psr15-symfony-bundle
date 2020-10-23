@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Middleware\Factory;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Middleware\Factory;
 
-use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
-use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
+use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;

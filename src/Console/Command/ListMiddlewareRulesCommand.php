@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Console\Command;
+namespace Profesia\Symfony\Psr15Bundle\Console\Command;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;

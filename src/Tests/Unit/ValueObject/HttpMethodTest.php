@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use PHPUnit\Framework\TestCase;
 use Mockery;
 use Mockery\MockInterface;

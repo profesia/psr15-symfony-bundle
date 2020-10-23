@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Adapter;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Adapter;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
+use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

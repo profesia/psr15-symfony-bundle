@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Resolver\Proxy;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching;
+use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

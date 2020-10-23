@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle;
+namespace Profesia\Symfony\Psr15Bundle;
 
 use DeepCopy\DeepCopy;
-use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
-use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

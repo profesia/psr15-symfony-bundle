@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\ValueObject;
+namespace Profesia\Symfony\Psr15Bundle\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 

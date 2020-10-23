@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Request;
+namespace Profesia\Symfony\Psr15Bundle\Resolver\Request;
 
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class MiddlewareResolvingRequest
 {

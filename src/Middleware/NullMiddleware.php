@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Middleware;
+namespace Profesia\Symfony\Psr15Bundle\Middleware;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Psr\Http\Message\ResponseInterface;

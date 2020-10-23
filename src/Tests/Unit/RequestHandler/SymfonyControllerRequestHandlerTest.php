@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
 
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

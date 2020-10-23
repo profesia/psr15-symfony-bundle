@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

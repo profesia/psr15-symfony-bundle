@@ -33,7 +33,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Delvesoft\\Symfony\\Psr15Bundle\\": "src/"
+			"Profesia\\Symfony\\Psr15Bundle\\": "src/"
 		}
 	},
 	"scripts": {

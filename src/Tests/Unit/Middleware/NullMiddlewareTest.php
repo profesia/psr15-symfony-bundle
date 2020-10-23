@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Middleware;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Middleware;
 
-use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
+use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Mockery;
 use Mockery\MockInterface;
 use Nyholm\Psr7\Response;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Factory;
+namespace Profesia\Symfony\Psr15Bundle\Resolver\Factory;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
 
 class StrategyResolverFactory
 {

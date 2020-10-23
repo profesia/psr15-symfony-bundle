@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Resolver\Factory;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Factory;
 
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

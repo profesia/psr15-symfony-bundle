@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Adapter;
+namespace Profesia\Symfony\Psr15Bundle\Adapter;
 
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
+use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
-use Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use Profesia\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Mockery;
 use Mockery\MockInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;

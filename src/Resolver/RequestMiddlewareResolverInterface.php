@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Resolver;
+namespace Profesia\Symfony\Psr15Bundle\Resolver;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 
-use Delvesoft\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
-use Delvesoft\Symfony\Psr15Bundle\Middleware\NullMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
+use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
+use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

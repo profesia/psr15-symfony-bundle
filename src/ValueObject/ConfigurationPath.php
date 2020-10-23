@@ -2,18 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\ValueObject;
+namespace Profesia\Symfony\Psr15Bundle\ValueObject;
 
-use InvalidArgumentException;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use InvalidArgumentException;
 
 class ConfigurationPath
 {
-    /** @var string */
-    private $path;
-
-    /** @var ConfigurationHttpMethod */
-    private $method;
+    private string                   $path;
+    private ConfigurationHttpMethod  $method;
 
     private function __construct(ConfigurationHttpMethod $method, string $path)
     {

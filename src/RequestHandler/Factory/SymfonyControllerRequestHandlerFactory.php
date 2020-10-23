@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\RequestHandler\Factory;
+namespace Profesia\Symfony\Psr15Bundle\RequestHandler\Factory;
 
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;

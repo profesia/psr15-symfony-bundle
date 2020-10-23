@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Event\Subscriber;
+namespace Profesia\Symfony\Psr15Bundle\Event\Subscriber;
 
-use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
+use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ErrorController;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;

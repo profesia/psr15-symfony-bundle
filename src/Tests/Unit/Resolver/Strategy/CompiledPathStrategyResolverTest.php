@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

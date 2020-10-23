@@ -19,64 +19,64 @@
 
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter">
-            <argument key="$httpMiddlewareResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+        <service id="Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter">
+            <argument key="$httpMiddlewareResolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
             <argument key="$foundationFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
             <argument key="$psrRequestFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory">
+        <service id="Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory">
             <argument key="$foundationHttpFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory" />
             <argument key="$psrHttpFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory" />
             <argument key="$requestStack" type="service" id="request_stack" />
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber">
+        <service id="Profesia\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber">
             <tag name="kernel.event_subscriber"/>
-            <argument key="$symfonyControllerAdapter" type="service" id="Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter"/>
+            <argument key="$symfonyControllerAdapter" type="service" id="Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter"/>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory">
+        <service id="Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory">
             <argument key="$serverRequestFactory" type="service" id="nyholm.psr7.psr17_factory"/>
             <argument key="$responseFactory" type="service" id="nyholm.psr7.psr17_factory"/>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver" shared="false">
+        <service id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver" shared="false">
             <argument key="$middlewareChainItemFactory" type="service"
-                      id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory"/>
+                      id="Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory"/>
             <argument key="$router" type="service" id="router.default"/>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver" shared="false">
+        <service id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver" shared="false">
             <argument key="$middlewareChainItemFactory" type="service"
-                      id="Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory"/>
+                      id="Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory"/>
             <argument key="$router" type="service" id="router.default"/>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" />
+        <service id="Profesia\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" />
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand">
+        <service id="Profesia\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand">
             <tag name="console.command"/>
-            <argument key="$routeNameStrategyResolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver"/>
+            <argument key="$routeNameStrategyResolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver"/>
             <argument key="$compiledPathStrategyResolver" type="service"
-                      id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver"/>
+                      id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver"/>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand">
+        <service id="Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand">
             <tag name="console.command"/>
             <argument type="service" id="router.default"/>
             <argument type="service" id="MiddlewareChainResolverDecorator"/>
         </service>
 
-        <service id="MiddlewareChainResolver"  class="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver">
-            <factory service="Delvesoft\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" method="create"/>
+        <service id="MiddlewareChainResolver"  class="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver">
+            <factory service="Profesia\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" method="create"/>
             <argument type="collection">
-                <argument type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver"/>
-                <argument type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver"/>
+                <argument type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver"/>
+                <argument type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver"/>
             </argument>
         </service>
 
-        <service id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver">
+        <service id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver">
             <argument key="$middlewareResolverChain" type="service" id="MiddlewareChainResolver"/>
         </service>
 
@@ -84,13 +84,13 @@
             <tag name="cache.pool" />
         </service>
 
-        <service id="MiddlewareChainResolverProxy" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching">
+        <service id="MiddlewareChainResolverProxy" class="Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching">
             <argument key="$router" type="service" id="router.default"/>
-            <argument key="$resolver" type="service" id="Delvesoft\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+            <argument key="$resolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
             <argument key="$cache" type="service" id="cache.psr15-middleware"/>
         </service>
 
-        <service id="MiddlewareChainResolverDecorator" class="Delvesoft\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCacheRemoval">
+        <service id="MiddlewareChainResolverDecorator" class="Profesia\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCacheRemoval">
             <argument key="$decoratedObject" type="service" id="MiddlewareChainResolverProxy" />
             <argument key="$cache" type="service" id="cache.psr15-middleware" />
         </service>

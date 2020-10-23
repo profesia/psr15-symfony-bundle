@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
 
-use Delvesoft\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

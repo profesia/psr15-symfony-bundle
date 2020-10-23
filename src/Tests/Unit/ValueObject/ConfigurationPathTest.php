@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 use Mockery;

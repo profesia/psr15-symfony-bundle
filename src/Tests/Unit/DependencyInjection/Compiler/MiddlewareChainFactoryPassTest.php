@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\DependencyInjection\Compiler;
 
 use DeepCopy\DeepCopy;
-use Delvesoft\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
-use Delvesoft\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;

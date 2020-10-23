@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy;
+namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use RuntimeException;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;

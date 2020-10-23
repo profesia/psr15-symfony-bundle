@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
+namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
-use Delvesoft\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ExportedMiddleware
 {
