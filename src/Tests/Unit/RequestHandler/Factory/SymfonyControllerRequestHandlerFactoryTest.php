@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Delvesoft\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
 
 use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
 use Mockery;
