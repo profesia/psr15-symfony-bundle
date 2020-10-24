@@ -5,7 +5,7 @@ The bundle offers two console commands as part of its infrastructure:
 
 ## ListMiddlewareRulesCommand
 **Description**: Lists all registered middleware chains routing rules
-**Name**: psr15:middleware:list-rules
+**Name**: profesia:psr15:middleware:list-rules
 **Sample output**:
 ```
 +------------+------------------------------------ Route rules ---------------------+----------------------------+
@@ -34,8 +34,8 @@ The bundle offers two console commands as part of its infrastructure:
 
 ## WarmUpMiddlewareCacheCommand
 **Description**: Warms up middleware cache
-**Name**: psr15:middleware:warm-up
-**Sample output**:\
+**Name**: profesia:psr15:middleware:warm-up
+**Sample output**:
 ```
 +-------+-------------+-------------+----------------------------+
 | Route | Static Path | HTTP method | Middleware chain items     |
