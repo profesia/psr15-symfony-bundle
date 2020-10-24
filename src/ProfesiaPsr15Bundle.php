@@ -10,7 +10,7 @@ use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class Psr15Bundle extends Bundle
+class ProfesiaPsr15Bundle extends Bundle
 {
     public function build(ContainerBuilder $container): void
     {

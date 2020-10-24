@@ -27,11 +27,11 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasParameter('psr15')) {
+        if (!$container->hasParameter('profesia_psr15')) {
             return;
         }
 
-        $parameters        = $container->getParameter('psr15');
+        $parameters        = $container->getParameter('profesia_psr15');
         $adapterDefinition = $container->getDefinition(SymfonyControllerAdapter::class);
         if ($parameters['use_cache'] === true) {
             $adapterDefinition->replaceArgument(

@@ -30,7 +30,7 @@ class ListMiddlewareRulesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('psr15:middleware:list-rules')
+            ->setName('profesia:psr15:middleware:list-rules')
             ->setDescription('Lists all registered middleware chains routing rules')
             ->setHelp('This commands lists all the registered routing rules for middleware chains');
     }

@@ -39,7 +39,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(true);
@@ -55,7 +55,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(
@@ -216,7 +216,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(false);
@@ -241,7 +241,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(true);
@@ -251,7 +251,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(
@@ -320,7 +320,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(true);
@@ -330,7 +330,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(
@@ -412,7 +412,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(true);
@@ -422,7 +422,7 @@ class MiddlewareChainFactoryPassTest extends TestCase
             ->once()
             ->withArgs(
                 [
-                    'psr15'
+                    'profesia_psr15'
                 ]
             )
             ->andReturn(

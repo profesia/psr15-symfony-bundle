@@ -25,12 +25,12 @@ App\Middleware\MiddlewareAlias1:
         $serverRequestFactory: '@nyholm.psr7.psr17_factory'
         $responseFactory: '@nyholm.psr7.psr17_factory'
 
-App\Middleware\Middleware2
+App\Middleware\Middleware2:
     arguments:
         $serverRequestFactory: '@nyholm.psr7.psr17_factory'
         $responseFactory: '@nyholm.psr7.psr17_factory'
 
-App\Middleware\Middleware3
+App\Middleware\Middleware3:
     arguments:
         $serverRequestFactory: '@nyholm.psr7.psr17_factory'
         $responseFactory: '@nyholm.psr7.psr17_factory'

@@ -33,11 +33,16 @@ class Psr15Extension extends Extension
             $configs
         );
 
-        $container->setParameter('psr15', $config);
+        $container->setParameter('profesia_psr15', $config);
     }
 
     public function getConfiguration(array $config, ContainerBuilder $container): ConfigurationInterface
     {
         return new Psr15Configuration();
+    }
+
+    public function getAlias()
+    {
+        return 'profesia_psr15';
     }
 }

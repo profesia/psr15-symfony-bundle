@@ -11,7 +11,7 @@ class Psr15Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $builder = new TreeBuilder('psr15');
+        $builder = new TreeBuilder('profesia_psr15');
 
         $rootNode = $builder->getRootNode();
         $rootNode->
