@@ -10,6 +10,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterf
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -21,6 +22,14 @@ use Symfony\Component\Routing\RouterInterface;
 
 class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
+    public function httpMethodsDataProvider()
+    {
+        return [
+            [['GET', 'POST'], ['GET', 'POST']],
+            [[], HttpMethod::getPossibleValues()]
+        ];
+    }
+
     public function testCanCreate()
     {
         $routeCollection = new RouteCollection();
@@ -41,7 +50,13 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         );
     }
 
-    public function testCanExecute()
+    /**
+     * @dataProvider httpMethodsDataProvider
+     *
+     * @param array $inputHttpMethods
+     * @param array $checkedHttpMethods
+     */
+    public function testCanExecuteWithSpecifiedHttpMethods(array $inputHttpMethods, array $checkedHttpMethods)
     {
         $routeCollection = new RouteCollection();
 
@@ -69,7 +84,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         $route1
             ->shouldReceive('getMethods')
             ->andReturn(
-                $httpMethods
+                $inputHttpMethods
             );
 
         /** @var Route|MockInterface $route2 */
@@ -109,7 +124,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
             ->shouldReceive('resolveMiddlewareChain')
             ->times(2)
             ->withArgs(
-                function (Request $argument) use ($httpMethods, &$index) {
+                function (Request $argument) use ($checkedHttpMethods, &$index) {
                     $attributes = $argument->attributes;
                     if ($attributes->has('_route') === false) {
                         return false;
@@ -119,7 +134,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                         return false;
                     }
 
-                    if ($argument->getMethod() !== $httpMethods[$index]) {
+                    if ($argument->getMethod() !== $checkedHttpMethods[$index]) {
                         return false;
                     }
                     $index++;

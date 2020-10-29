@@ -40,9 +40,9 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $httpMethod = ConfigurationHttpMethod::createFromString('GET');
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware  = Mockery::mock(AbstractMiddlewareChainItem::class);
+        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $middlewares    = [
+        $middlewares = [
             'GET' => $middleware
         ];
         $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
@@ -62,7 +62,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $httpMethod          = ConfigurationHttpMethod::createFromString($implodedHttpMethods);
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware     = Mockery::mock(AbstractMiddlewareChainItem::class);
+        $middleware  = Mockery::mock(AbstractMiddlewareChainItem::class);
         $middlewares = [];
         foreach ($httpMethods as $method) {
             $middlewares[$method] = $middleware;
@@ -97,5 +97,48 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Value: [{$unsupportedString}] is not supported");
         ConfigurationHttpMethod::createFromString($implodedHttpMethods);
+    }
+
+    public function testWillDetectUnregisteredHttpMethodOnExtractionOfAMiddleware()
+    {
+        $httpMethods = [
+            'GET',
+            'POST',
+            'PUT',
+            'DELETE'
+        ];
+
+        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
+        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+
+        $middlewares = [
+            'GET'  => $middleware,
+            'POST' => $middleware,
+            'PUT'  => $middleware
+        ];
+
+        $configurationHttpMethod = ConfigurationHttpMethod::createFromString(
+            implode('|', $httpMethods)
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Value: [DELETE] is not present in the middleware chain array');
+        $configurationHttpMethod->assignMiddlewareChainToHttpMethods($middlewares);
+    }
+
+    public function testCanTransformToArray()
+    {
+        $httpMethods = [
+            'GET',
+            'POST',
+            'PUT',
+            'DELETE'
+        ];
+
+        $configurationHttpMethod = ConfigurationHttpMethod::createFromString(
+            implode('|', $httpMethods)
+        );
+
+        $this->assertEquals($httpMethods, $configurationHttpMethod->toArray());
     }
 }
