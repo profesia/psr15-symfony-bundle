@@ -48,8 +48,11 @@ The bundle currently supports two variants of assigning a specific middleware ch
 - by **Route**
 - by **Path**
 
-For both variants the FCFS rule will be applied: 
+For **Route** variant the FCFS rule will be applied: 
 conditions with a same definition as an already defined middleware chain will be ignored.
+
+**Path** variant works in a different fashion: each following middleware will be appended to the already registered chain. 
+In this case the order of the defined rules is important.
 ### Route
 Existing route name defined in your application has to be supplied. 
 Route name existence will be checked upon registration to middleware resolver.
@@ -61,15 +64,17 @@ All the following route name rules will be ignored.
 ### Path
 Application path start at which middleware chain should be triggered has to be supplied.
 Condition variant support usage of the `method` key for further specification of the HTTP method.
-It is possible to enlist multiple HTTP methods delimited by the `|` character, or to enlist keyword `ANY`
-to ensure matching of any HTTP method. 
+It is possible to enlist multiple HTTP methods delimited by the `|` character. 
 If omitted, condition will be triggered on any HTTP method.
+
 **Examples**
 ```yaml
 - {path: '/test'} #any HTTP method will be matched
-- {path: '/test', method: 'ANY'} #any HTTP method will be matched
 - {path: '/test', method: 'GET'} #only GET HTTP method will be matched
 - {path: '/test', method: 'GET|POST|PUT'} #any of GET,POST,PUT HTTP methods will be matched
+# appending to the registered chain
+- {path: '/test'} #Middleware1, final chain consists of: Middleware1 for each HTTP method
+- {path: '/test', method: 'GET|POST'} #Middleware2, final chain consists of: Middleware1, Middleware2 for GET|POST HTTP method and of: Middleware1 for the remaining HTTP method
 ```
 
 **Configuration**:
