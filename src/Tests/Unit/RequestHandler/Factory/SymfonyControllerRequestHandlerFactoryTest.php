@@ -4,23 +4,17 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\RequestHandler;
 
-use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
-class SymfonyControllerRequestHandlerFactoryTest extends TestCase
+class SymfonyControllerRequestHandlerFactoryTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanCreate()
     {
         /** @var MockInterface|HttpFoundationFactoryInterface $foundationHttpFactory */
@@ -50,7 +44,6 @@ class SymfonyControllerRequestHandlerFactoryTest extends TestCase
             $callable,
             $arguments
         );
-        $this->assertTrue(true);
     }
 }
 

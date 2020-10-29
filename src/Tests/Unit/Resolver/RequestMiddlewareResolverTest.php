@@ -8,20 +8,14 @@ use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestMiddlewareResolverTest extends TestCase
+class RequestMiddlewareResolverTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanResolveMiddlewareChain()
     {
         $routeName  = 'test';

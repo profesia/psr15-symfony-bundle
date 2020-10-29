@@ -5,19 +5,13 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
-use PHPUnit\Framework\TestCase;
 use Mockery;
 use Mockery\MockInterface;
 
-class HttpMethodTest extends TestCase
+class HttpMethodTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanExtractMiddleware()
     {
         $httpMethod  = HttpMethod::createFromString('GET');

@@ -9,9 +9,6 @@ use InvalidArgumentException;
 
 final class ConfigurationHttpMethod implements HttpMethodInterface
 {
-    private const METHOD_ANY = 'ANY';
-
-    private static array $possibleValues = [];
     private array        $values;
 
     private function __construct(array $values)
@@ -22,13 +19,23 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
     public static function createDefault(): ConfigurationHttpMethod
     {
         return new self(
-            [
-                static::METHOD_ANY
-            ]
+            static::getPossibleValues()
         );
     }
 
     public static function createFromString(string $value): ConfigurationHttpMethod
+    {
+        return new self(
+            static::validateAndSplit($value)
+        );
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string[]
+     */
+    public static function validateAndSplit(string $value): array
     {
         $explodedValues = explode('|', $value);
         $possibleValues = static::getPossibleValues();
@@ -36,15 +43,9 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
             if (!in_array($method, $possibleValues)) {
                 throw new InvalidArgumentException("Value: [{$method}] is not supported");
             }
-
-            if ($method === static::METHOD_ANY && sizeof($explodedValues) > 1) {
-                throw new InvalidArgumentException("HTTP method configuration is not valid. In case of 'ANY' any other HTTP methods are redundant");
-            }
         }
 
-        return new self(
-            $explodedValues
-        );
+        return $explodedValues;
     }
 
     /**
@@ -52,46 +53,28 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
      */
     public static function getPossibleValues(): array
     {
-        if (static::$possibleValues === []) {
-            static::$possibleValues = array_merge(
-                AbstractHttpMethod::getPossibleValues(),
-                [
-                    self::METHOD_ANY
-                ]
-            );
-        }
-
-        return static::$possibleValues;
+        return AbstractHttpMethod::getPossibleValues();
     }
 
     /**
-     * @param AbstractMiddlewareChainItem $middlewareChain
+     * @param array<string, AbstractMiddlewareChainItem> $middlewareChains
      *
-     * @return AbstractMiddlewareChainItem[]
+     * @return array<string, AbstractMiddlewareChainItem>
      */
-    public function assignMiddlewareChainToHttpMethods(AbstractMiddlewareChainItem $middlewareChain): array
+    public function assignMiddlewareChainToHttpMethods(array $middlewareChains): array
     {
-        if ($this->toString() !== static::METHOD_ANY) {
-            $returnMap = [];
-            foreach ($this->values as $value) {
-                $returnMap[$value] = $middlewareChain;
+        foreach ($this->values as $value) {
+            if (!isset($middlewareChains[$value])) {
+                throw new InvalidArgumentException("Value: [{$value}] is not present in the middleware chain array");
             }
-
-            return $returnMap;
         }
 
-        $possibleValues          = static::getPossibleValues();
-        $assignedMiddlewareItems = [];
-        foreach ($possibleValues as $possibleValue) {
-            if ($possibleValue === static::METHOD_ANY) {
-                continue;
-            }
+        return $middlewareChains;
+    }
 
-            $assignedMiddlewareItems[$possibleValue] = $middlewareChain;
-        }
-        
-
-        return $assignedMiddlewareItems;
+    public function toArray(): array
+    {
+        return $this->values;
     }
 
     public function toString(): string

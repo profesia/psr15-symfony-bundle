@@ -9,7 +9,8 @@ use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -19,12 +20,14 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class WarmUpMiddlewareCacheCommandTest extends TestCase
+class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
-    protected function tearDown(): void
+    public function httpMethodsDataProvider()
     {
-        Mockery::close();
-        parent::tearDown();
+        return [
+            [['GET', 'POST'], ['GET', 'POST']],
+            [[], HttpMethod::getPossibleValues()]
+        ];
     }
 
     public function testCanCreate()
@@ -45,11 +48,15 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
             $router,
             $resolver
         );
-
-        $this->assertTrue(true);
     }
 
-    public function testCanExecute()
+    /**
+     * @dataProvider httpMethodsDataProvider
+     *
+     * @param array $inputHttpMethods
+     * @param array $checkedHttpMethods
+     */
+    public function testCanExecuteWithSpecifiedHttpMethods(array $inputHttpMethods, array $checkedHttpMethods)
     {
         $routeCollection = new RouteCollection();
 
@@ -77,7 +84,7 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
         $route1
             ->shouldReceive('getMethods')
             ->andReturn(
-                $httpMethods
+                $inputHttpMethods
             );
 
         /** @var Route|MockInterface $route2 */
@@ -117,7 +124,7 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
             ->shouldReceive('resolveMiddlewareChain')
             ->times(2)
             ->withArgs(
-                function (Request $argument) use ($httpMethods, &$index) {
+                function (Request $argument) use ($checkedHttpMethods, &$index) {
                     $attributes = $argument->attributes;
                     if ($attributes->has('_route') === false) {
                         return false;
@@ -127,7 +134,7 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
                         return false;
                     }
 
-                    if ($argument->getMethod() !== $httpMethods[$index]) {
+                    if ($argument->getMethod() !== $checkedHttpMethods[$index]) {
                         return false;
                     }
                     $index++;

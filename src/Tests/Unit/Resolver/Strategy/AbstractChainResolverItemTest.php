@@ -10,16 +10,10 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 
-class AbstractChainResolverItemTest extends TestCase
+class AbstractChainResolverItemTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanHandleNoNextItem()
     {
         /** @var MockInterface|AbstractMiddlewareChainItem $nullMiddleware */

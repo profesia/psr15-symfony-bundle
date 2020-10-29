@@ -9,18 +9,12 @@ use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
-class MiddlewareChainItemFactoryTest extends TestCase
+class MiddlewareChainItemFactoryTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanCreateInstanceByClassName()
     {
         /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
@@ -35,7 +29,6 @@ class MiddlewareChainItemFactoryTest extends TestCase
         );
 
         $factory->createInstance(NullMiddleware::class);
-        $this->assertTrue(true);
     }
 
     public function testCanCreateNullMiddleware()

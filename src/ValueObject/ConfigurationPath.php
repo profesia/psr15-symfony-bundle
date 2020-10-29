@@ -32,15 +32,15 @@ class ConfigurationPath
     }
 
     /**
-     * @param AbstractMiddlewareChainItem $middlewareChain
+     * @param array<string, AbstractMiddlewareChainItem> $middlewareChains
      *
-     * @return array<int, array>
+     * @return array<int, array<string, array<string, AbstractMiddlewareChainItem>>>
      */
-    public function exportConfigurationForMiddleware(AbstractMiddlewareChainItem $middlewareChain): array
+    public function exportConfigurationForMiddleware(array $middlewareChains): array
     {
         return [
             strlen($this->path) => [
-                $this->path => $this->method->assignMiddlewareChainToHttpMethods($middlewareChain)
+                $this->path => $this->method->assignMiddlewareChainToHttpMethods($middlewareChains)
             ]
         ];
     }

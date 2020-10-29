@@ -6,20 +6,15 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy\Dto;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 
-class ExportedMiddlewareTest extends TestCase
+class ExportedMiddlewareTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanListMiddlewareChainItems()
     {
         $classNames = [

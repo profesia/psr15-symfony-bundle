@@ -9,7 +9,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use RuntimeException;
@@ -19,14 +19,8 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class RequestMiddlewareResolverCachingTest extends TestCase
+class RequestMiddlewareResolverCachingTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanDetectNonExistingRoute()
     {
         $routeName = 'test';

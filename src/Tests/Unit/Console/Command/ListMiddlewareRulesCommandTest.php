@@ -6,28 +6,22 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
+use Mockery;
+use Mockery\MockInterface;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Profesia\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
-use Mockery;
-use Mockery\MockInterface;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class ListMiddlewareRulesCommandTest extends TestCase
+class ListMiddlewareRulesCommandTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanListRouteNameMiddlewares()
     {
         $factory = new Psr17Factory();
