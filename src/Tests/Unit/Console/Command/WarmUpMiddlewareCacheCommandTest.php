@@ -9,7 +9,7 @@ use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -19,14 +19,8 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class WarmUpMiddlewareCacheCommandTest extends TestCase
+class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanCreate()
     {
         $routeCollection = new RouteCollection();
@@ -45,8 +39,6 @@ class WarmUpMiddlewareCacheCommandTest extends TestCase
             $router,
             $resolver
         );
-
-        $this->assertTrue(true);
     }
 
     public function testCanExecute()

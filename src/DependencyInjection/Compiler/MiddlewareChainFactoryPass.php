@@ -52,10 +52,16 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-                $middlewareDefinition =
-                    $this->copyDefinition(
-                        $container->getDefinition($middlewareAlias)
+                $middlewareDefinition = $container->getDefinition($middlewareAlias);
+                if ($middlewareDefinition->getMethodCalls() !== []) {
+                    throw new RuntimeException(
+                        "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
                     );
+                }
+
+                $middlewareDefinition = $this->copyDefinition(
+                    $middlewareDefinition
+                );
 
                 if (!($firstItemDefinition instanceof Definition)) {
                     $firstItemDefinition = $middlewareDefinition;
@@ -188,6 +194,18 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         $configurationHttpMethodDefinition->setFactory(sprintf('%s::%s', ConfigurationHttpMethod::class, 'createDefault'));
                     }
 
+
+                    $splitHttpMethods = ($hasMethod === true)
+                        ?
+                        ConfigurationHttpMethod::validateAndSplit(
+                            $condition['method']
+                        ) : ConfigurationHttpMethod::getPossibleValues();
+
+                    $selectedMiddlewareArray = [];
+                    foreach ($splitHttpMethods as $httpMethod) {
+                        $selectedMiddlewareArray[$httpMethod] = $this->copyDefinition($selectedMiddleware);
+                    }
+
                     $configurationPathDefinition = static::createDefinition(
                         ConfigurationPath::class,
                         false,
@@ -201,7 +219,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'registerPathMiddleware',
                         [
                             $configurationPathDefinition,
-                            $selectedMiddleware
+                            $selectedMiddlewareArray
                         ]
                     );
                 }
@@ -214,6 +232,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         $newDefinition = $this->cloner->copy($originalDefinition);
         $newDefinition
             ->setPublic(false)
+            ->setPrivate(true)
             ->setShared(false);
 
         return $newDefinition;
@@ -227,10 +246,13 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
      *
      * @return Definition
      */
-    private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition {
-        return
-            (new Definition($className, $arguments))
-                ->setPublic($isPublic)
-                ->setShared($isShared);
+    private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition
+    {
+        $definition = new Definition($className, $arguments);
+        $definition
+            ->setPublic($isPublic)
+            ->setShared($isShared);
+
+        return $definition;
     }
 }

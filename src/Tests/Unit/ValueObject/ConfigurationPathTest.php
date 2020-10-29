@@ -5,21 +5,16 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
-use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\AbstractHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 
-class ConfigurationPathTest extends TestCase
+class ConfigurationPathTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanInvalidateAnEmptyString()
     {
         $configurationHttpMethod = ConfigurationHttpMethod::createDefault();
@@ -56,25 +51,28 @@ class ConfigurationPathTest extends TestCase
             $configurationHttpMethod,
             '/test'
         );
-
-        $this->assertTrue(true);
     }
-    
+
     public function testCanExportConfiguration()
     {
         $configurationHttpMethod = ConfigurationHttpMethod::createDefault();
-        $path = ConfigurationPath::createFromConfigurationHttpMethodAndString(
+        $path                    = ConfigurationPath::createFromConfigurationHttpMethodAndString(
             $configurationHttpMethod,
             '/'
         );
-        
+
         /** @var MockInterface|AbstractMiddlewareChainItem $middlewareChain */
         $middlewareChain = Mockery::mock(AbstractMiddlewareChainItem::class);
-        
+
+        $allMethods  = AbstractHttpMethod::getPossibleValues();
+        $middlewares = [];
+        foreach ($allMethods as $method) {
+            $middlewares[$method] = $middlewareChain;
+        }
         $returnValue = $path->exportConfigurationForMiddleware(
-            $middlewareChain
+            $middlewares
         );
-        
+
         $this->assertCount(1, $returnValue);
         $this->assertArrayHasKey('/', $returnValue[1]);
     }

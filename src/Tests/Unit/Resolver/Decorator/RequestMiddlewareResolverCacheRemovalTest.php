@@ -9,18 +9,12 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCac
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class RequestMiddlewareResolverCacheRemovalTest extends TestCase
+class RequestMiddlewareResolverCacheRemovalTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testWillClearCacheBeforeDelegatingCallToDecoratedObject()
     {
         /** @var MockInterface|Request $request */

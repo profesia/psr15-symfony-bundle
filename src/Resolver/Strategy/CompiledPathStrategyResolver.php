@@ -26,25 +26,31 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
         $this->routeCollection = $router->getRouteCollection();
     }
 
-    public function registerPathMiddleware(ConfigurationPath $path, AbstractMiddlewareChainItem $middlewareChain): self
+    /**
+     * @param ConfigurationPath                          $path
+     * @param array<string, AbstractMiddlewareChainItem> $configuredMiddlewareChains
+     *
+     * @return $this
+     */
+    public function registerPathMiddleware(ConfigurationPath $path, array $configuredMiddlewareChains): self
     {
-        $exportedConfiguration = $path->exportConfigurationForMiddleware($middlewareChain);
-        foreach ($exportedConfiguration as $pathLength => $registeredPaths) {
+        $exportedConfiguration = $path->exportConfigurationForMiddleware($configuredMiddlewareChains);
+        foreach ($exportedConfiguration as $pathLength => $registeredPatterns) {
             if (!isset($this->registeredPathMiddlewares[$pathLength])) {
                 $this->registeredPathMiddlewares[$pathLength] = [];
             }
 
-            foreach ($registeredPaths as $path => $pathConfiguration) {
-                if (!isset($this->registeredPathMiddlewares[$pathLength][$path])) {
-                    $this->registeredPathMiddlewares[$pathLength][$path] = [];
+            foreach ($registeredPatterns as $pattern => $pathConfiguration) {
+                if (!isset($this->registeredPathMiddlewares[$pathLength][$pattern])) {
+                    $this->registeredPathMiddlewares[$pathLength][$pattern] = [];
                 }
 
                 foreach ($pathConfiguration as $method => $middlewareChain) {
-                    if (isset($this->registeredPathMiddlewares[$pathLength][$path][$method])) {
-                        continue;
+                    if (isset($this->registeredPathMiddlewares[$pathLength][$pattern][$method])) {
+                        $this->registeredPathMiddlewares[$pathLength][$pattern][$method]->append($configuredMiddlewareChains[$method]);
+                    } else {
+                        $this->registeredPathMiddlewares[$pathLength][$pattern][$method] = $configuredMiddlewareChains[$method];
                     }
-
-                    $this->registeredPathMiddlewares[$pathLength][$path][$method] = $middlewareChain;
                 }
             }
         }
@@ -93,13 +99,39 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
      */
     public function exportRules(): array
     {
+        $groupedExport   = [];
         $middlewareArray = [];
         foreach ($this->registeredPathMiddlewares as $patternLength => $patterns) {
             foreach ($patterns as $pattern => $httpMethods) {
+                if (!isset($groupedExport[$pattern])) {
+                    $groupedExport[$pattern] = [];
+                }
+
+
+                /** @var AbstractMiddlewareChainItem $middlewareChain */
+                foreach ($httpMethods as $httpMethod => $middlewareChain) {
+                    $middlewareChainClassNames = $middlewareChain->listChainClassNames();
+                    $middlewareListString      = implode('|', $middlewareChainClassNames);
+                    if (!isset($groupedExport[$pattern][$middlewareListString])) {
+                        $groupedExport[$pattern][$middlewareListString] = [
+                            'chain'   => null,
+                            'methods' => [],
+                        ];
+                    }
+
+                    $groupedExport[$pattern][$middlewareListString]['chain']     = $middlewareChain;
+                    $groupedExport[$pattern][$middlewareListString]['methods'][] = $httpMethod;
+                }
+            }
+        }
+
+
+        foreach ($groupedExport as $pattern => $item) {
+            foreach ($item as $middlewareListString => $middlewareList) {
                 $middlewareArray[] = new ExportedMiddleware(
-                    current($httpMethods),
+                    $middlewareList['chain'],
                     CompoundHttpMethod::createFromStrings(
-                        array_keys($httpMethods)
+                        $middlewareList['methods']
                     ),
                     $pattern
                 );

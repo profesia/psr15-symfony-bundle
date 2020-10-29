@@ -8,20 +8,14 @@ use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Mockery;
 use Mockery\MockInterface;
 use Nyholm\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class NullMiddlewareTest extends TestCase
+class NullMiddlewareTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanHandle()
     {
         /** @var MockInterface|ServerRequestInterface $request */

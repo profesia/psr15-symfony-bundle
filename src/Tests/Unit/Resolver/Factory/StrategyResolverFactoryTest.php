@@ -8,16 +8,10 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 
-class StrategyResolverFactoryTest extends TestCase
+class StrategyResolverFactoryTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanCreate()
     {
         $factory = new StrategyResolverFactory();

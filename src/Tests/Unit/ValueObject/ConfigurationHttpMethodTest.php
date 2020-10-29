@@ -5,21 +5,15 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\ValueObject\AbstractHttpMethod;
-use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
-use InvalidArgumentException;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\AbstractHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 
-class ConfigurationHttpMethodTest extends TestCase
+class ConfigurationHttpMethodTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     public function testCanAssignMiddlewareChainToAnyHttpMethod()
     {
         $httpMethod = ConfigurationHttpMethod::createDefault();
@@ -27,12 +21,17 @@ class ConfigurationHttpMethodTest extends TestCase
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middleware);
-
         $allHttpMethods = AbstractHttpMethod::getPossibleValues();
+        $middlewares    = [];
+        foreach ($allHttpMethods as $method) {
+            $middlewares[$method] = $middleware;
+        }
+
+        $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
+
         $this->assertCount(count($allHttpMethods), $returnValue);
-        foreach ($allHttpMethods as $httpMethod) {
-            $this->assertEquals($returnValue[$httpMethod], $middleware);
+        foreach ($allHttpMethods as $method) {
+            $this->assertEquals($returnValue[$method], $middleware);
         }
     }
 
@@ -42,7 +41,11 @@ class ConfigurationHttpMethodTest extends TestCase
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware  = Mockery::mock(AbstractMiddlewareChainItem::class);
-        $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middleware);
+
+        $middlewares    = [
+            'GET' => $middleware
+        ];
+        $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
 
         $this->assertCount(1, $returnValue);
         $this->assertEquals($returnValue['GET'], $middleware);
@@ -60,7 +63,12 @@ class ConfigurationHttpMethodTest extends TestCase
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware     = Mockery::mock(AbstractMiddlewareChainItem::class);
-        $returnValue    = $httpMethod->assignMiddlewareChainToHttpMethods($middleware);
+        $middlewares = [];
+        foreach ($httpMethods as $method) {
+            $middlewares[$method] = $middleware;
+        }
+
+        $returnValue    = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
         $string         = $httpMethod->toString();
         $explodedString = explode('|', $string);
 
@@ -75,26 +83,10 @@ class ConfigurationHttpMethodTest extends TestCase
         }
     }
 
-    public function testCanHandleAnyKeywordInMultipleInputString()
-    {
-        $httpMethods         = [
-            'GET',
-            'POST',
-            'ANY',
-            'PUT'
-        ];
-
-        $implodedHttpMethods = implode('|', $httpMethods);
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("HTTP method configuration is not valid. In case of 'ANY' any other HTTP methods are redundant");
-        ConfigurationHttpMethod::createFromString($implodedHttpMethods);
-    }
-
     public function testCanHandleUnsupportedHttpMethodInInputString()
     {
         $unsupportedString = 'assdaads';
-        $httpMethods         = [
+        $httpMethods       = [
             'GET',
             $unsupportedString,
             'PUT'
@@ -105,6 +97,5 @@ class ConfigurationHttpMethodTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Value: [{$unsupportedString}] is not supported");
         ConfigurationHttpMethod::createFromString($implodedHttpMethods);
-
     }
 }

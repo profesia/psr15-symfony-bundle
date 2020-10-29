@@ -5,26 +5,19 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
-use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Mockery;
 use Mockery\MockInterface;
-use PHPUnit\Framework\TestCase;
+use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class CompiledPathStrategyResolverTest extends TestCase
+class CompiledPathStrategyResolverTest extends MockeryTestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
-    public function testWillIgnoreDuplicityRegistrationOfMiddlewareRule()
+    public function testWillAppendNewRuleToExistingRuleBasedOnHttpMethod()
     {
         /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
         $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
@@ -46,18 +39,20 @@ class CompiledPathStrategyResolverTest extends TestCase
             $router
         );
 
-        $exportedRules = $resolver->exportRules();
-        $this->assertEmpty($exportedRules);
+        /** @var MockInterface|AbstractMiddlewareChainItem $middleware2 */
+        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
         $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
         $middleware1
-            ->shouldReceive('listChainClassNames')
-            ->times(2)
-            ->andReturn(
+            ->shouldReceive('append')
+            ->once()
+            ->withArgs(
                 [
-                    'middleware1'
+                    $middleware2
                 ]
+            )->andReturn(
+                $middleware1
             );
 
         $configurationPath = ConfigurationPath::createFromConfigurationHttpMethodAndString(
@@ -65,47 +60,23 @@ class CompiledPathStrategyResolverTest extends TestCase
             '/test'
         );
 
+        $middlewares = [
+            'POST' => $middleware1
+        ];
         $resolver->registerPathMiddleware(
             $configurationPath,
-            $middleware1
-        );
-        
-        $exportedRules = $resolver->exportRules();
-        $this->assertCount(1, $exportedRules);
-
-        /** @var ExportedMiddleware $rule */
-        $rule = current($exportedRules);
-        $this->assertEquals('POST', $rule->getHttpMethods()->listMethods('|'));
-        $this->assertEquals('/test', $rule->getIdentifier());
-        $this->assertEquals(
-            [
-                0 => 'middleware1',
-            ],
-            $rule->listMiddlewareChainItems()
+            $middlewares
         );
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware2 */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
-        $middleware2
-            ->shouldNotReceive('listChainClassNames');
-
+        $middlewares['POST'] = $middleware2;
         $resolver->registerPathMiddleware(
             $configurationPath,
-            $middleware2
+            $middlewares
         );
+    }
 
-        $exportedRules = $resolver->exportRules();
-        $this->assertCount(1, $exportedRules);
+    public function testCanExport()
+    {
 
-        /** @var ExportedMiddleware $rule */
-        $rule = current($exportedRules);
-        $this->assertEquals('POST', $rule->getHttpMethods()->listMethods('|'));
-        $this->assertEquals('/test', $rule->getIdentifier());
-        $this->assertEquals(
-            [
-                0 => 'middleware1',
-            ],
-            $rule->listMiddlewareChainItems()
-        );
     }
 }
