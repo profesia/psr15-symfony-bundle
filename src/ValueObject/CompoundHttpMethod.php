@@ -9,9 +9,6 @@ class CompoundHttpMethod
     /** @var HttpMethod[] */
     private array $httpMethods;
 
-    /**
-     * @var HttpMethod[]
-     */
     private function __construct(array $httpMethods)
     {
         $this->httpMethods = $httpMethods;
@@ -20,9 +17,9 @@ class CompoundHttpMethod
     /**
      * @param array<int, string> $httpMethods
      *
-     * @return self
+     * @return CompoundHttpMethod
      */
-    public static function createFromStrings(array $httpMethods): self
+    public static function createFromStrings(array $httpMethods): CompoundHttpMethod
     {
         $methodValueObjects = [];
         foreach ($httpMethods as $httpMethod) {
