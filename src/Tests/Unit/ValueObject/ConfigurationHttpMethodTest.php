@@ -9,11 +9,22 @@ use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
-use Profesia\Symfony\Psr15Bundle\ValueObject\AbstractHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ConfigurationHttpMethodTest extends MockeryTestCase
 {
+    public function valuesDataProvider()
+    {
+        return [
+            [
+                ['GET'],
+                ['GET', 'POST'],
+                ['GET', 'POST', 'DELETE', 'PUT']
+            ]
+        ];
+    }
+
     public function testCanAssignMiddlewareChainToAnyHttpMethod()
     {
         $httpMethod = ConfigurationHttpMethod::createDefault();
@@ -21,7 +32,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $allHttpMethods = AbstractHttpMethod::getPossibleValues();
+        $allHttpMethods = HttpMethod::getPossibleValues();
         $middlewares    = [];
         foreach ($allHttpMethods as $method) {
             $middlewares[$method] = $middleware;
@@ -126,7 +137,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $configurationHttpMethod->assignMiddlewareChainToHttpMethods($middlewares);
     }
 
-    public function testCanTransformToArray()
+    public function testCanCastToArray()
     {
         $httpMethods = [
             'GET',
@@ -135,10 +146,25 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
             'DELETE'
         ];
 
-        $configurationHttpMethod = ConfigurationHttpMethod::createFromString(
-            implode('|', $httpMethods)
+        $configurationHttpMethod = ConfigurationHttpMethod::createFromArray(
+            $httpMethods
         );
 
         $this->assertEquals($httpMethods, $configurationHttpMethod->toArray());
+    }
+
+    /**
+     * @dataProvider valuesDataProvider
+     *
+     * @param array $httpMethods
+     */
+    public function testCanCasToToString(array $httpMethods)
+    {
+        $httpMethod = ConfigurationHttpMethod::createFromArray(
+            $httpMethods
+        );
+
+        $string = implode('|', $httpMethods);
+        $this->assertEquals($string, $httpMethod->toString());
     }
 }

@@ -9,9 +9,9 @@ use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
-use Profesia\Symfony\Psr15Bundle\ValueObject\AbstractHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ConfigurationPathTest extends MockeryTestCase
 {
@@ -64,7 +64,7 @@ class ConfigurationPathTest extends MockeryTestCase
         /** @var MockInterface|AbstractMiddlewareChainItem $middlewareChain */
         $middlewareChain = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        $allMethods  = AbstractHttpMethod::getPossibleValues();
+        $allMethods  = HttpMethod::getPossibleValues();
         $middlewares = [];
         foreach ($allMethods as $method) {
             $middlewares[$method] = $middlewareChain;

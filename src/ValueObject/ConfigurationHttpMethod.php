@@ -9,7 +9,7 @@ use InvalidArgumentException;
 
 final class ConfigurationHttpMethod implements HttpMethodInterface
 {
-    private array        $values;
+    private array $values;
 
     private function __construct(array $values)
     {
@@ -20,6 +20,15 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
     {
         return new self(
             static::getPossibleValues()
+        );
+    }
+
+    public static function createFromArray(array $values): ConfigurationHttpMethod
+    {
+        static::validateAllValues($values);
+
+        return new self(
+            $values
         );
     }
 
@@ -38,12 +47,7 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
     public static function validateAndSplit(string $value): array
     {
         $explodedValues = explode('|', $value);
-        $possibleValues = static::getPossibleValues();
-        foreach ($explodedValues as $method) {
-            if (!in_array($method, $possibleValues)) {
-                throw new InvalidArgumentException("Value: [{$method}] is not supported");
-            }
-        }
+        static::validateAllValues($explodedValues);
 
         return $explodedValues;
     }
@@ -53,7 +57,7 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
      */
     public static function getPossibleValues(): array
     {
-        return AbstractHttpMethod::getPossibleValues();
+        return HttpMethod::getPossibleValues();
     }
 
     /**
@@ -93,5 +97,15 @@ final class ConfigurationHttpMethod implements HttpMethodInterface
     private function getValue(): array
     {
         return $this->values;
+    }
+
+    private static function validateAllValues(array $values): void
+    {
+        $possibleValues = static::getPossibleValues();
+        foreach ($values as $method) {
+            if (!in_array($method, $possibleValues)) {
+                throw new InvalidArgumentException("Value: [{$method}] is not supported");
+            }
+        }
     }
 }
