@@ -38,7 +38,7 @@ class WarmUpMiddlewareCacheCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('profesia:psr15:middleware:warm-up')
+            ->setName('profesia:middleware:warm-up')
             ->setDescription('Warms up middleware cache')
             ->setHelp('The command iterates over registered routes and resolves and caches middleware chain for each registered route ');
     }
