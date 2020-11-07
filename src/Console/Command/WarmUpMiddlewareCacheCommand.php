@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Console\Command;
 
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\Console\Command\Command;
@@ -61,8 +62,16 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $request->attributes->set('_route', $routeName);
                 $request->setMethod($httpMethod);
 
-                $middleware = $this->resolverCacheProxy->resolveMiddlewareChain($request);
-                $table->addRow([$routeName, $staticPrefix, $httpMethod, implode("\n", $middleware->listChainClassNames())]);
+                $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
+                    $request,
+                    $route,
+                    $routeName
+                );
+                $resolvedMiddleware         = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
+
+                $table->addRow(
+                    [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())]
+                );
 
                 if ($innerIndex !== sizeof($route->getMethods())) {
                     $table->addRow(new TableSeparator());

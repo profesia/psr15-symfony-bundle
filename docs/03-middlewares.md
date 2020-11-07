@@ -85,8 +85,8 @@ psr15:
 ```
 ## Matching
 Matching of an incoming requests takes place in two clasess:
-* [RouteNameStrategyResolver](../src/Resolver/Strategy/RouteNameStrategyResolver.php)
-* [CompiledPathStrategyResolver](../src/Resolver/Strategy/CompiledPathStrategyResolver.php)
+* [RouteNameStrategyResolver](../src/Resolver/Strategy/RouteNameResolver.php)
+* [CompiledPathStrategyResolver](../src/Resolver/Strategy/CompiledPathResolver.php)
 ### RouteNameStrategyResolver
 Matching of an incoming request is straightforward in this strategy:
 1. Actual route name is being searched in the registered route middleware chains.

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Decorator;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class RequestMiddlewareResolverCacheRemoval implements RequestMiddlewareResolverCachingInterface
 {
@@ -21,7 +21,7 @@ class RequestMiddlewareResolverCacheRemoval implements RequestMiddlewareResolver
         $this->cache           = $cache;
     }
 
-    public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
+    public function resolveMiddlewareChain(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
         $this->cache->clear();
 

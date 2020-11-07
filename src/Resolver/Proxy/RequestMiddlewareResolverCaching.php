@@ -4,55 +4,59 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Proxy;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
-use RuntimeException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
 
 class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachingInterface
 {
-    private RouteCollection                    $routeCollection;
     private RequestMiddlewareResolverInterface $resolver;
     private CacheItemPoolInterface             $cache;
 
-    public function __construct(RouterInterface $router, RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
+    public function __construct(RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
     {
-        $this->routeCollection = $router->getRouteCollection();
-        $this->resolver        = $resolver;
-        $this->cache           = $cache;
+        $this->resolver = $resolver;
+        $this->cache    = $cache;
     }
 
     /**
-     * @param Request $request
+     * @param MiddlewareResolvingRequest $request
      *
-     * @return AbstractMiddlewareChainItem
+     * @return ResolvedMiddlewareChain
      * @throws InvalidArgumentException
      */
-    public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem
+    public function resolveMiddlewareChain(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
-        $routeName = $request->attributes->get('_route');
-        $route     = $this->routeCollection->get($routeName);
-        if ($route === null) {
-            throw new RuntimeException("Route: [{$routeName}] is not registered");
-        }
+        $cacheKey  = $request->getCacheKey();
+        $cacheItem = $this->cache->getItem(
+            $cacheKey
+        );
 
-        $staticPrefix = $route->compile()->getStaticPrefix();
-        $cacheKey     = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
-
-        $cacheItem = $this->cache->getItem($cacheKey);
         if ($cacheItem->isHit()) {
-            return $cacheItem->get();
+            $request = $request->withResolvedMiddlewareAccessCode(
+                ResolvedMiddlewareAccessKey::createFromArray(
+                    $cacheItem->get()
+                )
+            );
         }
 
-        $middleware = $this->resolver->resolveMiddlewareChain($request);
-        $cacheItem->set($middleware);
+        $resolvedMiddlewareChain = $this->resolver->resolveMiddlewareChain($request);
+        if (!$resolvedMiddlewareChain->wasMiddlewareResolved()) {
+            return $resolvedMiddlewareChain;
+        }
+
+        $cacheItem->set(
+            $resolvedMiddlewareChain
+                ->getMiddlewareAccessKey()
+                ->toArray()
+        );
+
         $this->cache->save($cacheItem);
 
-        return $middleware;
+        return $resolvedMiddlewareChain;
     }
 }

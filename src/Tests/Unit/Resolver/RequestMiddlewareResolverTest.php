@@ -7,7 +7,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver;
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Mockery;
@@ -39,8 +39,8 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var MockInterface|AbstractChainResolverItem $middlewareResolverChain */
-        $middlewareResolverChain = Mockery::mock(AbstractChainResolverItem::class);
+        /** @var MockInterface|AbstractChainResolver $middlewareResolverChain */
+        $middlewareResolverChain = Mockery::mock(AbstractChainResolver::class);
         $middlewareResolverChain
             ->shouldReceive('handle')
             ->once()
@@ -89,8 +89,8 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
         $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
 
-        /** @var MockInterface|AbstractChainResolverItem $middlewareResolverChain */
-        $middlewareResolverChain = Mockery::mock(AbstractChainResolverItem::class);
+        /** @var MockInterface|AbstractChainResolver $middlewareResolverChain */
+        $middlewareResolverChain = Mockery::mock(AbstractChainResolver::class);
         $middlewareResolverChain
             ->shouldReceive('handle')
             ->once()

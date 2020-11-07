@@ -10,9 +10,9 @@ use Mockery;
 use Mockery\MockInterface;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Profesia\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Psr\Http\Message\ResponseInterface;
@@ -42,8 +42,8 @@ class ListMiddlewareRulesCommandTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|RouteNameStrategyResolver $routeNameStrategyResolver */
-        $routeNameStrategyResolver = Mockery::mock(RouteNameStrategyResolver::class);
+        /** @var MockInterface|RouteNameResolver $routeNameStrategyResolver */
+        $routeNameStrategyResolver = Mockery::mock(RouteNameResolver::class);
         $routeNameStrategyResolver
             ->shouldReceive('exportRules')
             ->once()
@@ -58,8 +58,8 @@ class ListMiddlewareRulesCommandTest extends MockeryTestCase
                 ]
             );
 
-        /** @var MockInterface|CompiledPathStrategyResolver $compiledPathStrategyResolver */
-        $compiledPathStrategyResolver = Mockery::mock(CompiledPathStrategyResolver::class);
+        /** @var MockInterface|CompiledPathResolver $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = Mockery::mock(CompiledPathResolver::class);
         $compiledPathStrategyResolver
             ->shouldReceive('exportRules')
             ->once()
@@ -104,8 +104,8 @@ class ListMiddlewareRulesCommandTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|RouteNameStrategyResolver $routeNameStrategyResolver */
-        $routeNameStrategyResolver = Mockery::mock(RouteNameStrategyResolver::class);
+        /** @var MockInterface|RouteNameResolver $routeNameStrategyResolver */
+        $routeNameStrategyResolver = Mockery::mock(RouteNameResolver::class);
         $routeNameStrategyResolver
             ->shouldReceive('exportRules')
             ->once()
@@ -113,8 +113,8 @@ class ListMiddlewareRulesCommandTest extends MockeryTestCase
                 []
             );
 
-        /** @var MockInterface|CompiledPathStrategyResolver $compiledPathStrategyResolver */
-        $compiledPathStrategyResolver = Mockery::mock(CompiledPathStrategyResolver::class);
+        /** @var MockInterface|CompiledPathResolver $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = Mockery::mock(CompiledPathResolver::class);
         $compiledPathStrategyResolver
             ->shouldReceive('exportRules')
             ->once()

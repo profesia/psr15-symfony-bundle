@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Console\Command;
 
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -15,10 +15,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListMiddlewareRulesCommand extends Command
 {
-    private RouteNameStrategyResolver    $routeNameStrategyResolver;
-    private CompiledPathStrategyResolver $compiledPathStrategyResolver;
+    private RouteNameResolver    $routeNameStrategyResolver;
+    private CompiledPathResolver $compiledPathStrategyResolver;
 
-    public function __construct(RouteNameStrategyResolver $routeNameStrategyResolver, CompiledPathStrategyResolver $compiledPathStrategyResolver)
+    public function __construct(RouteNameResolver $routeNameStrategyResolver, CompiledPathResolver $compiledPathStrategyResolver)
     {
         $this->routeNameStrategyResolver    = $routeNameStrategyResolver;
         $this->compiledPathStrategyResolver = $compiledPathStrategyResolver;

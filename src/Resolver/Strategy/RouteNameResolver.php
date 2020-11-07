@@ -8,36 +8,44 @@ use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\InvalidAccessKeyException;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use RuntimeException;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class RouteNameStrategyResolver extends AbstractChainResolverItem
+class RouteNameResolver extends AbstractChainResolver
 {
+    private const WILDCARD = '*';
+
     /** @var AbstractMiddlewareChainItem[] */
     private array           $registeredRouteMiddlewares = [];
     private RouteCollection $routeCollection;
 
-    public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory, RouterInterface $router)
-    {
+    public function __construct(
+        MiddlewareChainItemFactory $middlewareChainItemFactory,
+        RouterInterface $router
+    ) {
         parent::__construct($middlewareChainItemFactory);
         $this->routeCollection = $router->getRouteCollection();
     }
 
     public function registerRouteMiddleware(string $routeName, AbstractMiddlewareChainItem $middlewareChain): self
     {
-        if ($routeName === '*') {
+        if ($routeName === static::WILDCARD) {
             if (!empty($this->registeredRouteMiddlewares)) {
                 return $this;
             }
 
-            $this->registeredRouteMiddlewares['*'] = $middlewareChain;
+            $this->registeredRouteMiddlewares[static::WILDCARD] = $middlewareChain;
 
             return $this;
         }
 
-        if (array_key_exists('*', $this->registeredRouteMiddlewares)) {
+        if (array_key_exists(static::WILDCARD, $this->registeredRouteMiddlewares)) {
             return $this;
         }
 
@@ -54,19 +62,62 @@ class RouteNameStrategyResolver extends AbstractChainResolverItem
         return $this;
     }
 
-    public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
+    public function handle(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
-        if (isset($this->registeredRouteMiddlewares['*'])) {
-            return $this->registeredRouteMiddlewares['*'];
+        if (isset($this->registeredRouteMiddlewares[static::WILDCARD])) {
+            return ResolvedMiddlewareChain::createFromResolverContext(
+                $this->registeredRouteMiddlewares[static::WILDCARD],
+                ResolvedMiddlewareAccessKey::createFromMiddlewareResolver(
+                    $this,
+                    [
+                        static::WILDCARD
+                    ]
+                )
+            );
         }
 
         $routeName = $request->getRouteName();
         if (isset($this->registeredRouteMiddlewares[$routeName])) {
-            return $this->registeredRouteMiddlewares[$routeName];
+            return ResolvedMiddlewareChain::createFromResolverContext(
+                $this->registeredRouteMiddlewares[static::WILDCARD],
+                ResolvedMiddlewareAccessKey::createFromMiddlewareResolver(
+                    $this,
+                    [
+                        $routeName
+                    ]
+                )
+            );
         }
 
         return $this->handleNext($request);
     }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem
+    {
+        if (!$accessKey->isSameResolver($this)) {
+            return $this->getChainNext($accessKey);
+        }
+
+        $class = static::class;
+        $keys  = $accessKey->listPathParts();
+        if (sizeof($keys) !== 1) {
+            $implodedKey = implode(', ', $keys);
+
+            throw new InvalidAccessKeyException("Bad access keys: [{$implodedKey}] in resolver: [{$class}]");
+        }
+
+        $key = current($keys);
+        if (!array_key_exists($key, $this->registeredRouteMiddlewares)) {
+            throw new ChainNotFoundException("Chain with key: [{$key}] was not found in resolver: [{$class}]");
+        }
+
+        return $this->registeredRouteMiddlewares[$key];
+    }
+
 
     /**
      * @return ExportedMiddleware[]

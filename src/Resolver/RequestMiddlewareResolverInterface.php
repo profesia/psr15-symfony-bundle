@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Symfony\Component\HttpFoundation\Request;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 
 interface RequestMiddlewareResolverInterface
 {
-    public function resolveMiddlewareChain(Request $request): AbstractMiddlewareChainItem;
+    public function resolveMiddlewareChain(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain;
 }

@@ -6,8 +6,8 @@ namespace Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler;
 
 use DeepCopy\DeepCopy;
 use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use RuntimeException;
@@ -75,8 +75,8 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             $middlewareChains[$groupName] = $firstItemDefinition;
         }
 
-        $routeNameStrategyResolver    = $container->getDefinition(RouteNameStrategyResolver::class);
-        $compiledPathStrategyResolver = $container->getDefinition(CompiledPathStrategyResolver::class);
+        $routeNameStrategyResolver    = $container->getDefinition(RouteNameResolver::class);
+        $compiledPathStrategyResolver = $container->getDefinition(CompiledPathResolver::class);
         foreach ($routing as $conditionName => $conditionConfig) {
             $middlewareChainName = $conditionConfig['middleware_chain'];
             if (!isset($middlewareChains[$middlewareChainName])) {

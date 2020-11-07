@@ -8,22 +8,22 @@ use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\InvalidAccessKeyException;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
-use RuntimeException;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 
-class CompiledPathStrategyResolver extends AbstractChainResolverItem
+class CompiledPathResolver extends AbstractChainResolver
 {
     /** @var array<int, array> */
-    private array           $registeredPathMiddlewares = [];
-    private RouteCollection $routeCollection;
+    private array $registeredPathMiddlewares = [];
 
-    public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory, RouterInterface $router)
-    {
+    public function __construct(
+        MiddlewareChainItemFactory $middlewareChainItemFactory
+    ) {
         parent::__construct($middlewareChainItemFactory);
-        $this->routeCollection = $router->getRouteCollection();
     }
 
     /**
@@ -58,17 +58,9 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
         return $this;
     }
 
-    public function handle(MiddlewareResolvingRequest $request): AbstractMiddlewareChainItem
+    public function handle(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
-        $route = $this->routeCollection->get($request->getRouteName());
-        if ($route === null) {
-            throw new RuntimeException("Route: [{$request->getRouteName()}] is not registered");
-        }
-
-        $staticPrefix =
-            $route
-                ->compile()
-                ->getStaticPrefix();
+        $staticPrefix = $request->getCompiledRoute()->getStaticPrefix();
         $pathLength   = strlen($staticPrefix);
 
         while ($pathLength >= 1) {
@@ -83,7 +75,17 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
                     $extractedMiddleware = $request->getHttpMethod()->extractMiddleware($methodsConfig);
 
                     if ($extractedMiddleware !== null) {
-                        return $extractedMiddleware;
+                        return ResolvedMiddlewareChain::createFromResolverContext(
+                            $extractedMiddleware,
+                            ResolvedMiddlewareAccessKey::createFromMiddlewareResolver(
+                                $this,
+                                [
+                                    $pathLength,
+                                    $path,
+                                    $request->getHttpMethod()->toString()
+                                ]
+                            )
+                        );
                     }
                 }
             }
@@ -92,6 +94,39 @@ class CompiledPathStrategyResolver extends AbstractChainResolverItem
         }
 
         return $this->handleNext($request);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem
+    {
+        if (!$accessKey->isSameResolver($this)) {
+            return $this->getChainNext($accessKey);
+        }
+
+        $keys  = $accessKey->listPathParts();
+        $class = static::class;
+        if (sizeof($keys) !== 3) {
+            $implodedKey = implode(', ', $keys);
+
+            throw new InvalidAccessKeyException("Bad access keys: [{$implodedKey}] in resolver: [{$class}]");
+        }
+
+        [$pathLength, $pattern, $httpMethod] = $keys;
+        if (!isset($this->registeredPathMiddlewares[$pathLength])) {
+            throw new ChainNotFoundException("Key: [{$pathLength}] was not found in resolver: [{$class}]");
+        }
+
+        if (!isset($this->registeredPathMiddlewares[$pathLength][$pattern])) {
+            throw new ChainNotFoundException("Keys: [{$pathLength}, {$pattern}] was not found in resolver: [{$class}]");
+        }
+
+        if (!isset($this->registeredPathMiddlewares[$pathLength][$pattern][$httpMethod])) {
+            throw new ChainNotFoundException("Chain with key: [{$pathLength}, {$pattern}, {$httpMethod}] was not found in resolver: [{$class}]");
+        }
+
+        return $this->registeredPathMiddlewares[$pathLength][$pattern][$httpMethod];
     }
 
     /**

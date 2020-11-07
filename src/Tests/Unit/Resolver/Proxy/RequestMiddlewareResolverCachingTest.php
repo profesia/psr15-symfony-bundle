@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Proxy;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
@@ -21,7 +21,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class RequestMiddlewareResolverCachingTest extends MockeryTestCase
 {
-    public function testCanDetectNonExistingRoute()
+    /*public function testCanDetectNonExistingRoute()
     {
         $routeName = 'test';
         $request   = new Request(
@@ -34,99 +34,49 @@ class RequestMiddlewareResolverCachingTest extends MockeryTestCase
 
 
         /** @var MockInterface|RouteCollection $routeCollection */
-        $routeCollection = Mockery::mock(RouteCollection::class);
-        $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    $routeName
-                ]
-            )->andReturn(null);
+    /*$routeCollection = Mockery::mock(RouteCollection::class);
+    $routeCollection
+        ->shouldReceive('get')
+        ->once()
+        ->withArgs(
+            [
+                $routeName
+            ]
+        )->andReturn(null);
 
-        /** @var MockInterface|RouterInterface $router */
-        $router = Mockery::mock(RouterInterface::class);
-        $router
-            ->shouldReceive('getRouteCollection')
-            ->once()
-            ->andReturn(
-                $routeCollection
-            );
-
-        /** @var MockInterface|RequestMiddlewareResolverInterface $resolver */
-        $resolver = Mockery::mock(RequestMiddlewareResolverInterface::class);
-
-        /** @var MockInterface|CacheItemPoolInterface $cacheItemPool */
-        $cacheItemPool = Mockery::mock(CacheItemPoolInterface::class);
-
-        $proxy = new RequestMiddlewareResolverCaching(
-            $router,
-            $resolver,
-            $cacheItemPool
+    /** @var MockInterface|RouterInterface $router */
+    /*$router = Mockery::mock(RouterInterface::class);
+    $router
+        ->shouldReceive('getRouteCollection')
+        ->once()
+        ->andReturn(
+            $routeCollection
         );
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("Route: [{$routeName}] is not registered");
-        $proxy->resolveMiddlewareChain($request);
-    }
+    /** @var MockInterface|RequestMiddlewareResolverInterface $resolver */
+    /*$resolver = Mockery::mock(RequestMiddlewareResolverInterface::class);
 
-    public function testWillReturnCachedMiddleware()
+    /** @var MockInterface|CacheItemPoolInterface $cacheItemPool */
+    /*$cacheItemPool = Mockery::mock(CacheItemPoolInterface::class);
+
+    $proxy = new RequestMiddlewareResolverCaching(
+        $router,
+        $resolver,
+        $cacheItemPool
+    );
+
+    $this->expectException(RuntimeException::class);
+    $this->expectExceptionMessage("Route: [{$routeName}] is not registered");
+    $proxy->resolveMiddlewareChain($request);
+}*/
+
+    public function testWillUpdateRequestOnCachedAccessKey()
     {
         $routeName = 'test';
-        $request   = new Request(
-            [],
-            [],
-            [
-                '_route' => $routeName
-            ],
-            [],
-            [],
-            [
-                'REQUEST_METHOD' => 'POST'
-            ]
-        );
-
+        /** @var MiddlewareResolvingRequest $request */
+        $request      = Mockery::mock(MiddlewareResolvingRequest::class);
         $staticPrefix = 'static-prefix';
 
-        /** @var MockInterface|CompiledRoute $compiledRoute */
-        $compiledRoute = Mockery::mock(CompiledRoute::class);
-        $compiledRoute
-            ->shouldReceive('getStaticPrefix')
-            ->once()
-            ->andReturn(
-                $staticPrefix
-            );
-
-        /** @var MockInterface|Route $route */
-        $route = Mockery::mock(Route::class);
-        $route
-            ->shouldReceive('compile')
-            ->once()
-            ->andReturn(
-                $compiledRoute
-            );
-
-        /** @var MockInterface|RouteCollection $routeCollection */
-        $routeCollection = Mockery::mock(RouteCollection::class);
-        $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    $routeName
-                ]
-            )->andReturn(
-                $route
-            );
-
-        /** @var MockInterface|RouterInterface $router */
-        $router = Mockery::mock(RouterInterface::class);
-        $router
-            ->shouldReceive('getRouteCollection')
-            ->once()
-            ->andReturn(
-                $routeCollection
-            );
 
         /** @var MockInterface|RequestMiddlewareResolverInterface $resolver */
         $resolver = Mockery::mock(RequestMiddlewareResolverInterface::class);
@@ -164,7 +114,6 @@ class RequestMiddlewareResolverCachingTest extends MockeryTestCase
 
 
         $proxy = new RequestMiddlewareResolverCaching(
-            $router,
             $resolver,
             $cacheItemPool
         );

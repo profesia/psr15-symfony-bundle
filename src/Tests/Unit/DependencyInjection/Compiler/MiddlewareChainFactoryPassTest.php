@@ -9,8 +9,8 @@ use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathStrategyResolver;
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameStrategyResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
@@ -76,28 +76,28 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $adapterDefinition
             );
 
-        /** @var MockInterface|RouteNameStrategyResolver $routeNameStrategyResolver */
-        $routeNameStrategyResolver = Mockery::mock(RouteNameStrategyResolver::class);
+        /** @var MockInterface|RouteNameResolver $routeNameStrategyResolver */
+        $routeNameStrategyResolver = Mockery::mock(RouteNameResolver::class);
         $container
             ->shouldReceive('getDefinition')
             ->once()
             ->withArgs(
                 [
-                    RouteNameStrategyResolver::class
+                    RouteNameResolver::class
                 ]
             )
             ->andReturn(
                 $routeNameStrategyResolver
             );
 
-        /** @var MockInterface|CompiledPathStrategyResolver $compiledPathStrategyResolver */
-        $compiledPathStrategyResolver = Mockery::mock(CompiledPathStrategyResolver::class);
+        /** @var MockInterface|CompiledPathResolver $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = Mockery::mock(CompiledPathResolver::class);
         $container
             ->shouldReceive('getDefinition')
             ->once()
             ->withArgs(
                 [
-                    CompiledPathStrategyResolver::class
+                    CompiledPathResolver::class
                 ]
             )
             ->andReturn(
@@ -292,7 +292,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    RouteNameStrategyResolver::class
+                    RouteNameResolver::class
                 ]
             )
             ->andReturn(
@@ -304,7 +304,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    CompiledPathStrategyResolver::class
+                    CompiledPathResolver::class
                 ]
             )
             ->andReturn(
@@ -383,7 +383,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    RouteNameStrategyResolver::class
+                    RouteNameResolver::class
                 ]
             )
             ->andReturn(
@@ -395,7 +395,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    CompiledPathStrategyResolver::class
+                    CompiledPathResolver::class
                 ]
             )
             ->andReturn(
@@ -1882,7 +1882,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             $finalMiddlewareChain[$method] = $httpMethodMiddlewareChain;
         }
 
-        /** @var CompiledPathStrategyResolver|MockInterface $compiledPathStrategyResolver */
+        /** @var CompiledPathResolver|MockInterface $compiledPathStrategyResolver */
         $compiledPathStrategyResolver = $mocks['compiledPathStrategyResolver'];
         $compiledPathStrategyResolver
             ->shouldReceive('addMethodCall')
@@ -2104,7 +2104,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'POST' => $postMiddlewareChain,
         ];
 
-        /** @var CompiledPathStrategyResolver|MockInterface $compiledPathStrategyResolver */
+        /** @var CompiledPathResolver|MockInterface $compiledPathStrategyResolver */
         $compiledPathStrategyResolver = $mocks['compiledPathStrategyResolver'];
         $compiledPathStrategyResolver
             ->shouldReceive('addMethodCall')

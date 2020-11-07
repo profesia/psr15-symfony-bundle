@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Factory;
 
-use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolverItem;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
 
 class StrategyResolverFactory
 {
     /**
-     * @param AbstractChainResolverItem[] $strategyResolverItems
+     * @param AbstractChainResolver[] $strategyResolverItems
      *
-     * @return AbstractChainResolverItem
+     * @return AbstractChainResolver
      */
-    public function create(array $strategyResolverItems): AbstractChainResolverItem
+    public function create(array $strategyResolverItems): AbstractChainResolver
     {
-        /** @var AbstractChainResolverItem $first */
+        /** @var AbstractChainResolver $first */
         $first = null;
 
-        /** @var AbstractChainResolverItem $previous */
+        /** @var AbstractChainResolver $previous */
         $previous = null;
         foreach ($strategyResolverItems as $strategyResolverItem) {
-            if (!($first instanceof AbstractChainResolverItem)) {
+            if (!($first instanceof AbstractChainResolver)) {
                 $first = $strategyResolverItem;
             }
 
-            if ($previous instanceof AbstractChainResolverItem) {
+            if ($previous instanceof AbstractChainResolver) {
                 $previous->setNext($strategyResolverItem);
             }
 
