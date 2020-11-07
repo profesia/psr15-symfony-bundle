@@ -20,7 +20,7 @@
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
 
         <service id="Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter">
-            <argument key="$httpMiddlewareResolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+            <argument key="$httpMiddlewareResolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver"/>
             <argument key="$foundationFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
             <argument key="$psrRequestFactory" type="service" id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory"/>
             <argument key="$router" type="service" id="router.default"/>
@@ -76,7 +76,7 @@
             </argument>
         </service>
 
-        <service id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver">
+        <service id="Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver">
             <argument key="$middlewareResolverChain" type="service" id="MiddlewareChainResolver"/>
             <argument key="$logger" type="service" id="logger" on-invalid="null"/>
             <tag name="monolog.logger" channel="middleware"/>
@@ -86,12 +86,12 @@
             <tag name="cache.pool"/>
         </service>
 
-        <service id="MiddlewareChainResolverProxy" class="Profesia\Symfony\Psr15Bundle\Resolver\Proxy\RequestMiddlewareResolverCaching">
-            <argument key="$resolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver"/>
+        <service id="MiddlewareChainResolverProxy" class="Profesia\Symfony\Psr15Bundle\Resolver\Proxy\MiddlewareResolverCaching">
+            <argument key="$resolver" type="service" id="Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver"/>
             <argument key="$cache" type="service" id="cache.psr15-middleware"/>
         </service>
 
-        <service id="MiddlewareChainResolverDecorator" class="Profesia\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCacheRemoval">
+        <service id="MiddlewareChainResolverDecorator" class="Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCacheRemoval">
             <argument key="$decoratedObject" type="service" id="MiddlewareChainResolverProxy"/>
             <argument key="$cache" type="service" id="cache.psr15-middleware"/>
         </service>

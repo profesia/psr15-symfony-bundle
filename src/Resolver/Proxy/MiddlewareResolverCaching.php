@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Proxy;
 
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 
-class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachingInterface
+class MiddlewareResolverCaching implements MiddlewareResolverCachingInterface
 {
-    private RequestMiddlewareResolverInterface $resolver;
+    private MiddlewareResolverInterface $resolver;
     private CacheItemPoolInterface             $cache;
 
-    public function __construct(RequestMiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
+    public function __construct(MiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
     {
         $this->resolver = $resolver;
         $this->cache    = $cache;

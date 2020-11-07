@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Console\Command;
 
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -20,9 +20,9 @@ class WarmUpMiddlewareCacheCommand extends Command
 {
     /** @var Route[] */
     private array                                     $routes;
-    private RequestMiddlewareResolverCachingInterface $resolverCacheProxy;
+    private MiddlewareResolverCachingInterface $resolverCacheProxy;
 
-    public function __construct(RouterInterface $router, RequestMiddlewareResolverCachingInterface $resolverCacheProxy)
+    public function __construct(RouterInterface $router, MiddlewareResolverCachingInterface $resolverCacheProxy)
     {
         $this->routes             = array_filter(
             $router->getRouteCollection()->all(),

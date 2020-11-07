@@ -11,7 +11,7 @@ use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
 use Profesia\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
@@ -45,8 +45,8 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|RequestMiddlewareResolverInterface $middlewareResolver */
-        $middlewareResolver = Mockery::mock(RequestMiddlewareResolverInterface::class);
+        /** @var MockInterface|MiddlewareResolverInterface $middlewareResolver */
+        $middlewareResolver = Mockery::mock(MiddlewareResolverInterface::class);
 
         /** @var MockInterface|HttpFoundationFactoryInterface $foundationFactory */
         $foundationFactory = Mockery::mock(HttpFoundationFactoryInterface::class);
@@ -166,8 +166,8 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
                 $middleware
             );
 
-        /** @var MockInterface|RequestMiddlewareResolverInterface $middlewareResolver */
-        $middlewareResolver = Mockery::mock(RequestMiddlewareResolverInterface::class);
+        /** @var MockInterface|MiddlewareResolverInterface $middlewareResolver */
+        $middlewareResolver = Mockery::mock(MiddlewareResolverInterface::class);
         $middlewareResolver
             ->shouldReceive('resolveMiddlewareChain')
             ->once()

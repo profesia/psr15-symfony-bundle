@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Decorator;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Resolver\Decorator\RequestMiddlewareResolverCacheRemoval;
+use Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCacheRemoval;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -17,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
 
-class RequestMiddlewareResolverCacheRemovalTest extends MockeryTestCase
+class MiddlewareResolverCacheRemovalTest extends MockeryTestCase
 {
     public function testWillClearCacheBeforeDelegatingCallToDecoratedObject()
     {
@@ -59,8 +58,8 @@ class RequestMiddlewareResolverCacheRemovalTest extends MockeryTestCase
         /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddleware */
         $expectedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
 
-        /** @var MockInterface|RequestMiddlewareResolverInterface $decoratedObject */
-        $decoratedObject = Mockery::mock(RequestMiddlewareResolverInterface::class);
+        /** @var MockInterface|MiddlewareResolverInterface $decoratedObject */
+        $decoratedObject = Mockery::mock(MiddlewareResolverInterface::class);
         $decoratedObject
             ->shouldReceive('resolveMiddlewareChain')
             ->once()
@@ -79,7 +78,7 @@ class RequestMiddlewareResolverCacheRemovalTest extends MockeryTestCase
             ->shouldReceive('clear')
             ->once();
 
-        $decorator = new RequestMiddlewareResolverCacheRemoval(
+        $decorator = new MiddlewareResolverCacheRemoval(
             $decoratedObject,
             $cacheItemPool
         );

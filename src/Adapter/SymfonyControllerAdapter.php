@@ -6,7 +6,7 @@ namespace Profesia\Symfony\Psr15Bundle\Adapter;
 
 use Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ class SymfonyControllerAdapter
 {
     private HttpFoundationFactoryInterface           $foundationHttpFactory;
     private HttpMessageFactoryInterface              $psrRequestFactory;
-    private RequestMiddlewareResolverInterface       $httpMiddlewareResolver;
+    private MiddlewareResolverInterface       $httpMiddlewareResolver;
     private SymfonyControllerRequestHandlerFactory   $controllerRequestHandlerFactory;
     private Request                                  $request;
     private RouteCollection                          $routeCollection;
@@ -30,7 +30,7 @@ class SymfonyControllerAdapter
 
 
     public function __construct(
-        RequestMiddlewareResolverInterface $httpMiddlewareResolver,
+        MiddlewareResolverInterface $httpMiddlewareResolver,
         HttpFoundationFactoryInterface $foundationFactory,
         HttpMessageFactoryInterface $psrRequestFactory,
         RouterInterface $router,

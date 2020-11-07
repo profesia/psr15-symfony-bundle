@@ -11,7 +11,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\AbstractResolveExce
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
-class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
+class MiddlewareResolver implements MiddlewareResolverInterface
 {
     private AbstractChainResolver  $middlewareResolverChain;
     private ?LoggerInterface       $logger;

@@ -6,7 +6,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 
 use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolverCachingInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
@@ -42,8 +42,8 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                    $routeCollection
                );
 
-        /** @var RequestMiddlewareResolverCachingInterface|MockInterface $resolver */
-        $resolver = Mockery::mock(RequestMiddlewareResolverCachingInterface::class);
+        /** @var MiddlewareResolverCachingInterface|MockInterface $resolver */
+        $resolver = Mockery::mock(MiddlewareResolverCachingInterface::class);
         new WarmUpMiddlewareCacheCommand(
             $router,
             $resolver
@@ -118,8 +118,8 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
 
         $index = 0;
-        /** @var RequestMiddlewareResolverCachingInterface|MockInterface $resolver */
-        $resolver = Mockery::mock(RequestMiddlewareResolverCachingInterface::class);
+        /** @var MiddlewareResolverCachingInterface|MockInterface $resolver */
+        $resolver = Mockery::mock(MiddlewareResolverCachingInterface::class);
         $resolver
             ->shouldReceive('resolveMiddlewareChain')
             ->times(2)

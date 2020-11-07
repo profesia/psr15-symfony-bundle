@@ -8,7 +8,7 @@ use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\RequestMiddlewareResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
 
-class RequestMiddlewareResolverTest extends MockeryTestCase
+class MiddlewareResolverTest extends MockeryTestCase
 {
     public function testCanResolveMiddlewareChain()
     {
@@ -129,7 +129,7 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
                 }
             );
 
-        $resolver = new RequestMiddlewareResolver(
+        $resolver = new MiddlewareResolver(
             $middlewareResolverChain,
             $logger
         );
@@ -248,7 +248,7 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
                 $resolvedMiddleware
             );
 
-        $resolver = new RequestMiddlewareResolver(
+        $resolver = new MiddlewareResolver(
             $middlewareResolverChain
         );
 
@@ -361,7 +361,7 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
                 }
             );
 
-        $resolver = new RequestMiddlewareResolver(
+        $resolver = new MiddlewareResolver(
             $middlewareResolverChain,
             $logger
         );
@@ -535,7 +535,7 @@ class RequestMiddlewareResolverTest extends MockeryTestCase
                 }
             );
 
-        $resolver = new RequestMiddlewareResolver(
+        $resolver = new MiddlewareResolver(
             $middlewareResolverChain,
             $logger
         );
