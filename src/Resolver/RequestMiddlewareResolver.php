@@ -34,14 +34,14 @@ class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
             } catch (AbstractResolveException $e) {
                 $this->log(
                     LogLevel::WARNING,
-                    "Unable to fetch cached resolver. Cause: [{$e->getMessage()}]",
+                    "Unable to fetch cached resolver. Cause: [{$e->getMessage()}]. ",
                     [
                         'accessKey' => $accessKey->toArray()
                     ]
                 );
             }
 
-            if ($middlewareChain !== null && $accessKey !== null) {
+            if ($middlewareChain !== null) {
                 $cachedMiddleware = ResolvedMiddlewareChain::createFromResolverContext(
                     $middlewareChain,
                     $accessKey
@@ -49,7 +49,7 @@ class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
 
                 $this->log(
                     LogLevel::INFO,
-                    'Fetched middleware chain from cache',
+                    'Fetched middleware chain from cache. ',
                     [
                         'accessKey'       => $accessKey->toArray(),
                         'middlewareChain' => $middlewareChain->listChainClassNames()
@@ -67,7 +67,7 @@ class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
         if (!$resolvedMiddleware->isNullMiddleware()) {
             $this->log(
                 LogLevel::INFO,
-                'Resolved middleware chain',
+                'Resolved middleware chain. ',
                 [
                     'accessKey'       =>
                         $resolvedMiddleware

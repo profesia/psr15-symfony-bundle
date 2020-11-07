@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
 
-class MiddlewareResolvingRequest
+final class MiddlewareResolvingRequest
 {
     private HttpMethod                   $httpMethod;
     private CompiledRoute                $compiledRoute;
