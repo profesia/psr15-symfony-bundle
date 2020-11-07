@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
 use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 
 class ResolvedMiddlewareChain
@@ -41,9 +42,9 @@ class ResolvedMiddlewareChain
         return $this->middlewareChain;
     }
 
-    public function wasMiddlewareResolved(): bool
+    public function isNullMiddleware(): bool
     {
-        return ($this->middlewareAccessKey !== null);
+        return ($this->middlewareChain instanceof NullMiddleware);
     }
 
     public function getMiddlewareAccessKey(): ?ResolvedMiddlewareAccessKey

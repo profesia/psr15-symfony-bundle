@@ -55,6 +55,10 @@ class SymfonyControllerAdapter
     public function __invoke(): Response
     {
         $routeName = $this->request->attributes->get('_route');
+        if ($this->request->attributes->has('_locale')) {
+            $routeName = "{$routeName}.{$this->request->attributes->get('_locale')}";
+        }
+
         $route     = $this->routeCollection->get($routeName);
         if ($route === null) {
             throw new RuntimeException("Route: [{$routeName}] is not registered");

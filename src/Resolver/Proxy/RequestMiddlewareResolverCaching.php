@@ -45,7 +45,7 @@ class RequestMiddlewareResolverCaching implements RequestMiddlewareResolverCachi
         }
 
         $resolvedMiddlewareChain = $this->resolver->resolveMiddlewareChain($request);
-        if (!$resolvedMiddlewareChain->wasMiddlewareResolved()) {
+        if (!$resolvedMiddlewareChain->isNullMiddleware()) {
             return $resolvedMiddlewareChain;
         }
 

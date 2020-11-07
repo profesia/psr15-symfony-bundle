@@ -24,69 +24,62 @@ class RequestMiddlewareResolver implements RequestMiddlewareResolverInterface
 
     public function resolveMiddlewareChain(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
-        if (!$request->hasAccessKey()) {
-            $resolvedMiddleware = $this->middlewareResolverChain->handle(
-                $request
-            );
+        if ($request->hasAccessKey()) {
+            $accessKey       = $request->getAccessKey();
+            $middlewareChain = null;
+            try {
+                $middlewareChain = $this->middlewareResolverChain->getChain(
+                    $request->getAccessKey()
+                );
+            } catch (AbstractResolveException $e) {
+                $this->log(
+                    LogLevel::WARNING,
+                    "Unable to fetch cached resolver. Cause: [{$e->getMessage()}]",
+                    [
+                        'accessKey' => $accessKey->toArray()
+                    ]
+                );
+            }
 
-            $this->log(
-                LogLevel::INFO,
-                'Resolved middleware chain',
-                [
-                    'accessKey'       => $resolvedMiddleware->getMiddlewareAccessKey()->toArray(),
-                    'middlewareChain' => $resolvedMiddleware->getMiddlewareChain()->listChainClassNames()
-                ]
-            );
+            if ($middlewareChain !== null && $accessKey !== null) {
+                $cachedMiddleware = ResolvedMiddlewareChain::createFromResolverContext(
+                    $middlewareChain,
+                    $accessKey
+                );
 
-            return $resolvedMiddleware;
-        }
+                $this->log(
+                    LogLevel::INFO,
+                    'Fetched middleware chain from cache',
+                    [
+                        'accessKey'       => $accessKey->toArray(),
+                        'middlewareChain' => $middlewareChain->listChainClassNames()
+                    ]
+                );
 
-        $accessKey       = $request->getAccessKey();
-        $middlewareChain = null;
-        try {
-            $middlewareChain = $this->middlewareResolverChain->getChain(
-                $request->getAccessKey()
-            );
-        } catch (AbstractResolveException $e) {
-            $this->log(
-                LogLevel::WARNING,
-                "Unable to fetch cached resolver. Cause: [{$e->getMessage()}]",
-                [
-                    'accessKey' => $accessKey->toArray()
-                ]
-            );
-        }
-
-        if ($middlewareChain !== null && $accessKey !== null) {
-            $cachedMiddleware = ResolvedMiddlewareChain::createFromResolverContext(
-                $middlewareChain,
-                $accessKey
-            );
-
-            $this->log(
-                LogLevel::INFO,
-                'Fetched middleware chain from cache',
-                [
-                    'accessKey'       => $accessKey->toArray(),
-                    'middlewareChain' => $middlewareChain->listChainClassNames()
-                ]
-            );
-
-            return $cachedMiddleware;
+                return $cachedMiddleware;
+            }
         }
 
         $resolvedMiddleware = $this->middlewareResolverChain->handle(
             $request
         );
 
-        $this->log(
-            LogLevel::INFO,
-            'Resolved middleware chain',
-            [
-                'accessKey'       => $resolvedMiddleware->getMiddlewareAccessKey()->toArray(),
-                'middlewareChain' => $resolvedMiddleware->getMiddlewareChain()->listChainClassNames()
-            ]
-        );
+        if (!$resolvedMiddleware->isNullMiddleware()) {
+            $this->log(
+                LogLevel::INFO,
+                'Resolved middleware chain',
+                [
+                    'accessKey'       =>
+                        $resolvedMiddleware
+                            ->getMiddlewareAccessKey()
+                            ->toArray(),
+                    'middlewareChain' =>
+                        $resolvedMiddleware
+                            ->getMiddlewareChain()
+                            ->listChainClassNames()
+                ]
+            );
+        }
 
         return $resolvedMiddleware;
     }

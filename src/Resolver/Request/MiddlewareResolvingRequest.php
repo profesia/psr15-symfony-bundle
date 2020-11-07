@@ -34,10 +34,6 @@ class MiddlewareResolvingRequest
 
     public static function createFromFoundationAssets(Request $request, Route $route, string $routeName): MiddlewareResolvingRequest
     {
-        if ($request->attributes->has('_locale')) {
-            $routeName = "{$routeName}.{$request->attributes->get('_locale')}";
-        }
-
         $compiledRoute = $route->compile();
         $staticPrefix  = $compiledRoute->getStaticPrefix();
         $cacheKey      = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
