@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 
+use Mockery;
+use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
-use Mockery;
-use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
@@ -80,7 +81,6 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                 $compiledRoute1
             );
 
-        $httpMethods = ['GET', 'POST'];
         $route1
             ->shouldReceive('getMethods')
             ->andReturn(
@@ -124,17 +124,16 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
             ->shouldReceive('resolveMiddlewareChain')
             ->times(2)
             ->withArgs(
-                function (Request $argument) use ($checkedHttpMethods, &$index) {
-                    $attributes = $argument->attributes;
-                    if ($attributes->has('_route') === false) {
+                function (MiddlewareResolvingRequest $argument) use ($checkedHttpMethods, &$index) {
+                    if ($argument->hasAccessKey()) {
                         return false;
                     }
 
-                    if ($attributes->get('_route') != '1') {
+                    if ($argument->getAccessKey() !== null) {
                         return false;
                     }
 
-                    if ($argument->getMethod() !== $checkedHttpMethods[$index]) {
+                    if (!$argument->getHttpMethod()->equals(HttpMethod::createFromString($checkedHttpMethods[$index]))) {
                         return false;
                     }
                     $index++;
@@ -142,9 +141,11 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                     return true;
                 }
             )->andReturn(
-                new NullMiddleware(
-                    $serverRequestFactory,
-                    $responseFactory
+                ResolvedMiddlewareChain::createDefault(
+                    new NullMiddleware(
+                        $serverRequestFactory,
+                        $responseFactory
+                    )
                 )
             );
 

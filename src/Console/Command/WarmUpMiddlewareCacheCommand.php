@@ -65,7 +65,7 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
                     $request,
                     $route,
-                    $routeName
+                    (string)$routeName
                 );
                 $resolvedMiddleware         = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
 

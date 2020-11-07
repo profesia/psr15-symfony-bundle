@@ -10,44 +10,34 @@ use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
-use RuntimeException;
-use Symfony\Component\Routing\CompiledRoute;
+use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
 
 class CompiledPathResolverTest extends MockeryTestCase
 {
-    /*public function testWillAppendNewRuleToExistingRuleBasedOnHttpMethod()
+    public function testWillAppendNewRuleToExistingRuleBasedOnHttpMethod()
     {
         /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        /*$middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        /** @var MockInterface|RouteCollection $routeCollection */
-        /*$routeCollection = Mockery::mock(RouteCollection::class);
-
-        /** @var MockInterface|RouterInterface $router */
-        /*$router = Mockery::mock(RouterInterface::class);
-        $router
-            ->shouldReceive('getRouteCollection')
-            ->once()
-            ->andReturn(
-                $routeCollection
-            );
+        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
 
         $resolver = new CompiledPathResolver(
             $middlewareChainItemFactory
         );
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware2 */
-        /*$middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
 
         /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
-        /*$middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
         $middleware1
             ->shouldReceive('append')
             ->once()
@@ -85,60 +75,135 @@ class CompiledPathResolverTest extends MockeryTestCase
         );
     }
 
-    public function testCanHandleNonExistingRoute()
+    public function testWillHandleExecutionToNextHandlerOnNoRuleMatch()
     {
-        /*$request = new MiddlewareResolvingRequest(
-            HttpMethod::createFromString('POST'),
-            'test'
-        );*/
-
         /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        /*$middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        /** @var MockInterface|RouteCollection $routeCollection */
-        /*$routeCollection = Mockery::mock(RouteCollection::class);
-        $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    $request->getRouteName()
-                ]
-            )->andReturn(
-                null
-            );
-
-        /** @var MockInterface|RouterInterface $router */
-        /*$router = Mockery::mock(RouterInterface::class);
-        $router
-            ->shouldReceive('getRouteCollection')
-            ->once()
-            ->andReturn(
-                $routeCollection
-            );
-
+        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
 
         $resolver = new CompiledPathResolver(
             $middlewareChainItemFactory
         );
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage("Route: [{$request->getRouteName()}] is not registered");
-        $resolver->handle($request);
+        $request                    = new Request();
+        $route                      = new Route('/test');
+        $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
+            $request,
+            $route,
+            'test'
+        );
+
+        /** @var ResolvedMiddlewareChain|MockInterface $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
+
+        /** @var MockInterface|AbstractChainResolver $handler */
+        $handler = Mockery::mock(AbstractChainResolver::class);
+        $handler
+            ->shouldReceive(
+                'handle'
+            )
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareResolvingRequest
+                ]
+            )
+            ->andReturn(
+                $expectedMiddlewareChain
+            );
+
+        $resolver->setNext(
+            $handler
+        );
+
+        $resolvedMiddlewareChain = $resolver->handle(
+            $middlewareResolvingRequest
+        );
+
+        $this->assertEquals($expectedMiddlewareChain, $resolvedMiddlewareChain);
     }
 
-    public function testWillHandleRouteCompilation()
+    public function testCanDelegateGettingOfTheChainToNextHandler()
     {
-        /*$request = new MiddlewareResolvingRequest(
-            HttpMethod::createFromString('POST'),
-            'test'
-        );*/
+        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
+        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
 
+        $resolver = new CompiledPathResolver(
+            $middlewareChainItemFactory
+        );
+
+        $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
+            [
+                'resolverClass' => RouteNameResolver::class,
+                'accessPath' => [
+                    '1',
+                    '2'
+                ],
+            ]
+        );
+
+        /** @var MockInterface|AbstractMiddlewareChainItem $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(AbstractMiddlewareChainItem::class);
+
+        /** @var MockInterface|AbstractChainResolver $handler */
+        $handler = Mockery::mock(AbstractChainResolver::class);
+        $handler
+            ->shouldReceive(
+                'getChain'
+            )
+            ->once()
+            ->withArgs(
+                [
+                    $accessKey
+                ]
+            )
+            ->andReturn(
+                $expectedMiddlewareChain
+            );
+
+        $resolver->setNext(
+            $handler
+        );
+
+        $resolvedMiddlewareChain = $resolver->getChain(
+            $accessKey
+        );
+
+        $this->assertEquals($expectedMiddlewareChain, $resolvedMiddlewareChain);
+    }
+
+    public function testWillThrowExceptionOnGettingMiddlewareChainWhenThereIsNoNextResolver()
+    {
+        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
+        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
+
+        $resolver = new CompiledPathResolver(
+            $middlewareChainItemFactory
+        );
+
+        $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
+            [
+                'resolverClass' => RouteNameResolver::class,
+                'accessPath' => [
+                    '1',
+                    '2'
+                ],
+            ]
+        );
+
+        $this->expectException(ChainNotFoundException::class);
+        $this->expectExceptionMessage('No resolver was able to retrieve middleware chain');
+        $resolver->getChain(
+            $accessKey
+        );
+    }
+
+    public function testWillReturnNullMiddlewareOnNoNextHandlerRegistered()
+    {
         /** @var MockInterface|NullMiddleware $nullMiddleware */
-        /*$nullMiddleware = Mockery::mock(NullMiddleware::class);
+        $nullMiddleware = Mockery::mock(NullMiddleware::class);
 
         /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        /*$middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
+        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
         $middlewareChainItemFactory
             ->shouldReceive('createNullChainItem')
             ->once()
@@ -146,52 +211,19 @@ class CompiledPathResolverTest extends MockeryTestCase
                 $nullMiddleware
             );
 
-        /** @var MockInterface|CompiledRoute $compiledRoute */
-        /*$compiledRoute = Mockery::mock(CompiledRoute::class);
-        $compiledRoute
-            ->shouldReceive('getStaticPrefix')
-            ->once()
-            ->andReturn(
-                '/test'
-            );
-
-        /** @var MockInterface|Route $route */
-        /*$route = Mockery::mock(Route::class);
-        $route
-            ->shouldReceive('compile')
-            ->once()
-            ->andReturn(
-                $compiledRoute
-            );
-
-        /** @var MockInterface|RouteCollection $routeCollection */
-        /*$routeCollection = Mockery::mock(RouteCollection::class);
-        $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    $request->getRouteName()
-                ]
-            )->andReturn(
-                $route
-            );
-
-        /** @var MockInterface|RouterInterface $router */
-        /*$router = Mockery::mock(RouterInterface::class);
-        $router
-            ->shouldReceive('getRouteCollection')
-            ->once()
-            ->andReturn(
-                $routeCollection
-            );
-
-
         $resolver = new CompiledPathResolver(
             $middlewareChainItemFactory
         );
 
-        $resolvedMiddleware = $resolver->handle($request);
-        $this->assertEquals($nullMiddleware, $resolvedMiddleware);
-    }*/
+        $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
+            new Request(),
+            new Route('/test'),
+            'test'
+        );
+
+        $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
+        $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
+        $this->assertTrue($resolvedMiddlewareChain->getMiddlewareChain() === $nullMiddleware);
+        $this->assertNull($resolvedMiddlewareChain->getMiddlewareAccessKey());
+    }
 }

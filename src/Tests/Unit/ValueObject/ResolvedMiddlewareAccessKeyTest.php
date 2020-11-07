@@ -17,6 +17,7 @@ class ResolvedMiddlewareAccessKeyTest extends MockeryTestCase
         return [
             [[], InvalidArgumentException::class, 'Key: [accessPath] is not present in input argument'],
             [['accessPath' => []], InvalidArgumentException::class, 'Key: [resolverClass] is not present in input argument'],
+            [['accessPath' => [], 'resolverClass' => 'Test123'], InvalidArgumentException::class, 'Resolver: [Test123] is not supported']
         ];
     }
 
@@ -33,29 +34,4 @@ class ResolvedMiddlewareAccessKeyTest extends MockeryTestCase
         $this->expectExceptionMessage($exceptionMessage);
         ResolvedMiddlewareAccessKey::createFromArray($array);
     }
-
-    /*public function testCanCreateFromArray()
-    {
-    }*/
-
-    /*public function testCanTransformToArray()
-    {
-        $mock  = Mockery::mock(RouteNameResolver::class);
-        $array = [
-            'resolverClass' => get_class($mock),
-            'accessPath'    => [
-                'a',
-                'b',
-                'c'
-            ]
-        ];
-        $vo    = ResolvedMiddlewareAccessKey::createFromArray(
-            $array
-        );
-        $this->assertEquals(
-            $array,
-            $vo->toArray()
-        );
-    }*/
-
 }

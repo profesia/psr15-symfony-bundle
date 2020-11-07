@@ -57,7 +57,7 @@ final class ResolvedMiddlewareAccessKey
     private static function create(string $resolverClass, array $accessPath): ResolvedMiddlewareAccessKey
     {
         if (!array_key_exists($resolverClass, static::RESOLVERS)) {
-            throw new InvalidArgumentException("Resolver: [{$resolverClass}} id not supported");
+            throw new InvalidArgumentException("Resolver: [{$resolverClass}] is not supported");
         }
 
         return new static(

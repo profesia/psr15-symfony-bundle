@@ -79,7 +79,7 @@ class RouteNameResolver extends AbstractChainResolver
         $routeName = $request->getRouteName();
         if (isset($this->registeredRouteMiddlewares[$routeName])) {
             return ResolvedMiddlewareChain::createFromResolverContext(
-                $this->registeredRouteMiddlewares[static::WILDCARD],
+                $this->registeredRouteMiddlewares[$routeName],
                 ResolvedMiddlewareAccessKey::createFromMiddlewareResolver(
                     $this,
                     [
