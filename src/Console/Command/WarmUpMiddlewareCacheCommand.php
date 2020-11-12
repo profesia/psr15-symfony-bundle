@@ -49,14 +49,18 @@ class WarmUpMiddlewareCacheCommand extends Command
         $table = new Table($output);
         $table->setHeaders(['Route', 'Static Path', 'HTTP method', 'Middleware chain items']);
         $index = 1;
+
+        $routeNames     = array_keys($this->routes);
+        $firstRouteName = current($routeNames);
         foreach ($this->routes as $routeName => $route) {
-            $innerIndex   = 1;
             $staticPrefix = $route->compile()->getStaticPrefix();
             $httpMethods  = $route->getMethods();
             if ($httpMethods === []) {
                 $httpMethods = HttpMethod::getPossibleValues();
             }
 
+            $lasthttpMethod = $httpMethods[sizeof($httpMethods) - 1];
+            $rows           = [];
             foreach ($httpMethods as $httpMethod) {
                 $request = new Request();
                 $request->attributes->set('_route', $routeName);
@@ -71,23 +75,22 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $resolvedMiddleware = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
 
                 if (!$resolvedMiddleware->isNullMiddleware()) {
-                    $table->addRow(
-                        [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())]
-                    );
+                    $rows[] =
+                        [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())];
 
-                    if ($innerIndex !== sizeof($route->getMethods())) {
-                        $table->addRow(new TableSeparator());
+                    if ($httpMethod !== $lasthttpMethod) {
+                        $rows[] = new TableSeparator();
                     }
-
-                    $innerIndex++;
                 }
             }
 
-            if ($index !== sizeof($this->routes)) {
+            if ($routeName !== $firstRouteName && $rows !== []) {
                 $table->addRow(new TableSeparator());
             }
 
-            $index++;
+            if ($rows !== []) {
+                $table->addRows($rows);
+            }
         }
 
         $table->render();
