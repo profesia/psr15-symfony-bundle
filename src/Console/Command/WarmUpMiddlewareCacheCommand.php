@@ -48,7 +48,6 @@ class WarmUpMiddlewareCacheCommand extends Command
     {
         $table = new Table($output);
         $table->setHeaders(['Route', 'Static Path', 'HTTP method', 'Middleware chain items']);
-        $index = 1;
 
         $routeNames     = array_keys($this->routes);
         $firstRouteName = current($routeNames);
@@ -59,8 +58,7 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $httpMethods = HttpMethod::getPossibleValues();
             }
 
-            $lasthttpMethod = $httpMethods[sizeof($httpMethods) - 1];
-            $rows           = [];
+            $middlewareChains = [];
             foreach ($httpMethods as $httpMethod) {
                 $request = new Request();
                 $request->attributes->set('_route', $routeName);
@@ -75,21 +73,45 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $resolvedMiddleware = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
 
                 if (!$resolvedMiddleware->isNullMiddleware()) {
-                    $rows[] =
-                        [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())];
-
-                    if ($httpMethod !== $lasthttpMethod) {
-                        $rows[] = new TableSeparator();
+                    $middlewareChainClasses = $resolvedMiddleware->getMiddlewareChain()->listChainClassNames();
+                    $middlewareKey          = implode('|', $middlewareChainClasses);
+                    if (isset($middlewareChains[$middlewareKey])) {
+                        $middlewareChains[$middlewareKey]['method'][] = $httpMethod;
+                    } else {
+                        $middlewareChains[$middlewareKey] = [
+                            'routeName'              => $routeName,
+                            'staticPrefix'           => $staticPrefix,
+                            'middlewareChainClasses' => $middlewareChainClasses,
+                            'method'                 => [
+                                $httpMethod
+                            ]
+                        ];
                     }
                 }
             }
 
-            if ($routeName !== $firstRouteName && $rows !== []) {
+            if ($routeName !== $firstRouteName && $middlewareChains !== []) {
                 $table->addRow(new TableSeparator());
             }
 
-            if ($rows !== []) {
-                $table->addRows($rows);
+            if ($middlewareChains !== []) {
+                $keys    = array_keys($middlewareChains);
+                $lastKey = $keys[sizeof($keys) - 1];
+
+                foreach ($middlewareChains as $key => $middlewareChain) {
+                    $table->addRow(
+                        [
+                            $middlewareChain['routeName'],
+                            $middlewareChain['staticPrefix'],
+                            implode('|', $middlewareChain['method']),
+                            implode("\n", $middlewareChain['middlewareChainClasses'])
+                        ]
+                    );
+
+                    if ($key !== $lastKey) {
+                        $table->addRow(new TableSeparator());
+                    }
+                }
             }
         }
 
