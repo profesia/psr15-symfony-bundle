@@ -70,9 +70,11 @@ class WarmUpMiddlewareCacheCommand extends Command
 
                 $resolvedMiddleware = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
 
-                $table->addRow(
-                    [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())]
-                );
+                if (!$resolvedMiddleware->isNullMiddleware()) {
+                    $table->addRow(
+                        [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())]
+                    );
+                }
 
                 if ($innerIndex !== sizeof($route->getMethods())) {
                     $table->addRow(new TableSeparator());
