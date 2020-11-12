@@ -36,7 +36,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         if ($parameters['use_cache'] === true) {
             $adapterDefinition->replaceArgument(
                 '$httpMiddlewareResolver',
-                new Reference('MiddlewareChainResolverProxy')
+                new Reference('MiddlewareChainResolverCaching')
             );
         }
 

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Decorator;
 
-use Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCacheRemoval;
-use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCacheRemoval;
+use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -75,8 +75,13 @@ class MiddlewareResolverCacheRemovalTest extends MockeryTestCase
         /** @var MockInterface|CacheItemPoolInterface $cacheItemPool */
         $cacheItemPool = Mockery::mock(CacheItemPoolInterface::class);
         $cacheItemPool
-            ->shouldReceive('clear')
-            ->once();
+            ->shouldReceive('deleteItem')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareResolvingRequest->getCacheKey()
+                ]
+            );
 
         $decorator = new MiddlewareResolverCacheRemoval(
             $decoratedObject,

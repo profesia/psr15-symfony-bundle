@@ -362,7 +362,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                         return false;
                     }
 
-                    return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverProxy');
+                    return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverCaching');
                 }
             );
 

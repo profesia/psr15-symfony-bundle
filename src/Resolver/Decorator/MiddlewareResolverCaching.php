@@ -2,19 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Profesia\Symfony\Psr15Bundle\Resolver\Proxy;
+namespace Profesia\Symfony\Psr15Bundle\Resolver\Decorator;
 
-use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
-use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverInterface;
+use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 
-class MiddlewareResolverCaching implements MiddlewareResolverCachingInterface
+class MiddlewareResolverCaching implements MiddlewareResolverInterface
 {
-    private MiddlewareResolverInterface $resolver;
+    private MiddlewareResolverInterface        $resolver;
     private CacheItemPoolInterface             $cache;
 
     public function __construct(MiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
@@ -36,8 +35,10 @@ class MiddlewareResolverCaching implements MiddlewareResolverCachingInterface
             $cacheKey
         );
 
+        $isLoadedFromCache = false;
         if ($cacheItem->isHit()) {
-            $request = $request->withResolvedMiddlewareAccessCode(
+            $isLoadedFromCache = true;
+            $request           = $request->withResolvedMiddlewareAccessCode(
                 ResolvedMiddlewareAccessKey::createFromArray(
                     $cacheItem->get()
                 )
@@ -45,7 +46,7 @@ class MiddlewareResolverCaching implements MiddlewareResolverCachingInterface
         }
 
         $resolvedMiddlewareChain = $this->resolver->resolveMiddlewareChain($request);
-        if ($resolvedMiddlewareChain->isNullMiddleware()) {
+        if ($resolvedMiddlewareChain->isNullMiddleware() || $isLoadedFromCache === true) {
             return $resolvedMiddlewareChain;
         }
 
