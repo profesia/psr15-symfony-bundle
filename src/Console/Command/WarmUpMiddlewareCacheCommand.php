@@ -74,13 +74,13 @@ class WarmUpMiddlewareCacheCommand extends Command
                     $table->addRow(
                         [$routeName, $staticPrefix, $httpMethod, implode("\n", $resolvedMiddleware->getMiddlewareChain()->listChainClassNames())]
                     );
-                }
 
-                if ($innerIndex !== sizeof($route->getMethods())) {
-                    $table->addRow(new TableSeparator());
-                }
+                    if ($innerIndex !== sizeof($route->getMethods())) {
+                        $table->addRow(new TableSeparator());
+                    }
 
-                $innerIndex++;
+                    $innerIndex++;
+                }
             }
 
             if ($index !== sizeof($this->routes)) {
