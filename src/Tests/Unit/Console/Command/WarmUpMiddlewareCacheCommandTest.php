@@ -51,6 +51,45 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         );
     }
 
+    public function testConfiguration()
+    {
+        /** @var MockInterface|RouteCollection $routeCollection */
+        $routeCollection = Mockery::mock(RouteCollection::class);
+        $routeCollection
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn(
+                []
+            );
+
+        /** @var MockInterface|RouterInterface $router */
+        $router = Mockery::mock(RouterInterface::class);
+        $router
+            ->shouldReceive('getRouteCollection')
+            ->once()
+            ->andReturn(
+                $routeCollection
+            );
+
+        /** @var MockInterface|MiddlewareResolverCachingInterface $resolverCacheProxy */
+        $resolverCacheProxy = Mockery::mock(MiddlewareResolverCachingInterface::class);
+
+        $command = new WarmUpMiddlewareCacheCommand(
+            $router,
+            $resolverCacheProxy
+        );
+
+        $this->assertEquals(
+            'profesia:middleware:warm-up',
+            $command->getName()
+        );
+
+        $this->assertEquals(
+            'Warms up the middleware cache',
+            $command->getDescription()
+        );
+    }
+
     /**
      * @dataProvider httpMethodsDataProvider
      *
