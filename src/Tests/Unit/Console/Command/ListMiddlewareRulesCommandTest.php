@@ -22,6 +22,30 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class ListMiddlewareRulesCommandTest extends MockeryTestCase
 {
+    public function testConfiguration()
+    {
+        /** @var MockInterface|RouteNameResolver $routeNameStrategyResolver */
+        $routeNameStrategyResolver = Mockery::mock(RouteNameResolver::class);
+
+        /** @var MockInterface|CompiledPathResolver $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = Mockery::mock(CompiledPathResolver::class);
+
+        $command = new ListMiddlewareRulesCommand(
+            $routeNameStrategyResolver,
+            $compiledPathStrategyResolver
+        );
+
+        $this->assertEquals(
+            'profesia:middleware:list-rules',
+            $command->getName()
+        );
+
+        $this->assertEquals(
+            'Lists all registered middleware chains routing rules',
+            $command->getDescription()
+        );
+    }
+
     public function testCanListRouteNameMiddlewares()
     {
         $factory = new Psr17Factory();
