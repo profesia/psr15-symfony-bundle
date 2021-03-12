@@ -12,18 +12,7 @@ composer require profesia/psr15-symfony-bundle
 - PHP 7.4+
 - Symfony 5+
 ## Documentation
-- [Installation](docs/01-installation.md#installation)
-- [Requirements](docs/01-installation.md#requirements)
-- [Configuration](docs/02-configuration.md)
-- [Middleware chain definition](docs/03-middlewares.md#chain-definition)
-- [Middleware matching](docs/03-middlewares.md#matching)
-- [Middleware resolving](docs/03-middlewares.md#resolving)
-- [Middleware caching](docs/03-middlewares.md#caching)
-- [Architecture](docs/04-architecture.md)
-- [Console](docs/05-console.md)
-- [Limitations](docs/06-limitations.md)
-## Tests
-Work in progress
+Documentation for the bundle can be found at https://profesia.github.io/psr15-symfony-bundle/
 ## Author
 Matej Bádal - matejbadal@gmail.com
 ## License
