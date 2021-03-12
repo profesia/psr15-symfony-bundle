@@ -1,5 +1,8 @@
 # PSR-15 Symfony Bundle
 Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ applications
+
+[![Build Status](https://travis-ci.com/profesia/psr15-symfony-bundle.svg?branch=master)](https://travis-ci.com/profesia/psr15-symfony-bundle)
+
 ## Installation
 Install the latest version by running the command
 ```bash
