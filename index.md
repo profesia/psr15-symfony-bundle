@@ -1,37 +1,27 @@
-## Welcome to GitHub Pages
-
-You can use the [editor on GitHub](https://github.com/profesia/psr15-symfony-bundle/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
-
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+# PSR-15 Symfony Bundle
+Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ applications
+## Installation
+Install the latest version by running the command
+```bash
+composer require profesia/psr15-symfony-bundle
 ```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/profesia/psr15-symfony-bundle/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+## Requirements
+- PHP 7.4+
+- Symfony 5+
+## Documentation
+- [Installation](docs/01-installation.md#installation)
+- [Requirements](docs/01-installation.md#requirements)
+- [Configuration](docs/02-configuration.md)
+- [Middleware chain definition](docs/03-middlewares.md#chain-definition)
+- [Middleware matching](docs/03-middlewares.md#matching)
+- [Middleware resolving](docs/03-middlewares.md#resolving)
+- [Middleware caching](docs/03-middlewares.md#caching)
+- [Architecture](docs/04-architecture.md)
+- [Console](docs/05-console.md)
+- [Limitations](docs/06-limitations.md)
+## Tests
+Work in progress
+## Author
+Matej Bádal - matejbadal@gmail.com
+## License
+This project is licensed under the MIT License
