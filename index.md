@@ -19,8 +19,7 @@ composer require profesia/psr15-symfony-bundle
 - [Architecture](docs/04-architecture.md)
 - [Console](docs/05-console.md)
 - [Limitations](docs/06-limitations.md)
-## Tests
-Work in progress
+
 ## Author
 Matej Bádal - matejbadal@gmail.com
 ## License
