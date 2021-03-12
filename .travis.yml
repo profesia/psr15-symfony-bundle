@@ -8,4 +8,5 @@ install:
 branches:
     only:
         - master
-#        - /^v\d+\.\d+\.\d+/
+        - development
+        - /^v\d+\.\d+\.\d+/
