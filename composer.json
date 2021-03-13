@@ -1,5 +1,6 @@
 {
 	"name": "profesia/psr15-symfony-bundle",
+	"description": "Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ applications",
 	"keywords": [
 		"psr-15",
 		"symfony",
@@ -18,13 +19,13 @@
 		"delvesoft/psr15": "^1.2",
 		"symfony/psr-http-message-bridge": "^2.0",
 		"nyholm/psr7": "^1.3",
-		"symfony/console": ">=5.0",
-		"myclabs/deep-copy": "^1.10",
-		"symfony/dependency-injection": ">=5.0",
-		"symfony/http-kernel": ">=5.0",
-		"symfony/cache": ">=5.0",
-		"symfony/config": ">=5.0",
-		"symfony/routing": ">=5.0"
+		"symfony/console": "~5.0",
+		"myclabs/deep-copy": "~1.10",
+		"symfony/dependency-injection": "~5.0",
+		"symfony/http-kernel": "~5.0",
+		"symfony/cache": "~5.0",
+		"symfony/config": "~5.0",
+		"symfony/routing": "~5.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "^0.12.29",
