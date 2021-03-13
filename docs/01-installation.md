@@ -1,3 +1,5 @@
+`/`[Home](/)`/`[Installation](/docs/01-installation.md)
+
 # Installing Bundle
 ## Installation
 - Install the latest version by running the command:

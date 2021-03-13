@@ -1,3 +1,5 @@
+`/`[Home](/)`/`[Console](/docs/05-console.md)
+
 # Console
 The bundle offers two console commands as part of its infrastructure:
 * [ListMiddlewareRulesCommand](../src/Console/Command/ListMiddlewareRulesCommand.php)

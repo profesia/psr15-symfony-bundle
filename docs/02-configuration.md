@@ -1,3 +1,5 @@
+`/`[Home](/)`/`[Configuration](/docs/02-configuration.md)
+
 # Configuring Bundle
 Configuration for the bundle has to be stored in the `psr15.yaml` file.
 ## Config structure
