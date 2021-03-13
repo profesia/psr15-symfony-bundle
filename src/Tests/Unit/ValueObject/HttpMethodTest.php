@@ -50,7 +50,6 @@ class HttpMethodTest extends MockeryTestCase
 
         $returnValue = $httpMethod->extractMiddleware($middlewares);
         $this->assertEquals($middleware2, $returnValue);
-        $this->assertEquals(true, false);
     }
 
     public function testCanCompare()
