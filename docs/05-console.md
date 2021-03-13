@@ -1,4 +1,4 @@
-`/`[Home](/)`/`[Console](/docs/05-console.md)
+`/`[Home](/psr15-symfony-bundle)`/`[Console](/psr15-symfony-bundle/docs/05-console.md)
 
 # Console
 The bundle offers two console commands as part of its infrastructure:

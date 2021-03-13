@@ -1,4 +1,4 @@
-`/`[Home](/)
+`/`[Home](/psr15-symfony-bundle)
 
 
 # PSR-15 Symfony Bundle

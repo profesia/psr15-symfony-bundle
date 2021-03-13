@@ -1,4 +1,4 @@
-`/`[Home](/)`/`[Installation](/docs/01-installation.md)
+`/`[Home](/psr15-symfony-bundle)`/`[Installation](/psr15-symfony-bundle/docs/01-installation.md)
 
 # Installing Bundle
 ## Installation
