@@ -12,16 +12,16 @@ composer require profesia/psr15-symfony-bundle
 - PHP 7.4+
 - Symfony 5+
 ## Documentation
-- [Installation](docs/01-installation.md#installation)
-- [Requirements](docs/01-installation.md#requirements)
-- [Configuration](docs/02-configuration.md)
-- [Middleware chain definition](docs/03-middlewares.md#chain-definition)
-- [Middleware matching](docs/03-middlewares.md#matching)
-- [Middleware resolving](docs/03-middlewares.md#resolving)
-- [Middleware caching](docs/03-middlewares.md#caching)
-- [Architecture](docs/04-architecture.md)
-- [Console](docs/05-console.md)
-- [Limitations](docs/06-limitations.md)
+- [Installation](docs/01-installation.html#installation)
+- [Requirements](docs/01-installation.html#requirements)
+- [Configuration](docs/02-configuration.html)
+- [Middleware chain definition](docs/03-middlewares.html#chain-definition)
+- [Middleware matching](docs/03-middlewares.html#matching)
+- [Middleware resolving](docs/03-middlewares.html#resolving)
+- [Middleware caching](docs/03-middlewares.html#caching)
+- [Architecture](docs/04-architecture.html)
+- [Console](docs/05-console.html)
+- [Limitations](docs/06-limitations.html)
 
 ## Author
 Matej Bádal - matejbadal@gmail.com
