@@ -1,0 +1,25 @@
+name: PHP Composer
+
+on:
+    push:
+        branches:
+            - master
+            - development
+            - /^v\d+\.\d+\.\d+/
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                php: [7.4, 8.0]
+
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Validate composer.json and composer.lock
+              run: composer validate --strict
+
+            - name: Install dependencies
+              run: composer install --prefer-dist --no-progress --no-suggest
