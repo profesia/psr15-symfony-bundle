@@ -1,2 +1,5 @@
 .*
 !.gitignore
+composer.lock
+vendor/
+build
