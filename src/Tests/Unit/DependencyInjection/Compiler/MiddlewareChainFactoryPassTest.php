@@ -33,7 +33,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(true);
@@ -41,7 +41,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         $routingConfig = [];
         if ($routing !== null) {
             $routingConfig = [
-                'Condition' => $routing
+                'Condition' => $routing,
             ];
         }
         $container
@@ -49,16 +49,16 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(
                 [
                     'use_cache'         => false,
                     'middleware_chains' => [
-                        'Test' => $middlewareChain
+                        'Test' => $middlewareChain,
                     ],
-                    'routing'           => $routingConfig
+                    'routing'           => $routingConfig,
                 ]
             );
 
@@ -69,7 +69,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    SymfonyControllerAdapter::class
+                    SymfonyControllerAdapter::class,
                 ]
             )
             ->andReturn(
@@ -83,7 +83,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    RouteNameResolver::class
+                    RouteNameResolver::class,
                 ]
             )
             ->andReturn(
@@ -97,7 +97,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    CompiledPathResolver::class
+                    CompiledPathResolver::class,
                 ]
             )
             ->andReturn(
@@ -111,7 +111,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $alias
+                        $alias,
                     ]
                 )
                 ->andReturn(true);
@@ -130,7 +130,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $alias
+                        $alias,
                     ]
                 )
                 ->andReturn(
@@ -144,7 +144,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        false
+                        false,
                     ]
                 )->andReturn(
                     $newDefinition
@@ -155,7 +155,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        true
+                        true,
                     ]
                 )->andReturn(
                     $newDefinition
@@ -166,7 +166,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        false
+                        false,
                     ]
                 )
                 ->andReturn(
@@ -179,7 +179,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $middlewareDefinition
+                        $middlewareDefinition,
                     ]
                 )
                 ->andReturn(
@@ -198,7 +198,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                         'append',
                         [
                             $adapterDefinition,
-                        ]
+                        ],
                     ]
                 );
         }
@@ -208,7 +208,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'deepCopy'                     => $deepCopy,
             'middlewareChain'              => $firstDefinition,
             'routeNameStrategyResolver'    => $routeNameStrategyResolver,
-            'compiledPathStrategyResolver' => $compiledPathStrategyResolver
+            'compiledPathStrategyResolver' => $compiledPathStrategyResolver,
         ];
     }
 
@@ -228,7 +228,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(false);
@@ -236,85 +236,32 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         $compilerPass->process($container);
     }
 
-    public function testCanHandleCachingDisabled()
+    public function provideDataForCachingTest(): array
     {
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = Mockery::mock(DeepCopy::class);
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $deepCopy
-        );
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = Mockery::mock(ContainerBuilder::class);
-        $container
-            ->shouldReceive('hasParameter')
-            ->once()
-            ->withArgs(
-                [
-                    'profesia_psr15'
-                ]
-            )
-            ->andReturn(true);
-
-        $container
-            ->shouldReceive('getParameter')
-            ->once()
-            ->withArgs(
-                [
-                    'profesia_psr15'
-                ]
-            )
-            ->andReturn(
+        return [
+            [
                 [
                     'use_cache'         => false,
                     'middleware_chains' => [],
-                    'routing'           => []
-                ]
-            );
-
-        /** @var MockInterface|Definition $definition */
-        $definition = Mockery::mock(Definition::class);
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
+                    'routing'           => [],
+                ],
+            ],
+            [
                 [
-                    SymfonyControllerAdapter::class
-                ]
-            )
-            ->andReturn(
-                $definition
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    RouteNameResolver::class
-                ]
-            )
-            ->andReturn(
-                null
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    CompiledPathResolver::class
-                ]
-            )
-            ->andReturn(
-                null
-            );
-
-        $compilerPass->process($container);
+                    'use_cache'         => true,
+                    'middleware_chains' => [],
+                    'routing'           => [],
+                ],
+            ],
+        ];
     }
 
-    public function testCanHandleCachingEnabled()
+    /**
+     * @dataProvider provideDataForCachingTest
+     *
+     * @param array $config
+     */
+    public function testCanHandleCachingConfig(array $config)
     {
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
@@ -330,7 +277,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(true);
@@ -340,69 +287,46 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(
-                [
-                    'use_cache'         => true,
-                    'middleware_chains' => [],
-                    'routing'           => []
-                ]
+                $config
             );
 
         /** @var MockInterface|Definition $definition */
         $definition = Mockery::mock(Definition::class);
-        $definition
-            ->shouldReceive('replaceArgument')
-            ->once()
-            ->withArgs(
-                function ($name, $argument) {
-                    if ($name !== '$httpMiddlewareResolver') {
-                        return false;
+
+        if ($config['use_cache'] === true) {
+            /** @var MockInterface|Definition $definition */
+            $definition = Mockery::mock(Definition::class);
+            $definition
+                ->shouldReceive('replaceArgument')
+                ->once()
+                ->withArgs(
+                    function ($name, $argument) {
+                        if ($name !== '$httpMiddlewareResolver') {
+                            return false;
+                        }
+
+                        return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverCaching');
                     }
+                );
 
-                    return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverCaching');
-                }
-            );
+            $container
+                ->shouldReceive('getDefinition')
+                ->once()
+                ->withArgs(
+                    [
+                        SymfonyControllerAdapter::class,
+                    ]
+                )
+                ->andReturn(
+                    $definition
+                );
+        }
 
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    SymfonyControllerAdapter::class
-                ]
-            )
-            ->andReturn(
-                $definition
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    RouteNameResolver::class
-                ]
-            )
-            ->andReturn(
-                null
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    CompiledPathResolver::class
-                ]
-            )
-            ->andReturn(
-                null
-            );
-
-        $compilerPass->process($container);
+        $compilerPass->turnOnCaching($definition, $config['use_cache']);
     }
 
     public function testCanHandleNonExistingMiddlewareDuringChainCreation()
@@ -421,7 +345,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(true);
@@ -431,7 +355,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(
@@ -440,9 +364,9 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'middleware_chains' => [
                         'Test' => [
                             '1',
-                        ]
+                        ],
                     ],
-                    'routing'           => []
+                    'routing'           => [],
                 ]
             );
 
@@ -453,7 +377,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    SymfonyControllerAdapter::class
+                    SymfonyControllerAdapter::class,
                 ]
             )
             ->andReturn(
@@ -465,7 +389,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(false);
@@ -491,7 +415,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(true);
@@ -501,7 +425,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'profesia_psr15'
+                    'profesia_psr15',
                 ]
             )
             ->andReturn(
@@ -510,9 +434,9 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'middleware_chains' => [
                         'Test' => [
                             '1',
-                        ]
+                        ],
                     ],
-                    'routing'           => []
+                    'routing'           => [],
                 ]
             );
 
@@ -523,7 +447,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    SymfonyControllerAdapter::class
+                    SymfonyControllerAdapter::class,
                 ]
             )
             ->andReturn(
@@ -537,7 +461,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->andReturn(
                 [
-                    'test'
+                    'test',
                 ]
             );
 
@@ -546,7 +470,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(
@@ -557,14 +481,16 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )->andReturn(
                 $middlewareDefinition
             );
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Middleware with service alias: [1] could not be included in chain. Only simple services (without additional calls) could be included');
+        $this->expectExceptionMessage(
+            'Middleware with service alias: [1] could not be included in chain. Only simple services (without additional calls) could be included'
+        );
         $compilerPass->process($container);
     }
 
@@ -645,7 +571,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'conditions'       => [
                     [
                         'path'       => '/test',
-                        'route_name' => 'test'
+                        'route_name' => 'test',
                     ],
                 ],
             ]
@@ -667,7 +593,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -678,7 +604,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -689,7 +615,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             );
 
@@ -698,7 +624,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -727,7 +653,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'conditions'       => [
                     [
                         'route_name' => 'test',
-                        'method'     => 'test'
+                        'method'     => 'test',
                     ],
                 ],
             ]
@@ -749,7 +675,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -760,7 +686,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -771,7 +697,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             );
 
@@ -780,7 +706,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -807,7 +733,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             [
                 'middleware_chain' => 'Test',
                 'prepend'          => [
-                    'abcd'
+                    'abcd',
                 ],
                 'conditions'       => [
                     [
@@ -824,7 +750,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'abcd'
+                    'abcd',
                 ]
             )
             ->andReturn(
@@ -854,7 +780,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             [
                 'middleware_chain' => 'Test',
                 'prepend'          => [
-                    '1'
+                    '1',
                 ],
                 'conditions'       => [
                     [
@@ -871,7 +797,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(
@@ -886,7 +812,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->andReturn(
                 [
-                    'test'
+                    'test',
                 ]
             );
 
@@ -895,7 +821,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(
@@ -926,7 +852,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'middleware_chain' => 'Test',
                 'prepend'          => [
                     '4',
-                    '5'
+                    '5',
                 ],
                 'conditions'       => [
                     [
@@ -946,7 +872,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '4'
+                    '4',
                 ]
             )
             ->andReturn(
@@ -957,7 +883,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '5'
+                    '5',
                 ]
             )
             ->andReturn(
@@ -979,7 +905,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '4'
+                    '4',
                 ]
             )
             ->andReturn(
@@ -1000,7 +926,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '5'
+                    '5',
                 ]
             )
             ->andReturn(
@@ -1017,7 +943,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newPrependDefinition1
@@ -1028,7 +954,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newPrependDefinition1
@@ -1039,7 +965,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1051,7 +977,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $prependDefinition1
+                    $prependDefinition1,
                 ]
             )
             ->andReturn(
@@ -1065,7 +991,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newPrependDefinition2
@@ -1076,7 +1002,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newPrependDefinition2
@@ -1087,7 +1013,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1099,7 +1025,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $prependDefinition2
+                    $prependDefinition2,
                 ]
             )
             ->andReturn(
@@ -1113,8 +1039,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 [
                     'append',
                     [
-                        $newPrependDefinition2
-                    ]
+                        $newPrependDefinition2,
+                    ],
                 ]
             )
             ->andReturn($newPrependDefinition1);
@@ -1126,8 +1052,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 [
                     'append',
                     [
-                        $middlewareChain
-                    ]
+                        $middlewareChain,
+                    ],
                 ]
             )
             ->andReturn(
@@ -1144,8 +1070,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'registerRouteMiddleware',
                     [
                         'test',
-                        $newPrependDefinition1
-                    ]
+                        $newPrependDefinition1,
+                    ],
                 ]
             );
 
@@ -1154,7 +1080,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         );
 
         $compilerPass->process($container);
-        
     }
 
     public function testCanDetectNonExistingMiddlewareInAppendingSection()
@@ -1168,7 +1093,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             [
                 'middleware_chain' => 'Test',
                 'append'           => [
-                    'abcd'
+                    'abcd',
                 ],
                 'conditions'       => [
                     [
@@ -1185,7 +1110,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'abcd'
+                    'abcd',
                 ]
             )
             ->andReturn(
@@ -1205,7 +1130,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1216,7 +1141,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1227,7 +1152,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             );
 
@@ -1236,7 +1161,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -1263,7 +1188,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             [
                 'middleware_chain' => 'Test',
                 'append'           => [
-                    '1'
+                    '1',
                 ],
                 'conditions'       => [
                     [
@@ -1280,7 +1205,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(
@@ -1295,7 +1220,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->andReturn(
                 [
-                    'test'
+                    'test',
                 ]
             );
 
@@ -1304,7 +1229,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '1'
+                    '1',
                 ]
             )
             ->andReturn(
@@ -1324,7 +1249,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1335,7 +1260,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1346,7 +1271,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             );
 
@@ -1355,7 +1280,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -1383,7 +1308,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'middleware_chain' => 'Test',
                 'append'           => [
                     '4',
-                    '5'
+                    '5',
                 ],
                 'conditions'       => [
                     [
@@ -1403,7 +1328,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '4'
+                    '4',
                 ]
             )
             ->andReturn(
@@ -1414,7 +1339,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '5'
+                    '5',
                 ]
             )
             ->andReturn(
@@ -1436,7 +1361,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '4'
+                    '4',
                 ]
             )
             ->andReturn(
@@ -1457,7 +1382,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '5'
+                    '5',
                 ]
             )
             ->andReturn(
@@ -1474,7 +1399,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newAppendDefinition1
@@ -1485,7 +1410,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newAppendDefinition1
@@ -1496,7 +1421,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1508,7 +1433,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $appendDefinition1
+                    $appendDefinition1,
                 ]
             )
             ->andReturn(
@@ -1522,7 +1447,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newAppendDefinition2
@@ -1533,7 +1458,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newAppendDefinition2
@@ -1544,7 +1469,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1556,7 +1481,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $appendDefinition2
+                    $appendDefinition2,
                 ]
             )
             ->andReturn(
@@ -1570,7 +1495,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1581,7 +1506,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1592,7 +1517,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1607,8 +1532,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 [
                     'append',
                     [
-                        $newAppendDefinition1
-                    ]
+                        $newAppendDefinition1,
+                    ],
                 ]
             );
 
@@ -1619,8 +1544,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 [
                     'append',
                     [
-                        $newAppendDefinition2
-                    ]
+                        $newAppendDefinition2,
+                    ],
                 ]
             );
 
@@ -1629,7 +1554,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -1646,8 +1571,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'registerRouteMiddleware',
                     [
                         'test',
-                        $newMiddlewareChain
-                    ]
+                        $newMiddlewareChain,
+                    ],
                 ]
             );
 
@@ -1692,7 +1617,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1703,7 +1628,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1714,7 +1639,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1726,7 +1651,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -1743,8 +1668,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'registerRouteMiddleware',
                     [
                         'test',
-                        $newMiddlewareChain
-                    ]
+                        $newMiddlewareChain,
+                    ],
                 ]
             );
 
@@ -1789,7 +1714,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1800,7 +1725,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1811,7 +1736,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1823,7 +1748,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -1833,13 +1758,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         $finalMiddlewareChain = [];
         foreach (ConfigurationHttpMethod::getPossibleValues() as $method) {
             /** @var MockInterface|Definition $httpMethodMiddlewareChain */
-            $httpMethodMiddlewareChain =  Mockery::mock(Definition::class);
+            $httpMethodMiddlewareChain = Mockery::mock(Definition::class);
             $httpMethodMiddlewareChain
                 ->shouldReceive('setPublic')
                 ->once()
                 ->withArgs(
                     [
-                        false
+                        false,
                     ]
                 )->andReturn(
                     $httpMethodMiddlewareChain
@@ -1850,7 +1775,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        true
+                        true,
                     ]
                 )->andReturn(
                     $httpMethodMiddlewareChain
@@ -1861,7 +1786,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        false
+                        false,
                     ]
                 )
                 ->andReturn(
@@ -1873,7 +1798,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $newMiddlewareChain
+                        $newMiddlewareChain,
                     ]
                 )->andReturn(
                     $httpMethodMiddlewareChain
@@ -1943,7 +1868,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'conditions'       => [
                     [
                         'path'   => '/test',
-                        'method' => 'GET|POST'
+                        'method' => 'GET|POST',
                     ],
                 ],
             ]
@@ -1965,7 +1890,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1976,7 +1901,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $newMiddlewareChain
@@ -1987,7 +1912,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -1999,7 +1924,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain
+                    $middlewareChain,
                 ]
             )
             ->andReturn(
@@ -2013,7 +1938,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $getMiddlewareChain
@@ -2024,7 +1949,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $getMiddlewareChain
@@ -2035,7 +1960,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -2049,7 +1974,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )->andReturn(
                 $postMiddlewareChain
@@ -2060,7 +1985,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    true
+                    true,
                 ]
             )->andReturn(
                 $postMiddlewareChain
@@ -2071,7 +1996,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    false
+                    false,
                 ]
             )
             ->andReturn(
@@ -2083,7 +2008,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $newMiddlewareChain
+                    $newMiddlewareChain,
                 ]
             )->andReturn(
                 $getMiddlewareChain
@@ -2093,7 +2018,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $newMiddlewareChain
+                    $newMiddlewareChain,
                 ]
             )->andReturn(
                 $postMiddlewareChain

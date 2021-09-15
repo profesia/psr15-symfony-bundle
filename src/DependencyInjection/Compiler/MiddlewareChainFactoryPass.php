@@ -31,49 +31,14 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             return;
         }
 
-        $parameters        = $container->getParameter('profesia_psr15');
-        $adapterDefinition = $container->getDefinition(SymfonyControllerAdapter::class);
-        if ($parameters['use_cache'] === true) {
-            $adapterDefinition->replaceArgument(
-                '$httpMiddlewareResolver',
-                new Reference('MiddlewareChainResolverCaching')
-            );
-        }
+        $parameters = (array)$container->getParameter('profesia_psr15');
+        $this->turnOnCaching(
+            $container->getDefinition(SymfonyControllerAdapter::class),
+            $parameters['use_cache']
+        );
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
-        $middlewareChains = [];
-
-        foreach ($definitions as $groupName => $groupConfig) {
-            /** @var Definition $firstItemDefinition */
-            $firstItemDefinition = null;
-
-            foreach ($groupConfig as $middlewareAlias) {
-                if (!$container->hasDefinition($middlewareAlias)) {
-                    throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
-                }
-
-                $middlewareDefinition = $container->getDefinition($middlewareAlias);
-                if ($middlewareDefinition->getMethodCalls() !== []) {
-                    throw new RuntimeException(
-                        "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
-                    );
-                }
-
-                $middlewareDefinition = $this->copyDefinition(
-                    $middlewareDefinition
-                );
-
-                if (!($firstItemDefinition instanceof Definition)) {
-                    $firstItemDefinition = $middlewareDefinition;
-
-                    continue;
-                }
-
-                $firstItemDefinition->addMethodCall('append', [$middlewareDefinition]);
-            }
-
-            $middlewareChains[$groupName] = $firstItemDefinition;
-        }
+        $middlewareChains = $this->resolveMiddlewareChains($container, $definitions);
 
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathResolver::class);
@@ -91,64 +56,24 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware = null;
-            if (!empty($conditionConfig['prepend'])) {
-                foreach ($conditionConfig['prepend'] as $middlewareAlias) {
-                    if (!$container->hasDefinition($middlewareAlias)) {
-                        throw new RuntimeException(
-                            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
-                        );
-                    }
-
-                    $originalDefinition = $container->getDefinition($middlewareAlias);
-                    $methodCalls        = $originalDefinition->getMethodCalls();
-                    if ($methodCalls !== []) {
-                        throw new RuntimeException(
-                            "Error in condition config: [{$conditionName}]. Middleware to prepend must not be a middleware chain"
-                        );
-                    }
-
-                    $middlewareDefinition = $this->copyDefinition($originalDefinition);
-                    if ($selectedMiddleware === null) {
-                        $selectedMiddleware = $middlewareDefinition;
-
-                        continue;
-                    }
-
-                    $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
-                }
-
-                $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
-            }
+            $selectedMiddleware = $this->resolveMiddlewaresToPrepend(
+                $container,
+                $middlewareChains,
+                $conditionConfig['prepend'],
+                $middlewareChainName,
+                $conditionName
+            );
 
             if ($selectedMiddleware === null) {
                 $selectedMiddleware = $this->copyDefinition($middlewareChains[$middlewareChainName]);
             }
 
-            if (!empty($conditionConfig['append'])) {
-                foreach ($conditionConfig['append'] as $middlewareAlias) {
-                    if (!$container->hasDefinition($middlewareAlias)) {
-                        throw new RuntimeException(
-                            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
-                        );
-                    }
-
-                    $originalDefinition = $container->getDefinition($middlewareAlias);
-                    $methodCalls        = $originalDefinition->getMethodCalls();
-                    if ($methodCalls !== []) {
-                        throw new RuntimeException(
-                            "Error in condition config: [{$conditionName}]. Middleware to append must not be a middleware chain"
-                        );
-                    }
-
-                    $selectedMiddleware->addMethodCall(
-                        'append',
-                        [
-                            $this->copyDefinition($originalDefinition)
-                        ]
-                    );
-                }
-            }
+            $selectedMiddleware = $this->resolveMiddlewareChainToAppend(
+                $container,
+                $selectedMiddleware,
+                $conditionConfig['append'],
+                $conditionName
+            );
 
             foreach ($conditionConfig['conditions'] as $condition) {
                 $containsPath      = array_key_exists('path', $condition);
@@ -171,7 +96,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'registerRouteMiddleware',
                         [
                             $condition['route_name'],
-                            $selectedMiddleware
+                            $selectedMiddleware,
                         ]
                     );
 
@@ -219,7 +144,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'registerPathMiddleware',
                         [
                             $configurationPathDefinition,
-                            $selectedMiddlewareArray
+                            $selectedMiddlewareArray,
                         ]
                     );
                 }
@@ -227,12 +152,153 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
     }
 
+    public function turnOnCaching(Definition $symfonyControllerAdapter, bool $useCase): void
+    {
+        if ($useCase === true) {
+            $symfonyControllerAdapter->replaceArgument(
+                '$httpMiddlewareResolver',
+                new Reference('MiddlewareChainResolverCaching')
+            );
+        }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $definitions
+     *
+     * @return Definition[]
+     */
+    public function resolveMiddlewareChains(ContainerBuilder $container, array $definitions): array
+    {
+        $middlewareChains = [];
+        foreach ($definitions as $groupName => $groupConfig) {
+            /** @var Definition $firstItemDefinition */
+            $firstItemDefinition = null;
+
+            foreach ($groupConfig as $middlewareAlias) {
+                if (!$container->hasDefinition($middlewareAlias)) {
+                    throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
+                }
+
+                $middlewareDefinition = $container->getDefinition($middlewareAlias);
+                if ($middlewareDefinition->getMethodCalls() !== []) {
+                    throw new RuntimeException(
+                        "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
+                    );
+                }
+
+                $middlewareDefinition = $this->copyDefinition(
+                    $middlewareDefinition
+                );
+
+                if (!($firstItemDefinition instanceof Definition)) {
+                    $firstItemDefinition = $middlewareDefinition;
+
+                    continue;
+                }
+
+                $firstItemDefinition->addMethodCall('append', [$middlewareDefinition]);
+            }
+
+            $middlewareChains[$groupName] = $firstItemDefinition;
+        }
+
+        return $middlewareChains;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @param Definition[]     $middlewareChains
+     * @param array            $prependConfig
+     * @param string           $middlewareChainName
+     * @param string           $conditionName
+     *
+     * @return Definition|null
+     */
+    public function resolveMiddlewaresToPrepend(
+        ContainerBuilder $container,
+        array $middlewareChains,
+        array $prependConfig,
+        string $middlewareChainName,
+        string $conditionName
+    ): ?Definition {
+        $selectedMiddleware = null;
+        if ($prependConfig === []) {
+            return null;
+        }
+
+        foreach ($prependConfig as $middlewareAlias) {
+            if (!$container->hasDefinition($middlewareAlias)) {
+                throw new RuntimeException(
+                    "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+                );
+            }
+
+            $originalDefinition = $container->getDefinition($middlewareAlias);
+            $methodCalls        = $originalDefinition->getMethodCalls();
+            if ($methodCalls !== []) {
+                throw new RuntimeException(
+                    "Error in condition config: [{$conditionName}]. Middleware to prepend must not be a middleware chain"
+                );
+            }
+
+            $middlewareDefinition = $this->copyDefinition($originalDefinition);
+            if ($selectedMiddleware === null) {
+                $selectedMiddleware = $middlewareDefinition;
+
+                continue;
+            }
+
+            $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
+        }
+
+        $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
+
+        return $selectedMiddleware;
+    }
+
+    public function resolveMiddlewareChainToAppend(
+        ContainerBuilder $container,
+        Definition $selectedMiddleware,
+        array $appendConfig,
+        string $conditionName
+    ): Definition {
+        if ($appendConfig === []) {
+            return $selectedMiddleware;
+        }
+
+        foreach ($appendConfig as $middlewareAlias) {
+            if (!$container->hasDefinition($middlewareAlias)) {
+                throw new RuntimeException(
+                    "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+                );
+            }
+
+            $originalDefinition = $container->getDefinition($middlewareAlias);
+            $methodCalls        = $originalDefinition->getMethodCalls();
+            if ($methodCalls !== []) {
+                throw new RuntimeException(
+                    "Error in condition config: [{$conditionName}]. Middleware to append must not be a middleware chain"
+                );
+            }
+
+            $selectedMiddleware->addMethodCall(
+                'append',
+                [
+                    $this->copyDefinition($originalDefinition),
+                ]
+            );
+        }
+
+        return $selectedMiddleware;
+    }
+
     private function copyDefinition(Definition $originalDefinition): Definition
     {
+        /** @var Definition $newDefinition */
         $newDefinition = $this->cloner->copy($originalDefinition);
         $newDefinition
             ->setPublic(false)
-            ->setPrivate(true)
             ->setShared(false);
 
         return $newDefinition;
