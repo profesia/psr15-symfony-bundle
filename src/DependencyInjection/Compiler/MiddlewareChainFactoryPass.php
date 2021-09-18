@@ -59,7 +59,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             $selectedMiddleware = $this->resolveMiddlewaresToPrepend(
                 $container,
                 $middlewareChains,
-                $conditionConfig['prepend'],
+                $conditionConfig['prepend'] ?? [],
                 $middlewareChainName,
                 $conditionName
             );
@@ -71,7 +71,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             $selectedMiddleware = $this->resolveMiddlewareChainToAppend(
                 $container,
                 $selectedMiddleware,
-                $conditionConfig['append'],
+                $conditionConfig['append'] ?? [],
                 $conditionName
             );
 
