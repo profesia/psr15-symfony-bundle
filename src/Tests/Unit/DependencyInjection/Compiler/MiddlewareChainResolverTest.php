@@ -64,9 +64,10 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         }
 
 
-        $resolver    = new MiddlewareChainResolver();
+        $resolver    = new MiddlewareChainResolver(
+            $container
+        );
         $middlewares = $resolver->resolve(
-            $container,
             $definitionConfig
         );
 
@@ -128,9 +129,10 @@ class MiddlewareChainResolverTest extends MockeryTestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Middleware with service alias: [Class3] is not registered as a service");
-        $resolver = new MiddlewareChainResolver();
+        $resolver    = new MiddlewareChainResolver(
+            $container
+        );
         $resolver->resolve(
-            $container,
             $definitionConfig
         );
     }
@@ -190,9 +192,10 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         $this->expectExceptionMessage(
             "Middleware with service alias: [Class3] could not be included in chain. Only simple services (without additional calls) could be included"
         );
-        $resolver = new MiddlewareChainResolver();
+        $resolver    = new MiddlewareChainResolver(
+            $container
+        );
         $resolver->resolve(
-            $container,
             $definitionConfig
         );
     }

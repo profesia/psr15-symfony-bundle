@@ -40,7 +40,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         );
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
-        $middlewareChains = $this->chainResolver->resolve($container, $definitions);
+        $middlewareChains = $this->chainResolver->resolve($definitions);
 
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathResolver::class);

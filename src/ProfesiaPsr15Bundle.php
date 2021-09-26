@@ -6,6 +6,7 @@ namespace Profesia\Symfony\Psr15Bundle;
 
 use DeepCopy\DeepCopy;
 use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainResolver;
 use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -18,6 +19,7 @@ class ProfesiaPsr15Bundle extends Bundle
 
         $container->addCompilerPass(
             new MiddlewareChainFactoryPass(
+                new MiddlewareChainResolver($container),
                 new DeepCopy()
             )
         );

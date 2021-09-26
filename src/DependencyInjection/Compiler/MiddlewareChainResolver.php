@@ -10,22 +10,27 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class MiddlewareChainResolver
 {
+    private ContainerBuilder $container;
+    public function __construct(ContainerBuilder $container)
+    {
+        $this->container = $container;
+    }
+
     /**
-     * @param ContainerBuilder $container
      * @param array            $definitions
      *
      * @return array<string, Definition[]>
      */
-    public function resolve(ContainerBuilder $container, array $definitions): array
+    public function resolve(array $definitions): array
     {
         $middlewareChains = [];
         foreach ($definitions as $groupName => $groupConfig) {
             foreach ($groupConfig as $middlewareAlias) {
-                if (!$container->hasDefinition($middlewareAlias)) {
+                if (!$this->container->hasDefinition($middlewareAlias)) {
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-                $middlewareDefinition = $container->getDefinition($middlewareAlias);
+                $middlewareDefinition = $this->container->getDefinition($middlewareAlias);
                 if ($middlewareDefinition->getMethodCalls() !== []) {
                     throw new RuntimeException(
                         "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
