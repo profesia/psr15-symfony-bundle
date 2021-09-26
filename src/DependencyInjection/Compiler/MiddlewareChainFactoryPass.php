@@ -18,11 +18,13 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class MiddlewareChainFactoryPass implements CompilerPassInterface
 {
+    private MiddlewareChainResolver $chainResolver;
     private DeepCopy $cloner;
 
-    public function __construct(DeepCopy $cloner)
+    public function __construct(MiddlewareChainResolver $chainResolver, DeepCopy $cloner)
     {
-        $this->cloner = $cloner;
+        $this->chainResolver = $chainResolver;
+        $this->cloner        = $cloner;
     }
 
     public function process(ContainerBuilder $container): void
@@ -38,7 +40,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         );
 
         ['middleware_chains' => $definitions, 'routing' => $routing] = $parameters;
-        $middlewareChains = $this->resolveMiddlewareChains($container, $definitions);
+        $middlewareChains = $this->chainResolver->resolve($container, $definitions);
 
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathResolver::class);
@@ -56,21 +58,16 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware = $this->resolveMiddlewaresToPrepend(
+            $selectedMiddlewareChain = $this->resolveMiddlewaresToPrepend(
                 $container,
-                $middlewareChains,
+                $middlewareChains[$middlewareChainName],
                 $conditionConfig['prepend'] ?? [],
-                $middlewareChainName,
                 $conditionName
             );
 
-            if ($selectedMiddleware === null) {
-                $selectedMiddleware = $this->copyDefinition($middlewareChains[$middlewareChainName]);
-            }
-
-            $selectedMiddleware = $this->resolveMiddlewareChainToAppend(
+            $selectedMiddlewareChain = $this->resolveMiddlewareChainToAppend(
                 $container,
-                $selectedMiddleware,
+                $selectedMiddlewareChain,
                 $conditionConfig['append'] ?? [],
                 $conditionName
             );
@@ -96,7 +93,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                         'registerRouteMiddleware',
                         [
                             $condition['route_name'],
-                            $selectedMiddleware,
+                            $selectedMiddlewareChain,
                         ]
                     );
 
@@ -128,7 +125,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
                     $selectedMiddlewareArray = [];
                     foreach ($splitHttpMethods as $httpMethod) {
-                        $selectedMiddlewareArray[$httpMethod] = $this->copyDefinition($selectedMiddleware);
+                        $selectedMiddlewareArray[$httpMethod] = $selectedMiddlewareChain;
                     }
 
                     $configurationPathDefinition = static::createDefinition(
@@ -164,69 +161,23 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
     /**
      * @param ContainerBuilder $container
-     * @param array            $definitions
-     *
-     * @return Definition[]
-     */
-    public function resolveMiddlewareChains(ContainerBuilder $container, array $definitions): array
-    {
-        $middlewareChains = [];
-        foreach ($definitions as $groupName => $groupConfig) {
-            /** @var Definition $firstItemDefinition */
-            $firstItemDefinition = null;
-
-            foreach ($groupConfig as $middlewareAlias) {
-                if (!$container->hasDefinition($middlewareAlias)) {
-                    throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
-                }
-
-                $middlewareDefinition = $container->getDefinition($middlewareAlias);
-                if ($middlewareDefinition->getMethodCalls() !== []) {
-                    throw new RuntimeException(
-                        "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
-                    );
-                }
-
-                $middlewareDefinition = $this->copyDefinition(
-                    $middlewareDefinition
-                );
-
-                if (!($firstItemDefinition instanceof Definition)) {
-                    $firstItemDefinition = $middlewareDefinition;
-
-                    continue;
-                }
-
-                $firstItemDefinition->addMethodCall('append', [$middlewareDefinition]);
-            }
-
-            $middlewareChains[$groupName] = $firstItemDefinition;
-        }
-
-        return $middlewareChains;
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param Definition[]     $middlewareChains
+     * @param Definition       $middlewareCollection
      * @param array            $prependConfig
-     * @param string           $middlewareChainName
      * @param string           $conditionName
      *
-     * @return Definition|null
+     * @return Definition
      */
     public function resolveMiddlewaresToPrepend(
         ContainerBuilder $container,
-        array $middlewareChains,
+        Definition $middlewareCollection,
         array $prependConfig,
-        string $middlewareChainName,
         string $conditionName
-    ): ?Definition {
-        $selectedMiddleware = null;
+    ): Definition {
         if ($prependConfig === []) {
-            return null;
+            return $middlewareCollection;
         }
 
+        $middlewaresToPrepend = [];
         foreach ($prependConfig as $middlewareAlias) {
             if (!$container->hasDefinition($middlewareAlias)) {
                 throw new RuntimeException(
@@ -242,29 +193,33 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $middlewareDefinition = $this->copyDefinition($originalDefinition);
-            if ($selectedMiddleware === null) {
-                $selectedMiddleware = $middlewareDefinition;
-
-                continue;
-            }
-
-            $selectedMiddleware->addMethodCall('append', [$middlewareDefinition]);
+            $middlewaresToPrepend[] = $originalDefinition;
         }
 
-        $selectedMiddleware->addMethodCall('append', [$middlewareChains[$middlewareChainName]]);
+        /** @var Definition $middleware */
+        foreach (array_reverse($middlewaresToPrepend) as $middleware) {
+            $middlewareCollection->addMethodCall('prepend', [$middleware]);
+        }
 
-        return $selectedMiddleware;
+        return $middlewareCollection;
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param Definition       $middlewareCollection
+     * @param array            $appendConfig
+     * @param string           $conditionName
+     *
+     * @return Definition
+     */
     public function resolveMiddlewareChainToAppend(
         ContainerBuilder $container,
-        Definition $selectedMiddleware,
+        Definition $middlewareCollection,
         array $appendConfig,
         string $conditionName
     ): Definition {
         if ($appendConfig === []) {
-            return $selectedMiddleware;
+            return $middlewareCollection;
         }
 
         foreach ($appendConfig as $middlewareAlias) {
@@ -282,15 +237,10 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddleware->addMethodCall(
-                'append',
-                [
-                    $this->copyDefinition($originalDefinition),
-                ]
-            );
+            $middlewareCollection->addMethodCall('append', [$originalDefinition]);
         }
 
-        return $selectedMiddleware;
+        return $middlewareCollection;
     }
 
     private function copyDefinition(Definition $originalDefinition): Definition

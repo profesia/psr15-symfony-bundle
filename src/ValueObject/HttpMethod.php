@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\ValueObject;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use InvalidArgumentException;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 
 class HttpMethod implements HttpMethodInterface
 {
@@ -65,11 +65,11 @@ class HttpMethod implements HttpMethodInterface
     }
 
     /**
-     * @param AbstractMiddlewareChainItem[] $methodsConfig
+     * @param MiddlewareCollection[] $methodsConfig
      *
-     * @return AbstractMiddlewareChainItem|null
+     * @return MiddlewareCollection|null
      */
-    public function extractMiddleware(array $methodsConfig): ?AbstractMiddlewareChainItem
+    public function extractMiddleware(array $methodsConfig): ?MiddlewareCollection
     {
         return $methodsConfig[$this->getValue()] ?? null;
     }

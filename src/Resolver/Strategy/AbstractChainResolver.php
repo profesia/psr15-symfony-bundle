@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
+use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -16,13 +16,7 @@ use RuntimeException;
 
 abstract class AbstractChainResolver
 {
-    private MiddlewareChainItemFactory $middlewareChainItemFactory;
     private ?AbstractChainResolver     $next = null;
-
-    public function __construct(MiddlewareChainItemFactory $middlewareChainItemFactory)
-    {
-        $this->middlewareChainItemFactory = $middlewareChainItemFactory;
-    }
 
     public function setNext(AbstractChainResolver $chainItem): self
     {
@@ -33,13 +27,7 @@ abstract class AbstractChainResolver
 
     public abstract function handle(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain;
 
-    /**
-     * @param ResolvedMiddlewareAccessKey $accessKey
-     *
-     * @return AbstractMiddlewareChainItem
-     * @throws RuntimeException
-     */
-    public abstract function getChain(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem;
+    public abstract function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection;
 
     /**
      * @return ExportedMiddleware[]
@@ -50,7 +38,11 @@ abstract class AbstractChainResolver
     {
         if ($this->next === null) {
             return ResolvedMiddlewareChain::createDefault(
-                $this->middlewareChainItemFactory->createNullChainItem()
+                new MiddlewareCollection(
+                    [
+                        new NullMiddleware()
+                    ]
+                )
             );
         }
 
@@ -60,10 +52,10 @@ abstract class AbstractChainResolver
     /**
      * @param ResolvedMiddlewareAccessKey $accessKey
      *
-     * @return AbstractMiddlewareChainItem
+     * @return MiddlewareCollection
      * @throws AbstractResolveException
      */
-    protected function getChainNext(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem
+    protected function getChainNext(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
     {
         if ($this->next === null) {
             throw new ChainNotFoundException('No resolver was able to retrieve middleware chain');

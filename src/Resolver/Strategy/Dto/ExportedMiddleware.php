@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 
 class ExportedMiddleware
 {
-    private AbstractMiddlewareChainItem $middlewareChain;
+    private MiddlewareCollection $middlewareChain;
     private ?string                     $routeName;
     private CompoundHttpMethod          $httpMethods;
     private string                      $path;
 
     public function __construct(
-        AbstractMiddlewareChainItem $middlewareChain,
+        MiddlewareCollection $middlewareChain,
         CompoundHttpMethod $httpMethods,
         string $path,
         ?string $routeName = null
@@ -32,7 +32,7 @@ class ExportedMiddleware
      */
     public function listMiddlewareChainItems(): array
     {
-        return $this->middlewareChain->listChainClassNames();
+        return $this->middlewareChain->listClassNames();
     }
 
     public function getIdentifier(): string

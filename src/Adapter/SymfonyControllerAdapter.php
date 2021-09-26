@@ -17,13 +17,13 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SymfonyControllerAdapter
 {
-    private HttpFoundationFactoryInterface           $foundationHttpFactory;
-    private HttpMessageFactoryInterface              $psrRequestFactory;
-    private MiddlewareResolverInterface       $httpMiddlewareResolver;
-    private SymfonyControllerRequestHandlerFactory   $controllerRequestHandlerFactory;
-    private Request                                  $request;
-    private RouteCollection                          $routeCollection;
-    private array                                    $controllerArguments;
+    private HttpFoundationFactoryInterface $foundationHttpFactory;
+    private HttpMessageFactoryInterface $psrRequestFactory;
+    private MiddlewareResolverInterface $httpMiddlewareResolver;
+    private SymfonyControllerRequestHandlerFactory $controllerRequestHandlerFactory;
+    private Request $request;
+    private RouteCollection $routeCollection;
+    private array $controllerArguments;
 
     /** @var callable */
     private $originalController;
@@ -59,7 +59,7 @@ class SymfonyControllerAdapter
             $routeName = "{$routeName}.{$this->request->attributes->get('_locale')}";
         }
 
-        $route     = $this->routeCollection->get($routeName);
+        $route = $this->routeCollection->get($routeName);
         if ($route === null) {
             throw new RuntimeException("Route: [{$routeName}] is not registered");
         }
@@ -73,7 +73,6 @@ class SymfonyControllerAdapter
         $resolvedMiddlewareChain = $this->httpMiddlewareResolver->resolveMiddlewareChain($middlewareResolvingRequest);
         $psrRequest              = $this->psrRequestFactory->createRequest($this->request);
         $psrResponse             = $resolvedMiddlewareChain
-            ->getMiddlewareChain()
             ->process(
                 $psrRequest,
                 $this->controllerRequestHandlerFactory->create(

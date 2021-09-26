@@ -12,29 +12,8 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
 
 class MiddlewareChainItemFactory
 {
-    private ServerRequestFactoryInterface $serverRequestFactory;
-    private ResponseFactoryInterface      $responseFactory;
-
-    public function __construct(ServerRequestFactoryInterface $serverRequestFactory, ResponseFactoryInterface $responseFactory)
+    public function createNullChainItem(): NullMiddleware
     {
-        $this->serverRequestFactory = $serverRequestFactory;
-        $this->responseFactory      = $responseFactory;
-    }
-
-    public function createInstance(string $class): AbstractMiddlewareChainItem
-    {
-        if (!class_exists($class)) {
-            throw new InvalidArgumentException("Class: [{$class}] does not exist");
-        }
-
-        return new $class(
-            $this->serverRequestFactory,
-            $this->responseFactory
-        );
-    }
-
-    public function createNullChainItem(): AbstractMiddlewareChainItem
-    {
-        return $this->createInstance(NullMiddleware::class);
+        return new NullMiddleware();
     }
 }

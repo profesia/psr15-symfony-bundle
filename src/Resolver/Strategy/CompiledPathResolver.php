@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -17,18 +16,12 @@ use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 
 class CompiledPathResolver extends AbstractChainResolver
 {
-    /** @var array<int, array> */
+    /** @var array<int, array<string, array<string, MiddlewareCollection>>> */
     private array $registeredPathMiddlewares = [];
-
-    public function __construct(
-        MiddlewareChainItemFactory $middlewareChainItemFactory
-    ) {
-        parent::__construct($middlewareChainItemFactory);
-    }
 
     /**
      * @param ConfigurationPath                          $path
-     * @param array<string, AbstractMiddlewareChainItem> $configuredMiddlewareChains
+     * @param array<string, MiddlewareCollection> $configuredMiddlewareChains
      *
      * @return $this
      */
@@ -99,7 +92,7 @@ class CompiledPathResolver extends AbstractChainResolver
     /**
      * @inheritDoc
      */
-    public function getChain(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
     {
         if (!$accessKey->isSameResolver($this)) {
             return $this->getChainNext($accessKey);
@@ -143,9 +136,9 @@ class CompiledPathResolver extends AbstractChainResolver
                 }
 
 
-                /** @var AbstractMiddlewareChainItem $middlewareChain */
+                /** @var MiddlewareCollection $middlewareChain */
                 foreach ($httpMethods as $httpMethod => $middlewareChain) {
-                    $middlewareChainClassNames = $middlewareChain->listChainClassNames();
+                    $middlewareChainClassNames = $middlewareChain->listClassNames();
                     $middlewareListString      = implode('|', $middlewareChainClassNames);
                     if (!isset($groupedExport[$pattern][$middlewareListString])) {
                         $groupedExport[$pattern][$middlewareListString] = [

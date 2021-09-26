@@ -52,7 +52,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
                     'Fetched middleware chain from cache. ',
                     [
                         'accessKey'       => $accessKey->toArray(),
-                        'middlewareChain' => $middlewareChain->listChainClassNames()
+                        'middlewareChain' => $middlewareChain->listClassNames()
                     ]
                 );
 
@@ -75,7 +75,6 @@ class MiddlewareResolver implements MiddlewareResolverInterface
                             ->toArray(),
                     'middlewareChain' =>
                         $resolvedMiddleware
-                            ->getMiddlewareChain()
                             ->listChainClassNames()
                 ]
             );

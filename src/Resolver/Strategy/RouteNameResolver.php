@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
+use Profesia\Symfony\Psr15Bundle\RequestHandler\MiddlewareChainHandler;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -21,19 +21,17 @@ class RouteNameResolver extends AbstractChainResolver
 {
     private const WILDCARD = '*';
 
-    /** @var AbstractMiddlewareChainItem[] */
+    /** @var MiddlewareCollection[] */
     private array           $registeredRouteMiddlewares = [];
     private RouteCollection $routeCollection;
 
     public function __construct(
-        MiddlewareChainItemFactory $middlewareChainItemFactory,
         RouterInterface $router
     ) {
-        parent::__construct($middlewareChainItemFactory);
         $this->routeCollection = $router->getRouteCollection();
     }
 
-    public function registerRouteMiddleware(string $routeName, AbstractMiddlewareChainItem $middlewareChain): self
+    public function registerRouteMiddleware(string $routeName, MiddlewareChainHandler $middlewareChain): self
     {
         if ($routeName === static::WILDCARD) {
             if (!empty($this->registeredRouteMiddlewares)) {
@@ -96,7 +94,7 @@ class RouteNameResolver extends AbstractChainResolver
     /**
      * @inheritDoc
      */
-    public function getChain(ResolvedMiddlewareAccessKey $accessKey): AbstractMiddlewareChainItem
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
     {
         if (!$accessKey->isSameResolver($this)) {
             return $this->getChainNext($accessKey);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\ValueObject;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use InvalidArgumentException;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 
 class ConfigurationPath
 {
@@ -32,9 +32,9 @@ class ConfigurationPath
     }
 
     /**
-     * @param array<string, AbstractMiddlewareChainItem> $middlewareChains
+     * @param array<string, MiddlewareCollection> $middlewareChains
      *
-     * @return array<int, array<string, array<string, AbstractMiddlewareChainItem>>>
+     * @return array<int, array<string, array<string, MiddlewareCollection>>>
      */
     public function exportConfigurationForMiddleware(array $middlewareChains): array
     {

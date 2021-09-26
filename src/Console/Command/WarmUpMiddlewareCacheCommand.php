@@ -73,7 +73,7 @@ class WarmUpMiddlewareCacheCommand extends Command
                 $resolvedMiddleware = $this->resolverCacheProxy->resolveMiddlewareChain($middlewareResolvingRequest);
 
                 if (!$resolvedMiddleware->isNullMiddleware()) {
-                    $middlewareChainClasses = $resolvedMiddleware->getMiddlewareChain()->listChainClassNames();
+                    $middlewareChainClasses = $resolvedMiddleware->listChainClassNames();
                     $middlewareKey          = implode('|', $middlewareChainClasses);
                     if (isset($middlewareChains[$middlewareKey])) {
                         $middlewareChains[$middlewareKey]['method'][] = $httpMethod;
