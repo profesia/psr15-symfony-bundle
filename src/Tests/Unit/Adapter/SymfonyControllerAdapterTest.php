@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Adapter;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
@@ -17,6 +16,7 @@ use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 use Symfony\Bridge\PsrHttpMessage\HttpFoundationFactoryInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -143,8 +143,8 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
         /** @var MockInterface|SymfonyControllerRequestHandler $requestHandler */
         $requestHandler = Mockery::mock(SymfonyControllerRequestHandler::class);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('process')
             ->withArgs(
@@ -348,8 +348,8 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
         /** @var MockInterface|SymfonyControllerRequestHandler $requestHandler */
         $requestHandler = Mockery::mock(SymfonyControllerRequestHandler::class);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('process')
             ->withArgs(

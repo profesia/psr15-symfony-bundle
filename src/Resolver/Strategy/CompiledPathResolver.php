@@ -40,7 +40,7 @@ class CompiledPathResolver extends AbstractChainResolver
 
                 foreach ($pathConfiguration as $method => $middlewareChain) {
                     if (isset($this->registeredPathMiddlewares[$pathLength][$pattern][$method])) {
-                        $this->registeredPathMiddlewares[$pathLength][$pattern][$method]->append($configuredMiddlewareChains[$method]);
+                        $this->registeredPathMiddlewares[$pathLength][$pattern][$method]->appendCollection($configuredMiddlewareChains[$method]);
                     } else {
                         $this->registeredPathMiddlewares[$pathLength][$pattern][$method] = $configuredMiddlewareChains[$method];
                     }

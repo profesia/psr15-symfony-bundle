@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Psr\Http\Server\MiddlewareInterface;
 
 class ConfigurationPathTest extends MockeryTestCase
 {
@@ -61,13 +62,13 @@ class ConfigurationPathTest extends MockeryTestCase
             '/'
         );
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middlewareChain */
-        $middlewareChain = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middlewareChain */
+        $middlewareChain = Mockery::mock(MiddlewareInterface::class);
 
         $allMethods  = HttpMethod::getPossibleValues();
         $middlewares = [];
         foreach ($allMethods as $method) {
-            $middlewares[$method] = $middlewareChain;
+            $middlewares[$method] = new MiddlewareCollection([$middlewareChain]);
         }
         $returnValue = $path->exportConfigurationForMiddleware(
             $middlewares

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
 use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
-use Profesia\Symfony\Psr15Bundle\RequestHandler\MiddlewareChainHandler;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -31,7 +30,7 @@ class RouteNameResolver extends AbstractChainResolver
         $this->routeCollection = $router->getRouteCollection();
     }
 
-    public function registerRouteMiddleware(string $routeName, MiddlewareChainHandler $middlewareChain): self
+    public function registerRouteMiddleware(string $routeName, MiddlewareCollection $middlewareChain): self
     {
         if ($routeName === static::WILDCARD) {
             if (!empty($this->registeredRouteMiddlewares)) {

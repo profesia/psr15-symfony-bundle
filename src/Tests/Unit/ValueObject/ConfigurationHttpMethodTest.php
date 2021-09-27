@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Psr\Http\Server\MiddlewareInterface;
 
 class ConfigurationHttpMethodTest extends MockeryTestCase
 {
@@ -29,20 +30,20 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
     {
         $httpMethod = ConfigurationHttpMethod::createDefault();
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
 
         $allHttpMethods = HttpMethod::getPossibleValues();
         $middlewares    = [];
         foreach ($allHttpMethods as $method) {
-            $middlewares[$method] = $middleware;
+            $middlewares[$method] = new MiddlewareCollection([$middleware]);
         }
 
         $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
 
         $this->assertCount(count($allHttpMethods), $returnValue);
         foreach ($allHttpMethods as $method) {
-            $this->assertEquals($returnValue[$method], $middleware);
+            $this->assertEquals(new MiddlewareCollection([$middleware]), $returnValue[$method]);
         }
     }
 
@@ -50,16 +51,17 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
     {
         $httpMethod = ConfigurationHttpMethod::createFromString('GET');
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
 
+        $middlewareCollection = new MiddlewareCollection([$middleware]);
         $middlewares = [
-            'GET' => $middleware
+            'GET' => $middlewareCollection
         ];
         $returnValue = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
 
         $this->assertCount(1, $returnValue);
-        $this->assertEquals($returnValue['GET'], $middleware);
+        $this->assertEquals($returnValue['GET'], $middlewareCollection);
     }
 
     public function testCanHandleMultipleHttpMethods()
@@ -72,11 +74,11 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $implodedHttpMethods = implode('|', $httpMethods);
         $httpMethod          = ConfigurationHttpMethod::createFromString($implodedHttpMethods);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware  = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middlewares = [];
         foreach ($httpMethods as $method) {
-            $middlewares[$method] = $middleware;
+            $middlewares[$method] = new MiddlewareCollection([$middleware]);
         }
 
         $returnValue    = $httpMethod->assignMiddlewareChainToHttpMethods($middlewares);
@@ -88,7 +90,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
 
         $index = 0;
         foreach ($httpMethods as $httpMethod) {
-            $this->assertEquals($middleware, $returnValue[$httpMethod]);
+            $this->assertEquals(new MiddlewareCollection([$middleware]), $returnValue[$httpMethod]);
             $this->assertEquals($httpMethod, $explodedString[$index]);
             $index++;
         }
@@ -119,13 +121,13 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
             'DELETE'
         ];
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
 
         $middlewares = [
-            'GET'  => $middleware,
-            'POST' => $middleware,
-            'PUT'  => $middleware
+            'GET'  => new MiddlewareCollection([$middleware]),
+            'POST' => new MiddlewareCollection([$middleware]),
+            'PUT'  => new MiddlewareCollection([$middleware])
         ];
 
         $configurationHttpMethod = ConfigurationHttpMethod::createFromString(
@@ -158,7 +160,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
      *
      * @param array $httpMethods
      */
-    public function testCanCasToToString(array $httpMethods)
+    public function testCanCastToToString(array $httpMethods)
     {
         $httpMethod = ConfigurationHttpMethod::createFromArray(
             $httpMethods

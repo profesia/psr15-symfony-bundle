@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Integration\Console\Command;
 
-use Delvesoft\Psr15\Middleware\Factory\MiddlewareChainFactory;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
@@ -16,8 +16,6 @@ use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware1;
 use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware2;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
@@ -66,39 +64,18 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                 $routeCollection
             );
 
-        /** @var ServerRequestFactoryInterface|MockInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var ResponseFactoryInterface|MockInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
         $middlewareChains = [
-            'route1' => MiddlewareChainFactory::createFromArray(
+            'route1' => new MiddlewareCollection(
                 [
-                    new TestMiddleware1(
-                        $serverRequestFactory,
-                        $responseFactory
-                    ),
-                    new TestMiddleware2(
-                        $serverRequestFactory,
-                        $responseFactory
-                    ),
+                    new TestMiddleware1(),
+                    new TestMiddleware2(),
                 ]
             ),
-            'route2' => MiddlewareChainFactory::createFromArray(
+            'route2' => new MiddlewareCollection(
                 [
-                    new TestMiddleware1(
-                        $serverRequestFactory,
-                        $responseFactory
-                    ),
-                    new TestMiddleware2(
-                        $serverRequestFactory,
-                        $responseFactory
-                    ),
-                    new TestMiddleware2(
-                        $serverRequestFactory,
-                        $responseFactory
-                    ),
+                    new TestMiddleware1(),
+                    new TestMiddleware2(),
+                    new TestMiddleware2(),
                 ]
             ),
         ];

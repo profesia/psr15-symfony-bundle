@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
@@ -16,6 +15,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundExcept
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,8 +47,8 @@ class MiddlewareResolverTest extends MockeryTestCase
             'Middleware2'
         ];
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('listChainClassNames')
             ->once()
@@ -189,8 +189,8 @@ class MiddlewareResolverTest extends MockeryTestCase
             'Middleware2'
         ];
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('listChainClassNames')
             ->once()
@@ -305,8 +305,8 @@ class MiddlewareResolverTest extends MockeryTestCase
             'Middleware2'
         ];
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('listChainClassNames')
             ->once()
@@ -420,8 +420,8 @@ class MiddlewareResolverTest extends MockeryTestCase
             'Middleware2'
         ];
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware = Mockery::mock(MiddlewareInterface::class);
         $middleware
             ->shouldReceive('listChainClassNames')
             ->once()

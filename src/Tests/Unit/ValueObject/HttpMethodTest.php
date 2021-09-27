@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use InvalidArgumentException;
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
+use Psr\Http\Server\MiddlewareInterface;
 
 class HttpMethodTest extends MockeryTestCase
 {
@@ -33,23 +34,25 @@ class HttpMethodTest extends MockeryTestCase
         $returnValue = $httpMethod->extractMiddleware($middlewares);
         $this->assertNull($returnValue);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
+        $c1 = new MiddlewareCollection([$middleware1]);
         $middlewares = [
-            'POST' => $middleware1
+            'POST' => $c1
         ];
 
         $returnValue = $httpMethod->extractMiddleware($middlewares);
         $this->assertNull($returnValue);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware */
+        $middleware2 = Mockery::mock(MiddlewareInterface::class);
+        $c2 = new MiddlewareCollection([$middleware2]);
         $middlewares = [
-            'GET' => $middleware2
+            'GET' => $c2
         ];
 
         $returnValue = $httpMethod->extractMiddleware($middlewares);
-        $this->assertEquals($middleware2, $returnValue);
+        $this->assertEquals($c2, $returnValue);
     }
 
     public function testCanCompare()

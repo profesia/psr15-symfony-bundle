@@ -31,6 +31,13 @@ class MiddlewareCollection
         return $this;
     }
 
+    public function appendCollection(MiddlewareCollection $collectionToAppend): self
+    {
+        $this->middlewares = array_merge($this->middlewares, $collectionToAppend->middlewares);
+
+        return $this;
+    }
+
     public function prepend(MiddlewareInterface $middleware): self
     {
         array_unshift($this->middlewares, $middleware);

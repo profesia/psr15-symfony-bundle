@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
@@ -17,6 +16,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundExcept
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
@@ -27,11 +27,8 @@ class RouteNameResolverTest extends MockeryTestCase
 {
     public function testCanRegisterChainToAnyRoute()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware1 */
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
 
         /** @var MockInterface|Route $route */
         $route = Mockery::mock(Route::class);
@@ -44,7 +41,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    '*'
+                    '*',
                 ]
             )->andReturn(
                 $route
@@ -60,7 +57,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -70,11 +66,8 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testCanRegisterChainToAStandardRoute()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware1 */
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
 
         /** @var MockInterface|Route $route */
         $route = Mockery::mock(Route::class);
@@ -86,7 +79,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'test'
+                    'test',
                 ]
             )->andReturn(
                 $route
@@ -102,7 +95,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -112,14 +104,11 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testWillDetectNonExistingRouteOnRegistration()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
+        /** @var MockInterface|MiddlewareInterface $middleware1 */
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
-
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware2 */
-        $middleware2 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware2 */
+        $middleware2 = Mockery::mock(MiddlewareInterface::class);
         $middleware2
             ->shouldNotReceive('listChainClassNames');
 
@@ -131,7 +120,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    'test'
+                    'test',
                 ]
             )->andReturn(
                 null
@@ -147,7 +136,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -160,18 +148,15 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testCanResolveStandardRoute()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
         $routeName   = 'test';
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => RouteNameResolver::class,
                 'accessPath'    => [
-                    $routeName
-                ]
+                    $routeName,
+                ],
             ]
         );
 
@@ -190,7 +175,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $routeName
+                    $routeName,
                 ]
             )->andReturn(
                 $route
@@ -206,7 +191,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -226,19 +210,16 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testCanResolveMagicRoute()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        /** @var MockInterface|AbstractMiddlewareChainItem $middleware1 */
-        $middleware1 = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $middleware1 */
+        $middleware1 = Mockery::mock(MiddlewareInterface::class);
         $routeName   = '*';
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => RouteNameResolver::class,
                 'accessPath'    => [
-                    $routeName
-                ]
+                    $routeName,
+                ],
             ]
         );
 
@@ -260,7 +241,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -282,19 +262,13 @@ class RouteNameResolverTest extends MockeryTestCase
     {
         /** @var MockInterface|NullMiddleware $middleware1 */
         $middleware = Mockery::mock(NullMiddleware::class);
-
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-
-        $routeName = 'testing';
-
-        $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
+        $routeName  = 'testing';
+        $accessKey  = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => RouteNameResolver::class,
                 'accessPath'    => [
-                    $routeName
-                ]
+                    $routeName,
+                ],
             ]
         );
 
@@ -322,7 +296,6 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -333,7 +306,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareResolvingRequest
+                    $middlewareResolvingRequest,
                 ]
             )
             ->andReturn(
@@ -352,9 +325,6 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testWillDetectNonExistingRouteDuringExport()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $factory */
-        $factory = Mockery::mock(MiddlewareChainItemFactory::class);
-
         /** @var MockInterface|NullMiddleware $middleware1 */
         $middleware = Mockery::mock(NullMiddleware::class);
 
@@ -367,7 +337,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->times(1)
             ->withArgs(
                 [
-                    $routeName
+                    $routeName,
                 ]
             )
             ->andReturn(
@@ -378,7 +348,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->times(1)
             ->withArgs(
                 [
-                    $routeName
+                    $routeName,
                 ]
             )
             ->andReturn(
@@ -395,7 +365,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $factory,
             $router
         );
 
@@ -407,9 +376,6 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testCanDelegateGettingOfTheChainToNextHandler()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
 
@@ -423,22 +389,21 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $middlewareChainItemFactory,
             $router
         );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => CompiledPathResolver::class,
-                'accessPath' => [
+                'accessPath'    => [
                     '1',
-                    '2'
+                    '2',
                 ],
             ]
         );
 
-        /** @var MockInterface|AbstractMiddlewareChainItem $expectedMiddlewareChain */
-        $expectedMiddlewareChain = Mockery::mock(AbstractMiddlewareChainItem::class);
+        /** @var MockInterface|MiddlewareInterface $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(MiddlewareInterface::class);
 
         /** @var MockInterface|AbstractChainResolver $handler */
         $handler = Mockery::mock(AbstractChainResolver::class);
@@ -449,7 +414,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $accessKey
+                    $accessKey,
                 ]
             )
             ->andReturn(
@@ -469,9 +434,6 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testWillThrowExceptionOnGettingMiddlewareChainWhenThereIsNoNextResolver()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
 
@@ -485,16 +447,15 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $middlewareChainItemFactory,
             $router
         );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => CompiledPathResolver::class,
-                'accessPath' => [
+                'accessPath'    => [
                     '1',
-                    '2'
+                    '2',
                 ],
             ]
         );
@@ -533,7 +494,6 @@ class RouteNameResolverTest extends MockeryTestCase
             );
 
         $resolver = new RouteNameResolver(
-            $middlewareChainItemFactory,
             $router
         );
 
