@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy\Dto;
 
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Mockery;
 use Mockery\MockInterface;
-use Psr\Http\Server\MiddlewareInterface;
 
 class ExportedMiddlewareTest extends MockeryTestCase
 {
@@ -22,10 +22,10 @@ class ExportedMiddlewareTest extends MockeryTestCase
             'Test3'
         ];
 
-        /** @var MiddlewareInterface|MockInterface $chain */
-        $chain = Mockery::mock(MiddlewareInterface::class);
+        /** @var MiddlewareCollection|MockInterface $chain */
+        $chain = Mockery::mock(MiddlewareCollection::class);
         $chain
-            ->shouldReceive('listChainClassNames')
+            ->shouldReceive('listClassNames')
             ->once()
             ->andReturn(
                 $classNames
@@ -47,8 +47,8 @@ class ExportedMiddlewareTest extends MockeryTestCase
 
     public function testCanGetIdentifier()
     {
-        /** @var MiddlewareInterface|MockInterface $chain */
-        $chain              = Mockery::mock(MiddlewareInterface::class);
+        /** @var MiddlewareCollection|MockInterface $chain */
+        $chain              = Mockery::mock(MiddlewareCollection::class);
         $compoundHttpMethod = CompoundHttpMethod::createFromStrings(['GET']);
 
         $exportedMiddleware = new ExportedMiddleware(
@@ -69,8 +69,8 @@ class ExportedMiddlewareTest extends MockeryTestCase
 
     public function testCanGetHttpMethods()
     {
-        /** @var MiddlewareInterface|MockInterface $chain */
-        $chain              = Mockery::mock(MiddlewareInterface::class);
+        /** @var MiddlewareCollection|MockInterface $chain */
+        $chain              = Mockery::mock(MiddlewareCollection::class);
 
         /** @var CompoundHttpMethod|MockInterface $compoundHttpMethodMock */
         $compoundHttpMethodMock = Mockery::mock(CompoundHttpMethod::class);

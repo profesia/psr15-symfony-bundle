@@ -37,13 +37,7 @@ abstract class AbstractChainResolver
     protected function handleNext(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain
     {
         if ($this->next === null) {
-            return ResolvedMiddlewareChain::createDefault(
-                new MiddlewareCollection(
-                    [
-                        new NullMiddleware()
-                    ]
-                )
-            );
+            return ResolvedMiddlewareChain::createDefault();
         }
 
         return $this->next->handle($request);

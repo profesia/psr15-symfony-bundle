@@ -49,7 +49,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
 
                 $this->log(
                     LogLevel::INFO,
-                    'Fetched middleware chain from cache. ',
+                    'Fetched middleware chain from cache.',
                     [
                         'accessKey'       => $accessKey->toArray(),
                         'middlewareChain' => $middlewareChain->listClassNames()
@@ -67,7 +67,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
         if (!$resolvedMiddleware->isNullMiddleware()) {
             $this->log(
                 LogLevel::INFO,
-                'Resolved middleware chain. ',
+                'Resolved middleware chain.',
                 [
                     'accessKey'       =>
                         $resolvedMiddleware

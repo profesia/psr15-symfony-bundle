@@ -6,6 +6,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver;
 
 use Mockery;
 use Mockery\MockInterface;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
@@ -15,7 +16,6 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundExcept
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,28 +32,34 @@ class MiddlewareResolverTest extends MockeryTestCase
             [],
             [],
             [
-                '_route' => $routeName
+                '_route' => $routeName,
             ],
             [],
             [],
             [
-                'REQUEST_METHOD' => $httpMethod
+                'REQUEST_METHOD' => $httpMethod,
             ]
         );
 
         $httpMethodValueObject = HttpMethod::createFromString($httpMethod);
-        $middlewareNames =                 [
+        $middlewareNames       = [
             'Middleware1',
-            'Middleware2'
+            'Middleware2',
         ];
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
-            ->shouldReceive('listChainClassNames')
+        /** @var MockInterface|MiddlewareCollection $middlewareChain */
+        $middlewareChain = Mockery::mock(MiddlewareCollection::class);
+        $middlewareChain
+            ->shouldReceive('listClassNames')
             ->once()
             ->andReturn(
                 $middlewareNames
+            );
+        $middlewareChain
+            ->shouldReceive('isNullMiddleware')
+            ->once()
+            ->andReturn(
+                false
             );
 
         /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddleware */
@@ -64,12 +70,6 @@ class MiddlewareResolverTest extends MockeryTestCase
             ->andReturn(
                 false
             );
-        $resolvedMiddleware
-            ->shouldReceive('getMiddlewareChain')
-            ->once()
-            ->andReturn(
-                $middleware
-            );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
@@ -77,7 +77,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                 'accessPath'    => [
                     1,
                     2,
-                    3
+                    3,
                 ],
             ]
         );
@@ -87,6 +87,12 @@ class MiddlewareResolverTest extends MockeryTestCase
             ->once()
             ->andReturn(
                 $accessKey
+            );
+        $resolvedMiddleware
+            ->shouldReceive('listChainClassNames')
+            ->once()
+            ->andReturn(
+                $middlewareNames
             );
 
         /** @var MockInterface|AbstractChainResolver $middlewareResolverChain */
@@ -117,7 +123,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                         return false;
                     }
 
-                    if ($errorMessage !== 'Resolved middleware chain. ') {
+                    if ($errorMessage !== 'Resolved middleware chain.') {
                         return false;
                     }
 
@@ -160,7 +166,6 @@ class MiddlewareResolverTest extends MockeryTestCase
 
         $returnedMiddleware = $resolver->resolveMiddlewareChain($middlewareResolvingRequest);
         $this->assertEquals($resolvedMiddleware, $returnedMiddleware);
-        $this->assertEquals($middleware, $returnedMiddleware->getMiddlewareChain());
         $this->assertFalse($returnedMiddleware->isNullMiddleware());
         $this->assertEquals($accessKey, $returnedMiddleware->getMiddlewareAccessKey());
     }
@@ -173,29 +178,35 @@ class MiddlewareResolverTest extends MockeryTestCase
             [],
             [],
             [
-                '_route' => $routeName
+                '_route' => $routeName,
             ],
             [],
             [],
             [
-                'REQUEST_METHOD' => $httpMethod
+                'REQUEST_METHOD' => $httpMethod,
             ]
         );
 
 
         $httpMethodValueObject = HttpMethod::createFromString($httpMethod);
-        $middlewareNames =                 [
+        $middlewareNames       = [
             'Middleware1',
-            'Middleware2'
+            'Middleware2',
         ];
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
-            ->shouldReceive('listChainClassNames')
+        /** @var MockInterface|MiddlewareCollection $middlewareChain */
+        $middlewareChain = Mockery::mock(MiddlewareCollection::class);
+        $middlewareChain
+            ->shouldReceive('listClassNames')
             ->once()
             ->andReturn(
                 $middlewareNames
+            );
+        $middlewareChain
+            ->shouldReceive('isNullMiddleware')
+            ->once()
+            ->andReturn(
+                false
             );
 
         /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddleware */
@@ -207,10 +218,10 @@ class MiddlewareResolverTest extends MockeryTestCase
                 false
             );
         $resolvedMiddleware
-            ->shouldReceive('getMiddlewareChain')
+            ->shouldReceive('listChainClassNames')
             ->once()
             ->andReturn(
-                $middleware
+                $middlewareNames
             );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
@@ -219,7 +230,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                 'accessPath'    => [
                     1,
                     2,
-                    3
+                    3,
                 ],
             ]
         );
@@ -278,7 +289,6 @@ class MiddlewareResolverTest extends MockeryTestCase
 
         $returnedMiddleware = $resolver->resolveMiddlewareChain($middlewareResolvingRequest);
         $this->assertEquals($resolvedMiddleware, $returnedMiddleware);
-        $this->assertEquals($middleware, $returnedMiddleware->getMiddlewareChain());
         $this->assertFalse($returnedMiddleware->isNullMiddleware());
         $this->assertEquals($accessKey, $returnedMiddleware->getMiddlewareAccessKey());
     }
@@ -291,27 +301,33 @@ class MiddlewareResolverTest extends MockeryTestCase
             [],
             [],
             [
-                '_route' => $routeName
+                '_route' => $routeName,
             ],
             [],
             [],
             [
-                'REQUEST_METHOD' => $httpMethod
+                'REQUEST_METHOD' => $httpMethod,
             ]
         );
 
-        $middlewareNames =                 [
+        $middlewareNames = [
             'Middleware1',
-            'Middleware2'
+            'Middleware2',
         ];
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
-            ->shouldReceive('listChainClassNames')
+        /** @var MockInterface|MiddlewareCollection $middlewareChain */
+        $middlewareChain = Mockery::mock(MiddlewareCollection::class);
+        $middlewareChain
+            ->shouldReceive('listClassNames')
             ->once()
             ->andReturn(
                 $middlewareNames
+            );
+        $middlewareChain
+            ->shouldReceive('isNullMiddleware')
+            ->once()
+            ->andReturn(
+                false
             );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
@@ -320,7 +336,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                 'accessPath'    => [
                     1,
                     2,
-                    3
+                    3,
                 ],
             ]
         );
@@ -332,10 +348,10 @@ class MiddlewareResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $accessKey
+                    $accessKey,
                 ]
             )->andReturn(
-                $middleware
+                $middlewareChain
             );
 
         /** @var MockInterface|LoggerInterface $logger */
@@ -349,7 +365,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                         return false;
                     }
 
-                    if ($errorMessage !== 'Fetched middleware chain from cache. ') {
+                    if ($errorMessage !== 'Fetched middleware chain from cache.') {
                         return false;
                     }
 
@@ -392,7 +408,7 @@ class MiddlewareResolverTest extends MockeryTestCase
         $middlewareResolvingRequest = $middlewareResolvingRequest->withResolvedMiddlewareAccessCode($accessKey);
 
         $returnedMiddleware = $resolver->resolveMiddlewareChain($middlewareResolvingRequest);
-        $this->assertEquals($middleware, $returnedMiddleware->getMiddlewareChain());
+        //$this->assertEquals($middlewareChain, $returnedMiddleware->getMiddlewareChain());
         $this->assertFalse($returnedMiddleware->isNullMiddleware());
         $this->assertEquals($accessKey, $returnedMiddleware->getMiddlewareAccessKey());
     }
@@ -405,28 +421,34 @@ class MiddlewareResolverTest extends MockeryTestCase
             [],
             [],
             [
-                '_route' => $routeName
+                '_route' => $routeName,
             ],
             [],
             [],
             [
-                'REQUEST_METHOD' => $httpMethod
+                'REQUEST_METHOD' => $httpMethod,
             ]
         );
 
         $httpMethodValueObject = HttpMethod::createFromString($httpMethod);
-        $middlewareNames =                 [
+        $middlewareNames       = [
             'Middleware1',
-            'Middleware2'
+            'Middleware2',
         ];
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
-            ->shouldReceive('listChainClassNames')
+        /** @var MockInterface|MiddlewareCollection $middlewareChain */
+        $middlewareChain = Mockery::mock(MiddlewareCollection::class);
+        $middlewareChain
+            ->shouldReceive('listClassNames')
             ->once()
             ->andReturn(
                 $middlewareNames
+            );
+        $middlewareChain
+            ->shouldReceive('isNullMiddleware')
+            ->once()
+            ->andReturn(
+                false
             );
 
         /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddleware */
@@ -438,10 +460,10 @@ class MiddlewareResolverTest extends MockeryTestCase
                 false
             );
         $resolvedMiddleware
-            ->shouldReceive('getMiddlewareChain')
+            ->shouldReceive('listChainClassNames')
             ->once()
             ->andReturn(
-                $middleware
+                $middlewareNames
             );
 
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
@@ -450,7 +472,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                 'accessPath'    => [
                     1,
                     2,
-                    3
+                    3,
                 ],
             ]
         );
@@ -463,7 +485,7 @@ class MiddlewareResolverTest extends MockeryTestCase
             );
 
         $causeOfException = 'Testing';
-        $exception = new ChainNotFoundException($causeOfException);
+        $exception        = new ChainNotFoundException($causeOfException);
 
         /** @var MockInterface|AbstractChainResolver $middlewareResolverChain */
         $middlewareResolverChain = Mockery::mock(AbstractChainResolver::class);
@@ -472,7 +494,7 @@ class MiddlewareResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $accessKey
+                    $accessKey,
                 ]
             )->andThrow(
                 $exception
@@ -523,7 +545,7 @@ class MiddlewareResolverTest extends MockeryTestCase
                         return false;
                     }
 
-                    if ($errorMessage !== 'Resolved middleware chain. ') {
+                    if ($errorMessage !== 'Resolved middleware chain.') {
                         return false;
                     }
 
@@ -566,7 +588,7 @@ class MiddlewareResolverTest extends MockeryTestCase
         $middlewareResolvingRequest = $middlewareResolvingRequest->withResolvedMiddlewareAccessCode($accessKey);
 
         $returnedMiddleware = $resolver->resolveMiddlewareChain($middlewareResolvingRequest);
-        $this->assertEquals($middleware, $returnedMiddleware->getMiddlewareChain());
+        //$this->assertEquals($middlewareChain, $returnedMiddleware->getMiddlewareChain());
         $this->assertFalse($returnedMiddleware->isNullMiddleware());
         $this->assertEquals($accessKey, $returnedMiddleware->getMiddlewareAccessKey());
     }

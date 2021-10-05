@@ -143,10 +143,11 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
         /** @var MockInterface|SymfonyControllerRequestHandler $requestHandler */
         $requestHandler = Mockery::mock(SymfonyControllerRequestHandler::class);
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
+        /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
+        $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
+        $resolvedMiddlewareChain
             ->shouldReceive('process')
+            ->once()
             ->withArgs(
                 [
                     $psrRequest,
@@ -155,15 +156,6 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
             )
             ->andReturn(
                 $psrResponse
-            );
-
-        /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
-        $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
-        $resolvedMiddlewareChain
-            ->shouldReceive('getMiddlewareChain')
-            ->once()
-            ->andReturn(
-                $middleware
             );
 
         /** @var MockInterface|MiddlewareResolverInterface $middlewareResolver */
@@ -350,8 +342,12 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
 
         /** @var MockInterface|MiddlewareInterface $middleware */
         $middleware = Mockery::mock(MiddlewareInterface::class);
-        $middleware
+
+        /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
+        $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
+        $resolvedMiddlewareChain
             ->shouldReceive('process')
+            ->once()
             ->withArgs(
                 [
                     $psrRequest,
@@ -360,15 +356,6 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
             )
             ->andReturn(
                 $psrResponse
-            );
-
-        /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
-        $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
-        $resolvedMiddlewareChain
-            ->shouldReceive('getMiddlewareChain')
-            ->once()
-            ->andReturn(
-                $middleware
             );
 
         /** @var MockInterface|MiddlewareResolverInterface $middlewareResolver */

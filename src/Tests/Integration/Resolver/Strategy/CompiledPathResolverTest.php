@@ -7,6 +7,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Integration\Resolver\Strategy;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
@@ -27,16 +28,7 @@ class CompiledPathResolverTest extends MockeryTestCase
 {
     public function testCanCheckMultipleRegisteredRulesTillTheMatchingOneIsFound()
     {
-        /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var MockInterface|ResponseFactoryInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
-        $nullMiddleware = new NullMiddleware(
-            $serverRequestFactory,
-            $responseFactory
-        );
+        $nullMiddleware = new NullMiddleware();
 
         $routeName = 'test';
         $request   = new Request(
@@ -69,12 +61,7 @@ class CompiledPathResolverTest extends MockeryTestCase
             $routeName
         );
 
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $resolver = new CompiledPathResolver(
-            $middlewareChainItemFactory
-        );
+        $resolver = new CompiledPathResolver();
 
         $resolver->registerPathMiddleware(
             ConfigurationPath::createFromConfigurationHttpMethodAndString(
@@ -82,7 +69,7 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/1',
             ),
             [
-                'GET' => $nullMiddleware,
+                'GET' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -92,8 +79,8 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/12',
             ),
             [
-                'GET'  => $nullMiddleware,
-                'POST' => $nullMiddleware,
+                'GET'  => new MiddlewareCollection([$nullMiddleware]),
+                'POST' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -103,9 +90,9 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/123',
             ),
             [
-                'GET'  => $nullMiddleware,
-                'POST' => $nullMiddleware,
-                'PUT'  => $nullMiddleware,
+                'GET'  => new MiddlewareCollection([$nullMiddleware]),
+                'POST' => new MiddlewareCollection([$nullMiddleware]),
+                'PUT'  => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -115,16 +102,15 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/1234',
             ),
             [
-                'GET'    => $nullMiddleware,
-                'POST'   => $nullMiddleware,
-                'PUT'    => $nullMiddleware,
-                'DELETE' => $nullMiddleware,
+                'GET'    => new MiddlewareCollection([$nullMiddleware]),
+                'POST'   => new MiddlewareCollection([$nullMiddleware]),
+                'PUT'    => new MiddlewareCollection([$nullMiddleware]),
+                'DELETE' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
         $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
         $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
-        $this->assertTrue($nullMiddleware === $resolvedMiddlewareChain->getMiddlewareChain());
         $this->assertTrue($resolvedMiddlewareChain->getMiddlewareAccessKey()->isSameResolver($resolver));
         $this->assertEquals(
             [
@@ -141,16 +127,7 @@ class CompiledPathResolverTest extends MockeryTestCase
 
     public function testCAnChooseMatchLessStrictRule()
     {
-        /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var MockInterface|ResponseFactoryInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
-        $nullMiddleware = new NullMiddleware(
-            $serverRequestFactory,
-            $responseFactory
-        );
+        $nullMiddleware = new NullMiddleware();
 
         $routeName = 'test';
         $request   = new Request(
@@ -183,12 +160,7 @@ class CompiledPathResolverTest extends MockeryTestCase
             $routeName
         );
 
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $resolver = new CompiledPathResolver(
-            $middlewareChainItemFactory
-        );
+        $resolver = new CompiledPathResolver();
 
         $resolver->registerPathMiddleware(
             ConfigurationPath::createFromConfigurationHttpMethodAndString(
@@ -196,7 +168,7 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/1',
             ),
             [
-                'GET' => $nullMiddleware,
+                'GET' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -206,15 +178,14 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/ab',
             ),
             [
-                'GET'  => $nullMiddleware,
-                'POST' => $nullMiddleware,
+                'GET'  => new MiddlewareCollection([$nullMiddleware]),
+                'POST' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
 
         $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
         $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
-        $this->assertEquals($nullMiddleware, $resolvedMiddlewareChain->getMiddlewareChain());
         $this->assertTrue($resolvedMiddlewareChain->getMiddlewareAccessKey()->isSameResolver($resolver));
         $this->assertEquals(
             [
@@ -231,25 +202,11 @@ class CompiledPathResolverTest extends MockeryTestCase
 
     public function testCanExport()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $resolver = new CompiledPathResolver(
-            $middlewareChainItemFactory
-        );
+        $resolver = new CompiledPathResolver();
 
         $this->assertEmpty($resolver->exportRules());
 
-        /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var MockInterface|ResponseFactoryInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
-        $nullMiddleware = new NullMiddleware(
-            $serverRequestFactory,
-            $responseFactory
-        );
+        $nullMiddleware = new NullMiddleware();
 
         $resolver->registerPathMiddleware(
             ConfigurationPath::createFromConfigurationHttpMethodAndString(
@@ -257,8 +214,8 @@ class CompiledPathResolverTest extends MockeryTestCase
                 '/sk',
             ),
             [
-                'GET'  => $nullMiddleware,
-                'POST' => $nullMiddleware,
+                'GET'  => new MiddlewareCollection([$nullMiddleware]),
+                'POST' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -275,17 +232,7 @@ class CompiledPathResolverTest extends MockeryTestCase
     public function getChainDataProvider()
     {
         $class = CompiledPathResolver::class;
-
-        /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var MockInterface|ResponseFactoryInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
-        $nullMiddleware = new NullMiddleware(
-            $serverRequestFactory,
-            $responseFactory
-        );
+        $nullMiddleware = new NullMiddleware();
 
         return [
             [
@@ -420,12 +367,7 @@ class CompiledPathResolverTest extends MockeryTestCase
         ResolvedMiddlewareAccessKey $accessKey,
         array $rulesToRegister
     ) {
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $resolver = new CompiledPathResolver(
-            $middlewareChainItemFactory
-        );
+        $resolver = new CompiledPathResolver();
 
         $this->expectException($exceptionClass);
         $this->expectExceptionMessage($exceptionMessage);
@@ -442,33 +384,19 @@ class CompiledPathResolverTest extends MockeryTestCase
 
     public function testCanGetMiddlewareChain()
     {
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-
-        $resolver = new CompiledPathResolver(
-            $middlewareChainItemFactory
-        );
+        $resolver = new CompiledPathResolver();
 
         $path = ConfigurationPath::createFromConfigurationHttpMethodAndString(
             ConfigurationHttpMethod::createFromString('GET'),
             '/1',
         );
 
-        /** @var MockInterface|ServerRequestFactoryInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var MockInterface|ResponseFactoryInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
-
-        $nullMiddleware = new NullMiddleware(
-            $serverRequestFactory,
-            $responseFactory
-        );
+        $nullMiddleware = new NullMiddleware();
 
         $resolver->registerPathMiddleware(
             $path,
             [
-                'GET' => $nullMiddleware,
+                'GET' => new MiddlewareCollection([$nullMiddleware]),
             ]
         );
 
@@ -483,6 +411,6 @@ class CompiledPathResolverTest extends MockeryTestCase
             ]
         );
 
-        $this->assertEquals($nullMiddleware, $resolver->getChain($accessKey));
+        $this->assertEquals(new MiddlewareCollection([$nullMiddleware]), $resolver->getChain($accessKey));
     }
 }

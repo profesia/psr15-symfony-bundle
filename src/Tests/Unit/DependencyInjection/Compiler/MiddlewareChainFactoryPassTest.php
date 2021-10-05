@@ -9,6 +9,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
@@ -25,6 +26,9 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
     {
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
+
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
 
         /** @var MockInterface|ContainerBuilder $container */
         $container = Mockery::mock(ContainerBuilder::class);
@@ -206,6 +210,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         return [
             'container'                    => $container,
             'deepCopy'                     => $deepCopy,
+            'chainResolver'                => $chainResolver,
             'middlewareChain'              => $firstDefinition,
             'routeNameStrategyResolver'    => $routeNameStrategyResolver,
             'compiledPathStrategyResolver' => $compiledPathStrategyResolver,
@@ -217,7 +222,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -266,7 +275,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -334,7 +347,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -404,7 +421,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -496,7 +517,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
     public function testCanHandleMiddlewareChainsCreation()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy] = self::setUpStandardContainerExpectations(
+        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -506,6 +527,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         );
 
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -514,7 +536,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
     public function testCanDetectNonExistingMiddlewareChainDuringRoutingRulesCompilation()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy] = self::setUpStandardContainerExpectations(
+        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -527,6 +549,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         );
 
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -537,7 +560,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
     public function testCanDetectEmptyConditionsOnRoutingConfig()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy] = self::setUpStandardContainerExpectations(
+        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -550,6 +573,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         );
 
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -631,7 +655,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $newMiddlewareChain
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -713,7 +741,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $newMiddlewareChain
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -760,7 +792,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -831,7 +867,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1075,7 +1115,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1168,7 +1212,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $newMiddlewareChain
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1287,7 +1335,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $newMiddlewareChain
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1576,7 +1628,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1673,7 +1729,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -1848,7 +1908,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 }
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 
@@ -2071,7 +2135,11 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 }
             );
 
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $container['chainResolver'];
+
         $compilerPass = new MiddlewareChainFactoryPass(
+            $chainResolver,
             $deepCopy
         );
 

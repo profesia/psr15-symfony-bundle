@@ -35,11 +35,13 @@ class ResolvedMiddlewareChain implements MiddlewareInterface
         );
     }
 
-    public static function createDefault(
-        MiddlewareCollection $middlewareChain
-    ): ResolvedMiddlewareChain {
+    public static function createDefault(): ResolvedMiddlewareChain {
         return new self(
-            $middlewareChain
+            new MiddlewareCollection(
+                [
+                    new NullMiddleware()
+                ]
+            )
         );
     }
 

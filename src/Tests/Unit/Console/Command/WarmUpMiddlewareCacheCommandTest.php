@@ -7,14 +7,13 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
-use Psr\Http\Message\ResponseFactoryInterface;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
@@ -27,7 +26,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
     {
         return [
             [['GET', 'POST'], ['GET', 'POST']],
-            [[], HttpMethod::getPossibleValues()]
+            [[], HttpMethod::getPossibleValues()],
         ];
     }
 
@@ -38,10 +37,10 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         /** @var RouterInterface|MockInterface $router */
         $router = Mockery::mock(RouterInterface::class);
         $router->shouldReceive('getRouteCollection')
-               ->once()
-               ->andReturn(
-                   $routeCollection
-               );
+            ->once()
+            ->andReturn(
+                $routeCollection
+            );
 
         /** @var MiddlewareResolverCachingInterface|MockInterface $resolver */
         $resolver = Mockery::mock(MiddlewareResolverCachingInterface::class);
@@ -103,8 +102,8 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         /** @var Route|MockInterface $route1 */
         $route1 = Mockery::mock(Route::class);
         $route1->shouldReceive('getPath')
-               ->once()
-               ->andReturn('/1');
+            ->once()
+            ->andReturn('/1');
 
         /** @var CompiledRoute|MockInterface $compiledRoute1 */
         $compiledRoute1 = Mockery::mock(CompiledRoute::class);
@@ -129,8 +128,8 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         /** @var Route|MockInterface $route2 */
         $route2 = Mockery::mock(Route::class);
         $route2->shouldReceive('getPath')
-               ->once()
-               ->andReturn('/_2');
+            ->once()
+            ->andReturn('/_2');
 
         $routeCollection->add(
             '1',
@@ -145,16 +144,10 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         /** @var RouterInterface|MockInterface $router */
         $router = Mockery::mock(RouterInterface::class);
         $router->shouldReceive('getRouteCollection')
-               ->once()
-               ->andReturn(
-                   $routeCollection
-               );
-
-        /** @var ServerRequestFactoryInterface|MockInterface $serverRequestFactory */
-        $serverRequestFactory = Mockery::mock(ServerRequestFactoryInterface::class);
-
-        /** @var ResponseFactoryInterface|MockInterface $responseFactory */
-        $responseFactory = Mockery::mock(ResponseFactoryInterface::class);
+            ->once()
+            ->andReturn(
+                $routeCollection
+            );
 
         $index = 0;
         /** @var MiddlewareResolverCachingInterface|MockInterface $resolver */
@@ -180,12 +173,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
                     return true;
                 }
             )->andReturn(
-                ResolvedMiddlewareChain::createDefault(
-                    new NullMiddleware(
-                        $serverRequestFactory,
-                        $responseFactory
-                    )
-                )
+                ResolvedMiddlewareChain::createDefault()
             );
 
         $command = new WarmUpMiddlewareCacheCommand(
@@ -193,7 +181,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
             $resolver
         );
 
-        $tester     = new CommandTester(
+        $tester = new CommandTester(
             $command
         );
         $statusCode = $tester->execute([]);

@@ -7,6 +7,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
+use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
@@ -61,7 +62,7 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $this->assertEmpty($resolver->exportRules());
-        $resolver->registerRouteMiddleware('*', $middleware1);
+        $resolver->registerRouteMiddleware('*', new MiddlewareCollection([$middleware1]));
     }
 
     public function testCanRegisterChainToAStandardRoute()
@@ -99,7 +100,7 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $this->assertEmpty($resolver->exportRules());
-        $resolver->registerRouteMiddleware('test', $middleware1);
+        $resolver->registerRouteMiddleware('test', new MiddlewareCollection([$middleware1]));
     }
 
     public function testWillDetectNonExistingRouteOnRegistration()
@@ -142,7 +143,7 @@ class RouteNameResolverTest extends MockeryTestCase
         $this->assertEmpty($resolver->exportRules());
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Route with name: [test] is not registered");
-        $resolver->registerRouteMiddleware('test', $middleware1);
+        $resolver->registerRouteMiddleware('test', new MiddlewareCollection([$middleware1]));
         $this->assertEmpty($resolver->exportRules());
     }
 
@@ -161,7 +162,7 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $expectedMiddlewareChain = ResolvedMiddlewareChain::createFromResolverContext(
-            $middleware1,
+            new MiddlewareCollection([$middleware1]),
             $accessKey
         );
 
@@ -200,7 +201,7 @@ class RouteNameResolverTest extends MockeryTestCase
             $routeName
         );
 
-        $resolver->registerRouteMiddleware($routeName, $middleware1);
+        $resolver->registerRouteMiddleware($routeName, new MiddlewareCollection([$middleware1]));
         $resolvedMiddlewareChain = $resolver->handle(
             $middlewareResolvingRequest
         );
@@ -224,7 +225,7 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $expectedMiddlewareChain = ResolvedMiddlewareChain::createFromResolverContext(
-            $middleware1,
+            new MiddlewareCollection([$middleware1]),
             $accessKey
         );
 
@@ -250,7 +251,7 @@ class RouteNameResolverTest extends MockeryTestCase
             $routeName
         );
 
-        $resolver->registerRouteMiddleware($routeName, $middleware1);
+        $resolver->registerRouteMiddleware($routeName, new MiddlewareCollection([$middleware1]));
         $resolvedMiddlewareChain = $resolver->handle(
             $middlewareResolvingRequest
         );
@@ -273,7 +274,7 @@ class RouteNameResolverTest extends MockeryTestCase
         );
 
         $expectedMiddlewareChain = ResolvedMiddlewareChain::createFromResolverContext(
-            $middleware,
+            new MiddlewareCollection([$middleware]),
             $accessKey
         );
 
@@ -368,7 +369,7 @@ class RouteNameResolverTest extends MockeryTestCase
             $router
         );
 
-        $resolver->registerRouteMiddleware($routeName, $middleware);
+        $resolver->registerRouteMiddleware($routeName, new MiddlewareCollection([$middleware]));
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Route: [{$routeName}] is not registered");
         $resolver->exportRules();
@@ -402,8 +403,8 @@ class RouteNameResolverTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|MiddlewareInterface $expectedMiddlewareChain */
-        $expectedMiddlewareChain = Mockery::mock(MiddlewareInterface::class);
+        /** @var MockInterface|MiddlewareCollection $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(MiddlewareCollection::class);
 
         /** @var MockInterface|AbstractChainResolver $handler */
         $handler = Mockery::mock(AbstractChainResolver::class);
@@ -505,7 +506,7 @@ class RouteNameResolverTest extends MockeryTestCase
 
         $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
         $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
-        $this->assertTrue($resolvedMiddlewareChain->getMiddlewareChain() === $nullMiddleware);
+        $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
         $this->assertNull($resolvedMiddlewareChain->getMiddlewareAccessKey());
     }
 }
