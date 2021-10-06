@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy;
 
 use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
-use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\AbstractResolveException;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
-use RuntimeException;
 
 abstract class AbstractChainResolver
 {

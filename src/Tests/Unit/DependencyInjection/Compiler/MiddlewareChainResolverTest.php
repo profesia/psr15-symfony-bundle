@@ -15,18 +15,31 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class MiddlewareChainResolverTest extends MockeryTestCase
 {
-    public function testCanResolveMiddlewareChains()
+    public static function getDefinitionConfig(): array
     {
-        $classes          = [
+        $classes = [
             'Class1',
             'Class2',
             'Class3',
         ];
-        $definitionConfig = [
-            'Group1' => $classes,
+
+        return [
+            [
+                [
+                    'Group1' => $classes,
+                ],
+            ],
         ];
+    }
+
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanResolveMiddlewareChains(array $definitionConfig)
+    {
         /** @var ContainerBuilder|MockInterface $container */
         $container = Mockery::mock(ContainerBuilder::class);
+        $classes   = $definitionConfig['Group1'];
 
         foreach ($classes as $class) {
             $container
@@ -64,30 +77,28 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         }
 
 
-        $resolver    = new MiddlewareChainResolver(
+        $resolver = new MiddlewareChainResolver(
             $container
         );
+
         $middlewares = $resolver->resolve(
             $definitionConfig
         );
 
 
         $this->assertTrue(count($middlewares) === 1);
-        $this->assertTrue(count($middlewares['Group1']) === 3);
+        $definition = $middlewares['Group1'];
+        $this->assertCount(count($classes), $definition->getArguments()[0]);
     }
 
-    public function testCanIdentifyNonExistingMiddleware()
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanIdentifyNonExistingMiddleware(array $definitionConfig)
     {
-        $classes          = [
-            'Class1',
-            'Class2',
-            'Class3',
-        ];
-        $definitionConfig = [
-            'Group1' => $classes,
-        ];
         /** @var ContainerBuilder|MockInterface $container */
         $container = Mockery::mock(ContainerBuilder::class);
+        $classes   = $definitionConfig['Group1'];
 
         foreach ($classes as $class) {
             $isLastClass = ($class === 'Class3');
@@ -129,7 +140,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Middleware with service alias: [Class3] is not registered as a service");
-        $resolver    = new MiddlewareChainResolver(
+        $resolver = new MiddlewareChainResolver(
             $container
         );
         $resolver->resolve(
@@ -137,18 +148,14 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         );
     }
 
-    public function testCanIdentifyNonSimpleServiceDefinition()
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanIdentifyNonSimpleServiceDefinition(array $definitionConfig)
     {
-        $classes          = [
-            'Class1',
-            'Class2',
-            'Class3',
-        ];
-        $definitionConfig = [
-            'Group1' => $classes,
-        ];
         /** @var ContainerBuilder|MockInterface $container */
         $container = Mockery::mock(ContainerBuilder::class);
+        $classes   = $definitionConfig['Group1'];
 
         foreach ($classes as $class) {
             $isLastClass = ($class === 'Class3');
@@ -192,11 +199,253 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         $this->expectExceptionMessage(
             "Middleware with service alias: [Class3] could not be included in chain. Only simple services (without additional calls) could be included"
         );
-        $resolver    = new MiddlewareChainResolver(
+        $resolver = new MiddlewareChainResolver(
             $container
         );
         $resolver->resolve(
             $definitionConfig
+        );
+    }
+
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanIdentifyNonExistingServiceDuringPrepend(array $definitionConfig)
+    {
+        $classes = $definitionConfig['Group1'];
+
+        /** @var ContainerBuilder|MockInterface $container */
+        $container = Mockery::mock(ContainerBuilder::class);
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    $classes[0],
+                ]
+            )
+            ->andReturn(
+                false
+            );
+
+        $resolver = new MiddlewareChainResolver(
+            $container
+        );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+
+        $conditionName   = 'Test';
+        $middlewareAlias = $classes[0];
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+        );
+        $resolver->resolveMiddlewaresToPrepend(
+            $definition,
+            [
+                $classes[0],
+                $classes[2],
+            ],
+            'Test'
+        );
+    }
+
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanIdentifyNonExistingServiceDuringAppend(array $definitionConfig)
+    {
+        $classes = $definitionConfig['Group1'];
+
+        /** @var ContainerBuilder|MockInterface $container */
+        $container = Mockery::mock(ContainerBuilder::class);
+        $container
+            ->shouldReceive('hasDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    $classes[0],
+                ]
+            )
+            ->andReturn(
+                false
+            );
+
+        $resolver = new MiddlewareChainResolver(
+            $container
+        );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+
+        $conditionName   = 'Test';
+        $middlewareAlias = $classes[0];
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
+        );
+        $resolver->resolveMiddlewaresToAppend(
+            $definition,
+            [
+                $classes[0],
+                $classes[2],
+            ],
+            'Test'
+        );
+    }
+
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanPrependMiddlewares(array $definitionConfig)
+    {
+        $classes          = $definitionConfig['Group1'];
+        $classesToPrepend = [
+            $classes[0],
+            $classes[2],
+        ];
+
+        /** @var ContainerBuilder|MockInterface $container */
+        $container = Mockery::mock(ContainerBuilder::class);
+
+        $definitionsToPrepend = [
+            0 => Mockery::mock(Definition::class),
+            1 => Mockery::mock(Definition::class),
+        ];
+
+        $index = 0;
+        foreach ($classesToPrepend as $classToPrepend) {
+            $container
+                ->shouldReceive('hasDefinition')
+                ->once()
+                ->withArgs(
+                    [
+                        $classToPrepend,
+                    ]
+                )
+                ->andReturn(
+                    true
+                );
+
+            $container
+                ->shouldReceive('getDefinition')
+                ->once()
+                ->withArgs(
+                    [
+                        $classToPrepend,
+                    ]
+                )
+                ->andReturn(
+                    $definitionsToPrepend[$index++]
+                );
+        }
+
+        $resolver = new MiddlewareChainResolver(
+            $container
+        );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+
+        foreach (array_reverse($definitionsToPrepend) as $oneDefinitionToPrepend) {
+            $definition
+                ->shouldReceive('addMethodCall')
+                ->once()
+                ->withArgs(
+                    [
+                        'prepend',
+                        [
+                            $oneDefinitionToPrepend,
+                        ],
+                    ]
+                );
+        }
+
+        $this->assertEquals(
+            $definition,
+            $resolver->resolveMiddlewaresToPrepend(
+                $definition,
+                $classesToPrepend,
+                'Test'
+            )
+        );
+    }
+
+    /**
+     * @dataProvider getDefinitionConfig
+     */
+    public function testCanAppendMiddlewares(array $definitionConfig)
+    {
+        $classes          = $definitionConfig['Group1'];
+        $classesToAppend = [
+            $classes[0],
+            $classes[2],
+        ];
+
+        /** @var ContainerBuilder|MockInterface $container */
+        $container = Mockery::mock(ContainerBuilder::class);
+
+        $definitionsToAppend = [
+            0 => Mockery::mock(Definition::class),
+            1 => Mockery::mock(Definition::class),
+        ];
+
+        $index = 0;
+        foreach ($classesToAppend as $oneClassToAppend) {
+            $container
+                ->shouldReceive('hasDefinition')
+                ->once()
+                ->withArgs(
+                    [
+                        $oneClassToAppend,
+                    ]
+                )
+                ->andReturn(
+                    true
+                );
+
+            $container
+                ->shouldReceive('getDefinition')
+                ->once()
+                ->withArgs(
+                    [
+                        $oneClassToAppend,
+                    ]
+                )
+                ->andReturn(
+                    $definitionsToAppend[$index++]
+                );
+        }
+
+        $resolver = new MiddlewareChainResolver(
+            $container
+        );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+
+        foreach ($definitionsToAppend as $oneDefinitionToAppend) {
+            $definition
+                ->shouldReceive('addMethodCall')
+                ->once()
+                ->withArgs(
+                    [
+                        'append',
+                        [
+                            $oneDefinitionToAppend,
+                        ],
+                    ]
+                );
+        }
+
+        $this->assertEquals(
+            $definition,
+            $resolver->resolveMiddlewaresToAppend(
+                $definition,
+                $classesToAppend,
+                'Test'
+            )
         );
     }
 }

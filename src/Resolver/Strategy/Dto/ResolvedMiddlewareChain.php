@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto;
 
-use Delvesoft\Psr15\Middleware\AbstractMiddlewareChainItem;
 use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
-use Profesia\Symfony\Psr15Bundle\RequestHandler\MiddlewareChainHandler;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

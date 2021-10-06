@@ -48,6 +48,14 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'Condition' => $routing,
             ];
         }
+
+        $config = [
+            'use_cache'         => false,
+            'middleware_chains' => [
+                'Test' => $middlewareChain,
+            ],
+            'routing'           => $routingConfig,
+        ];
         $container
             ->shouldReceive('getParameter')
             ->once()
@@ -57,13 +65,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             )
             ->andReturn(
-                [
-                    'use_cache'         => false,
-                    'middleware_chains' => [
-                        'Test' => $middlewareChain,
-                    ],
-                    'routing'           => $routingConfig,
-                ]
+                $config
             );
 
         /** @var MockInterface|Definition $adapterDefinition */
@@ -208,6 +210,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         }
 
         return [
+            'config'                       => $config,
             'container'                    => $container,
             'deepCopy'                     => $deepCopy,
             'chainResolver'                => $chainResolver,
@@ -347,8 +350,30 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        $middlewareAlias = '1';
+        $config          = [
+            'use_cache'         => false,
+            'middleware_chains' => [
+                'Test' => [
+                    $middlewareAlias,
+                ],
+            ],
+            'routing'           => [],
+        ];
+
         /** @var MockInterface|MiddlewareChainResolver $chainResolver */
         $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+        $chainResolver
+            ->shouldReceive('resolve')
+            ->once()
+            ->withArgs(
+                [
+                    $config['middleware_chains'],
+                ]
+            )
+            ->andThrow(
+                new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service")
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -376,19 +401,9 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             )
             ->andReturn(
-                [
-                    'use_cache'         => false,
-                    'middleware_chains' => [
-                        'Test' => [
-                            '1',
-                        ],
-                    ],
-                    'routing'           => [],
-                ]
+                $config
             );
 
-        /** @var MockInterface|Definition $definition */
-        $definition = Mockery::mock(Definition::class);
         $container
             ->shouldReceive('getDefinition')
             ->once()
@@ -398,21 +413,28 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             )
             ->andReturn(
-                $definition
+                new Definition()
             );
 
         $container
-            ->shouldReceive('hasDefinition')
+            ->shouldReceive('getDefinition')
             ->once()
             ->withArgs(
                 [
-                    '1',
+                    RouteNameResolver::class,
                 ]
-            )
-            ->andReturn(false);
+            );
+        $container
+            ->shouldReceive('getDefinition')
+            ->once()
+            ->withArgs(
+                [
+                    CompiledPathResolver::class,
+                ]
+            );
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Middleware with service alias: [1] is not registered as a service');
+        $this->expectExceptionMessage("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
         $compilerPass->process($container);
     }
 
@@ -421,8 +443,32 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = Mockery::mock(DeepCopy::class);
 
+        $middlewareAlias = '1';
+        $config          = [
+            'use_cache'         => false,
+            'middleware_chains' => [
+                'Test' => [
+                    $middlewareAlias,
+                ],
+            ],
+            'routing'           => [],
+        ];
+
         /** @var MockInterface|MiddlewareChainResolver $chainResolver */
         $chainResolver = Mockery::mock(MiddlewareChainResolver::class);
+        $chainResolver
+            ->shouldReceive('resolve')
+            ->once()
+            ->withArgs(
+                [
+                    $config['middleware_chains'],
+                ]
+            )
+            ->andThrow(
+                new RuntimeException(
+                    "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
+                )
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -450,15 +496,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             )
             ->andReturn(
-                [
-                    'use_cache'         => false,
-                    'middleware_chains' => [
-                        'Test' => [
-                            '1',
-                        ],
-                    ],
-                    'routing'           => [],
-                ]
+                $config
             );
 
         /** @var MockInterface|Definition $adapterDefinition */
@@ -475,49 +513,23 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $adapterDefinition
             );
 
-        /** @var MockInterface|Definition $middlewareDefinition */
-        $middlewareDefinition = Mockery::mock(Definition::class);
-        $middlewareDefinition
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                [
-                    'test',
-                ]
-            );
-
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )->andReturn(
-                $middlewareDefinition
-            );
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
-            'Middleware with service alias: [1] could not be included in chain. Only simple services (without additional calls) could be included'
+            "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
         );
         $compilerPass->process($container);
     }
 
     public function testCanHandleMiddlewareChainsCreation()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        [
+            'container'     => $container,
+            'deepCopy'      => $deepCopy,
+            'chainResolver' => $chainResolver,
+            'config'        => $config,
+        ] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -525,6 +537,22 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ],
             null
         );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $chainResolver
+            ->shouldReceive('resolve')
+            ->once()
+            ->withArgs(
+                [
+                    $config['middleware_chains'],
+                ]
+            )
+            ->andReturn(
+                [
+                    'test' => $definition,
+                ]
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -536,7 +564,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
     public function testCanDetectNonExistingMiddlewareChainDuringRoutingRulesCompilation()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        [
+            'container'     => $container,
+            'deepCopy'      => $deepCopy,
+            'chainResolver' => $chainResolver,
+            'config'        => $config,
+        ] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -547,6 +581,22 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'conditions'       => [],
             ]
         );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $chainResolver
+            ->shouldReceive('resolve')
+            ->once()
+            ->withArgs(
+                [
+                    $config['middleware_chains'],
+                ]
+            )
+            ->andReturn(
+                [
+                    'test' => $definition,
+                ]
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -560,7 +610,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
     public function testCanDetectEmptyConditionsOnRoutingConfig()
     {
-        ['container' => $container, 'deepCopy' => $deepCopy, 'chainResolver' => $chainResolver] = self::setUpStandardContainerExpectations(
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        [
+            'container'     => $container,
+            'deepCopy'      => $deepCopy,
+            'chainResolver' => $chainResolver,
+            'config'        => $config,
+        ] = self::setUpStandardContainerExpectations(
             [
                 '1',
                 '2',
@@ -571,6 +627,22 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 'conditions'       => [],
             ]
         );
+
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $chainResolver
+            ->shouldReceive('resolve')
+            ->once()
+            ->withArgs(
+                [
+                    $config['middleware_chains'],
+                ]
+            )
+            ->andReturn(
+                [
+                    'Test' => $definition,
+                ]
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -604,59 +676,60 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|ContainerBuilder $container */
         $container = $mocks['container'];
 
+        /** @var array $config */
+        $config = $mocks['config'];
+
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $mocks['chainResolver'];
 
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $middlewareChains = [
+            'Test' => $definition
+        ];
+
+        $chainResolver
+            ->shouldReceive('resolve')
             ->once()
             ->withArgs(
                 [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $middlewareChain,
+                    $config['middleware_chains'],
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $middlewareChains
             );
 
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToPrepend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
+            );
+
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToAppend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -690,59 +763,60 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|ContainerBuilder $container */
         $container = $mocks['container'];
 
+        /** @var array $config */
+        $config = $mocks['config'];
+
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $mocks['chainResolver'];
 
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $middlewareChains = [
+            'Test' => $definition
+        ];
+
+        $chainResolver
+            ->shouldReceive('resolve')
             ->once()
             ->withArgs(
                 [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $middlewareChain,
+                    $config['middleware_chains'],
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $middlewareChains
             );
 
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToPrepend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
+            );
+
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToAppend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
+            );
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -751,891 +825,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Error in condition config: [Condition]. Key: 'method' is redundant for condition with 'route_name'");
-        $compilerPass->process($container);
-    }
-
-    public function testCanDetectNonExistingMiddlewareInPrependSection()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'prepend'          => [
-                    'abcd',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    'abcd',
-                ]
-            )
-            ->andReturn(
-                false
-            );
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware with service alias: [abcd] is not registered as a service');
-        $compilerPass->process($container);
-    }
-
-    public function testCanDetectPrependingOfAOtherMiddlewareChain()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'prepend'          => [
-                    '1',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-
-
-        /** @var MockInterface|Definition $originalDefinition */
-        $originalDefinition = Mockery::mock(Definition::class);
-        $originalDefinition
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                [
-                    'test',
-                ]
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )
-            ->andReturn(
-                $originalDefinition
-            );
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware to prepend must not be a middleware chain');
-        $compilerPass->process($container);
-    }
-
-    public function testCanCreateMiddlewareChainInPrependSection()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'prepend'          => [
-                    '4',
-                    '5',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '4',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '5',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-
-
-        /** @var MockInterface|Definition $prependDefinition1 */
-        $prependDefinition1 = Mockery::mock(Definition::class);
-        $prependDefinition1
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                []
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '4',
-                ]
-            )
-            ->andReturn(
-                $prependDefinition1
-            );
-
-        /** @var MockInterface|Definition $prependDefinition2 */
-        $prependDefinition2 = Mockery::mock(Definition::class);
-        $prependDefinition2
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                []
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '5',
-                ]
-            )
-            ->andReturn(
-                $prependDefinition2
-            );
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|Definition $newPrependDefinition1 */
-        $newPrependDefinition1 = Mockery::mock(Definition::class);
-        $newPrependDefinition1
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newPrependDefinition1
-            );
-
-        $newPrependDefinition1
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newPrependDefinition1
-            );
-
-        $newPrependDefinition1
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )
-            ->andReturn(
-                $newPrependDefinition1
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $prependDefinition1,
-                ]
-            )
-            ->andReturn(
-                $newPrependDefinition1
-            );
-
-        /** @var MockInterface|Definition $newPrependDefinition2 */
-        $newPrependDefinition2 = Mockery::mock(Definition::class);
-        $newPrependDefinition2
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newPrependDefinition2
-            );
-
-        $newPrependDefinition2
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newPrependDefinition2
-            );
-
-        $newPrependDefinition2
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )
-            ->andReturn(
-                $newPrependDefinition2
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $prependDefinition2,
-                ]
-            )
-            ->andReturn(
-                $newPrependDefinition2
-            );
-
-        $newPrependDefinition1
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'append',
-                    [
-                        $newPrependDefinition2,
-                    ],
-                ]
-            )
-            ->andReturn($newPrependDefinition1);
-
-        $newPrependDefinition1
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'append',
-                    [
-                        $middlewareChain,
-                    ],
-                ]
-            )
-            ->andReturn(
-                $newPrependDefinition1
-            );
-
-        /** @var MockInterface|Definition $routeNameStrategyResolver */
-        $routeNameStrategyResolver = $mocks['routeNameStrategyResolver'];
-        $routeNameStrategyResolver
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'registerRouteMiddleware',
-                    [
-                        'test',
-                        $newPrependDefinition1,
-                    ],
-                ]
-            );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
-        $compilerPass->process($container);
-    }
-
-    public function testCanDetectNonExistingMiddlewareInAppendingSection()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'append'           => [
-                    'abcd',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    'abcd',
-                ]
-            )
-            ->andReturn(
-                false
-            );
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $middlewareChain,
-                ]
-            )
-            ->andReturn(
-                $newMiddlewareChain
-            );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware with service alias: [abcd] is not registered as a service');
-        $compilerPass->process($container);
-    }
-
-    public function testCanDetectAppendingOfOtherMiddlewareChain()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'append'           => [
-                    '1',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-
-
-        /** @var MockInterface|Definition $originalDefinition */
-        $originalDefinition = Mockery::mock(Definition::class);
-        $originalDefinition
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                [
-                    'test',
-                ]
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '1',
-                ]
-            )
-            ->andReturn(
-                $originalDefinition
-            );
-
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $middlewareChain,
-                ]
-            )
-            ->andReturn(
-                $newMiddlewareChain
-            );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error in condition config: [Condition]. Middleware to append must not be a middleware chain');
-        $compilerPass->process($container);
-    }
-
-    public function testCanCreateMiddlewareChainInAppendSection()
-    {
-        $mocks = self::setUpStandardContainerExpectations(
-            [
-                '1',
-                '2',
-                '3',
-            ],
-            [
-                'middleware_chain' => 'Test',
-                'append'           => [
-                    '4',
-                    '5',
-                ],
-                'conditions'       => [
-                    [
-                        'route_name' => 'test',
-                    ],
-                ],
-            ]
-        );
-
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = $mocks['container'];
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '4',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-        $container
-            ->shouldReceive('hasDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '5',
-                ]
-            )
-            ->andReturn(
-                true
-            );
-
-
-        /** @var MockInterface|Definition $appendDefinition1 */
-        $appendDefinition1 = Mockery::mock(Definition::class);
-        $appendDefinition1
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                []
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '4',
-                ]
-            )
-            ->andReturn(
-                $appendDefinition1
-            );
-
-        /** @var MockInterface|Definition $appendDefinition2 */
-        $appendDefinition2 = Mockery::mock(Definition::class);
-        $appendDefinition2
-            ->shouldReceive('getMethodCalls')
-            ->once()
-            ->andReturn(
-                []
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    '5',
-                ]
-            )
-            ->andReturn(
-                $appendDefinition2
-            );
-
-        /** @var MockInterface|DeepCopy $deepCopy */
-        $deepCopy = $mocks['deepCopy'];
-
-        /** @var MockInterface|Definition $newAppendDefinition1 */
-        $newAppendDefinition1 = Mockery::mock(Definition::class);
-        $newAppendDefinition1
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newAppendDefinition1
-            );
-
-        $newAppendDefinition1
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newAppendDefinition1
-            );
-
-        $newAppendDefinition1
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )
-            ->andReturn(
-                $newAppendDefinition1
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $appendDefinition1,
-                ]
-            )
-            ->andReturn(
-                $newAppendDefinition1
-            );
-
-        /** @var MockInterface|Definition $newAppendDefinition2 */
-        $newAppendDefinition2 = Mockery::mock(Definition::class);
-        $newAppendDefinition2
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newAppendDefinition2
-            );
-
-        $newAppendDefinition2
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newAppendDefinition2
-            );
-
-        $newAppendDefinition2
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )
-            ->andReturn(
-                $newAppendDefinition2
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $appendDefinition2,
-                ]
-            )
-            ->andReturn(
-                $newAppendDefinition2
-            );
-
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )
-            ->andReturn(
-                $newMiddlewareChain
-            );
-
-
-        $newMiddlewareChain
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'append',
-                    [
-                        $newAppendDefinition1,
-                    ],
-                ]
-            );
-
-        $newMiddlewareChain
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'append',
-                    [
-                        $newAppendDefinition2,
-                    ],
-                ]
-            );
-
-        $deepCopy
-            ->shouldReceive('copy')
-            ->once()
-            ->withArgs(
-                [
-                    $middlewareChain,
-                ]
-            )
-            ->andReturn(
-                $newMiddlewareChain
-            );
-
-        /** @var MockInterface|Definition $routeNameStrategyResolver */
-        $routeNameStrategyResolver = $mocks['routeNameStrategyResolver'];
-        $routeNameStrategyResolver
-            ->shouldReceive('addMethodCall')
-            ->once()
-            ->withArgs(
-                [
-                    'registerRouteMiddleware',
-                    [
-                        'test',
-                        $newMiddlewareChain,
-                    ],
-                ]
-            );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
-        $compilerPass = new MiddlewareChainFactoryPass(
-            $chainResolver,
-            $deepCopy
-        );
-
         $compilerPass->process($container);
     }
 
@@ -1657,8 +846,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
+        /** @var array $config */
+        $config = $mocks['config'];
 
         /** @var MockInterface|ContainerBuilder $container */
         $container = $mocks['container'];
@@ -1666,52 +855,53 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $mocks['chainResolver'];
 
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $middlewareChains = [
+            'Test' => $definition
+        ];
 
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
+        $chainResolver
+            ->shouldReceive('resolve')
             ->once()
             ->withArgs(
                 [
-                    false,
+                    $config['middleware_chains'],
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $middlewareChains
             );
 
-        $deepCopy
-            ->shouldReceive('copy')
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToPrepend')
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain,
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $definition
+            );
+
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToAppend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
             );
 
         /** @var MockInterface|Definition $routeNameStrategyResolver */
@@ -1724,13 +914,10 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'registerRouteMiddleware',
                     [
                         'test',
-                        $newMiddlewareChain,
+                        $definition,
                     ],
                 ]
             );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -1758,61 +945,62 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
         /** @var MockInterface|ContainerBuilder $container */
         $container = $mocks['container'];
+
+        /** @var array $config */
+        $config = $mocks['config'];
 
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $middlewareChains = [
+            'Test' => $definition
+        ];
 
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $mocks['chainResolver'];
 
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
+        $chainResolver
+            ->shouldReceive('resolve')
             ->once()
             ->withArgs(
                 [
-                    false,
+                    $config['middleware_chains'],
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $middlewareChains
             );
 
-        $deepCopy
-            ->shouldReceive('copy')
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToPrepend')
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain,
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $definition
+            );
+
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToAppend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
             );
 
         $finalMiddlewareChain = [];
@@ -1858,7 +1046,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $newMiddlewareChain,
+                        $definition,
                     ]
                 )->andReturn(
                     $httpMethodMiddlewareChain
@@ -1873,7 +1061,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->shouldReceive('addMethodCall')
             ->once()
             ->withArgs(
-                function (string $methodName, array $parameters) use ($newMiddlewareChain, $finalMiddlewareChain) {
+                function (string $methodName, array $parameters) use ($definition, $finalMiddlewareChain) {
                     if ($methodName !== 'registerPathMiddleware') {
                         return false;
                     }
@@ -1908,9 +1096,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 }
             );
 
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
-
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
             $deepCopy
@@ -1938,61 +1123,62 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|Definition $middlewareChain */
-        $middlewareChain = $mocks['middlewareChain'];
-
         /** @var MockInterface|ContainerBuilder $container */
         $container = $mocks['container'];
+
+        /** @var array $config */
+        $config = $mocks['config'];
 
         /** @var MockInterface|DeepCopy $deepCopy */
         $deepCopy = $mocks['deepCopy'];
 
-        /** @var MockInterface|Definition $newMiddlewareChain */
-        $newMiddlewareChain = Mockery::mock(Definition::class);
-        $newMiddlewareChain
-            ->shouldReceive('setPublic')
-            ->once()
-            ->withArgs(
-                [
-                    false,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|Definition $definition */
+        $definition = Mockery::mock(Definition::class);
+        $middlewareChains = [
+            'Test' => $definition
+        ];
 
-        $newMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $newMiddlewareChain
-            );
+        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
+        $chainResolver = $mocks['chainResolver'];
 
-        $newMiddlewareChain
-            ->shouldReceive('setShared')
+        $chainResolver
+            ->shouldReceive('resolve')
             ->once()
             ->withArgs(
                 [
-                    false,
+                    $config['middleware_chains'],
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $middlewareChains
             );
 
-        $deepCopy
-            ->shouldReceive('copy')
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToPrepend')
             ->once()
             ->withArgs(
                 [
-                    $middlewareChain,
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
                 ]
             )
             ->andReturn(
-                $newMiddlewareChain
+                $definition
+            );
+
+        $chainResolver
+            ->shouldReceive('resolveMiddlewaresToAppend')
+            ->once()
+            ->withArgs(
+                [
+                    $middlewareChains['Test'],
+                    [],
+                    'Condition',
+                ]
+            )
+            ->andReturn(
+                $definition
             );
 
         /** @var MockInterface|Definition $getMiddlewareChain */
@@ -2072,7 +1258,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $newMiddlewareChain,
+                    $definition,
                 ]
             )->andReturn(
                 $getMiddlewareChain
@@ -2082,7 +1268,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $newMiddlewareChain,
+                    $definition,
                 ]
             )->andReturn(
                 $postMiddlewareChain
@@ -2099,7 +1285,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->shouldReceive('addMethodCall')
             ->once()
             ->withArgs(
-                function (string $methodName, array $parameters) use ($newMiddlewareChain, $finalMiddlewareChain) {
+                function (string $methodName, array $parameters) use ($definition, $finalMiddlewareChain) {
                     if ($methodName !== 'registerPathMiddleware') {
                         return false;
                     }
@@ -2134,9 +1320,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     return true;
                 }
             );
-
-        /** @var MockInterface|MiddlewareChainResolver $chainResolver */
-        $chainResolver = $container['chainResolver'];
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,

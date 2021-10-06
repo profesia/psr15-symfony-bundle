@@ -58,15 +58,13 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
-            $selectedMiddlewareChain = $this->resolveMiddlewaresToPrepend(
-                $container,
+            $selectedMiddlewareChain = $this->chainResolver->resolveMiddlewaresToPrepend(
                 $middlewareChains[$middlewareChainName],
                 $conditionConfig['prepend'] ?? [],
                 $conditionName
             );
 
-            $selectedMiddlewareChain = $this->resolveMiddlewareChainToAppend(
-                $container,
+            $selectedMiddlewareChain = $this->chainResolver->resolveMiddlewaresToAppend(
                 $selectedMiddlewareChain,
                 $conditionConfig['append'] ?? [],
                 $conditionName
@@ -125,7 +123,9 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
 
                     $selectedMiddlewareArray = [];
                     foreach ($splitHttpMethods as $httpMethod) {
-                        $selectedMiddlewareArray[$httpMethod] = $selectedMiddlewareChain;
+                        $selectedMiddlewareArray[$httpMethod] = $this->copyDefinition(
+                            $selectedMiddlewareChain
+                        );
                     }
 
                     $configurationPathDefinition = static::createDefinition(
@@ -159,90 +159,6 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         }
     }
 
-    /**
-     * @param ContainerBuilder $container
-     * @param Definition       $middlewareCollection
-     * @param array            $prependConfig
-     * @param string           $conditionName
-     *
-     * @return Definition
-     */
-    public function resolveMiddlewaresToPrepend(
-        ContainerBuilder $container,
-        Definition $middlewareCollection,
-        array $prependConfig,
-        string $conditionName
-    ): Definition {
-        if ($prependConfig === []) {
-            return $middlewareCollection;
-        }
-
-        $middlewaresToPrepend = [];
-        foreach ($prependConfig as $middlewareAlias) {
-            if (!$container->hasDefinition($middlewareAlias)) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
-                );
-            }
-
-            $originalDefinition = $container->getDefinition($middlewareAlias);
-            $methodCalls        = $originalDefinition->getMethodCalls();
-            if ($methodCalls !== []) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware to prepend must not be a middleware chain"
-                );
-            }
-
-            $middlewaresToPrepend[] = $originalDefinition;
-        }
-
-        /** @var Definition $middleware */
-        foreach (array_reverse($middlewaresToPrepend) as $middleware) {
-            $middlewareCollection->addMethodCall('prepend', [$middleware]);
-        }
-
-        return $middlewareCollection;
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param Definition       $middlewareCollection
-     * @param array            $appendConfig
-     * @param string           $conditionName
-     *
-     * @return Definition
-     */
-    public function resolveMiddlewareChainToAppend(
-        ContainerBuilder $container,
-        Definition $middlewareCollection,
-        array $appendConfig,
-        string $conditionName
-    ): Definition {
-        if ($appendConfig === []) {
-            return $middlewareCollection;
-        }
-
-        foreach ($appendConfig as $middlewareAlias) {
-            if (!$container->hasDefinition($middlewareAlias)) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware with service alias: [{$middlewareAlias}] is not registered as a service"
-                );
-            }
-
-            $originalDefinition = $container->getDefinition($middlewareAlias);
-            $methodCalls        = $originalDefinition->getMethodCalls();
-            if ($methodCalls !== []) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware to append must not be a middleware chain"
-                );
-            }
-
-            $middlewareCollection->addMethodCall('append', [$originalDefinition]);
-        }
-
-        return $middlewareCollection;
-    }
-
     private function copyDefinition(Definition $originalDefinition): Definition
     {
         /** @var Definition $newDefinition */
@@ -255,10 +171,10 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
     }
 
     /**
-     * @param string  $className
-     * @param bool    $isShared
-     * @param bool    $isPublic
-     * @param mixed[] $arguments
+     * @param string $className
+     * @param bool   $isShared
+     * @param bool   $isPublic
+     * @param array  $arguments
      *
      * @return Definition
      */
