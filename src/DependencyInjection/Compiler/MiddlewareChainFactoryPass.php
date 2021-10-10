@@ -45,6 +45,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         $routeNameStrategyResolver    = $container->getDefinition(RouteNameResolver::class);
         $compiledPathStrategyResolver = $container->getDefinition(CompiledPathResolver::class);
         foreach ($routing as $conditionName => $conditionConfig) {
+            $conditionName       = (string)$conditionName;
             $middlewareChainName = $conditionConfig['middleware_chain'];
             if (!isset($middlewareChains[$middlewareChainName])) {
                 throw new RuntimeException(
