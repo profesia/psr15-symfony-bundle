@@ -6,7 +6,6 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
 use Mockery;
 use Mockery\MockInterface;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
@@ -470,18 +469,6 @@ class RouteNameResolverTest extends MockeryTestCase
 
     public function testWillReturnNullMiddlewareOnNoNextHandlerRegistered()
     {
-        /** @var MockInterface|NullMiddleware $nullMiddleware */
-        $nullMiddleware = Mockery::mock(NullMiddleware::class);
-
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-        $middlewareChainItemFactory
-            ->shouldReceive('createNullChainItem')
-            ->once()
-            ->andReturn(
-                $nullMiddleware
-            );
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
 

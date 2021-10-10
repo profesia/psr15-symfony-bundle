@@ -6,9 +6,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Resolver\Strategy;
 
 use Mockery;
 use Mockery\MockInterface;
-use Profesia\Symfony\Psr15Bundle\Middleware\Factory\MiddlewareChainItemFactory;
 use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
-use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
@@ -179,18 +177,6 @@ class CompiledPathResolverTest extends MockeryTestCase
 
     public function testWillReturnNullMiddlewareOnNoNextHandlerRegistered()
     {
-        /** @var MockInterface|NullMiddleware $nullMiddleware */
-        $nullMiddleware = Mockery::mock(NullMiddleware::class);
-
-        /** @var MockInterface|MiddlewareChainItemFactory $middlewareChainItemFactory */
-        $middlewareChainItemFactory = Mockery::mock(MiddlewareChainItemFactory::class);
-        $middlewareChainItemFactory
-            ->shouldReceive('createNullChainItem')
-            ->once()
-            ->andReturn(
-                $nullMiddleware
-            );
-
         $resolver = new CompiledPathResolver();
 
         $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
@@ -201,7 +187,6 @@ class CompiledPathResolverTest extends MockeryTestCase
 
         $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
         $this->assertTrue($resolvedMiddlewareChain->isNullMiddleware());
-        //$this->assertTrue($resolvedMiddlewareChain->getMiddlewareChain() === $nullMiddleware);
         $this->assertNull($resolvedMiddlewareChain->getMiddlewareAccessKey());
     }
 }
