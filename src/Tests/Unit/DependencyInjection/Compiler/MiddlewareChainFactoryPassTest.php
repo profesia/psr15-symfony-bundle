@@ -644,6 +644,30 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ]
             );
 
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
             $deepCopy
@@ -691,6 +715,31 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'Test' => $definition
         ];
 
+
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         $chainResolver
             ->shouldReceive('resolve')
             ->once()
@@ -708,13 +757,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $chainResolver
@@ -722,13 +771,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $compilerPass = new MiddlewareChainFactoryPass(
@@ -778,6 +827,30 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'Test' => $definition
         ];
 
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         $chainResolver
             ->shouldReceive('resolve')
             ->once()
@@ -795,13 +868,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $chainResolver
@@ -809,13 +882,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $compilerPass = new MiddlewareChainFactoryPass(
@@ -860,9 +933,34 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
         /** @var MockInterface|Definition $definition */
         $definition = Mockery::mock(Definition::class);
+
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         $middlewareChains = [
             'Test' => $definition
         ];
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
 
         $chainResolver
             ->shouldReceive('resolve')
@@ -881,13 +979,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $chainResolver
@@ -895,13 +993,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         /** @var MockInterface|Definition $routeNameStrategyResolver */
@@ -914,7 +1012,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                     'registerRouteMiddleware',
                     [
                         'test',
-                        $definition,
+                        $newDefinition,
                     ],
                 ]
             );
@@ -960,6 +1058,30 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'Test' => $definition
         ];
 
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         /** @var MockInterface|MiddlewareChainResolver $chainResolver */
         $chainResolver = $mocks['chainResolver'];
 
@@ -980,13 +1102,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $chainResolver
@@ -994,13 +1116,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $finalMiddlewareChain = [];
@@ -1046,7 +1168,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 ->once()
                 ->withArgs(
                     [
-                        $definition,
+                        $newDefinition,
                     ]
                 )->andReturn(
                     $httpMethodMiddlewareChain
@@ -1061,7 +1183,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->shouldReceive('addMethodCall')
             ->once()
             ->withArgs(
-                function (string $methodName, array $parameters) use ($definition, $finalMiddlewareChain) {
+                function (string $methodName, array $parameters) use ($finalMiddlewareChain) {
                     if ($methodName !== 'registerPathMiddleware') {
                         return false;
                     }
@@ -1138,6 +1260,31 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             'Test' => $definition
         ];
 
+
+        /** @var MockInterface|Definition $newDefinition */
+        $newDefinition = Mockery::mock(Definition::class);
+        $newDefinition
+            ->shouldReceive('setPublic', 'setShared')
+            ->once()
+            ->withArgs(
+                [
+                    false
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
+        $deepCopy
+            ->shouldReceive('copy')
+            ->once()
+            ->withArgs(
+                [
+                    $definition
+                ]
+            )->andReturn(
+                $newDefinition
+            );
+
         /** @var MockInterface|MiddlewareChainResolver $chainResolver */
         $chainResolver = $mocks['chainResolver'];
 
@@ -1158,13 +1305,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         $chainResolver
@@ -1172,13 +1319,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareChains['Test'],
+                    $newDefinition,
                     [],
                     'Condition',
                 ]
             )
             ->andReturn(
-                $definition
+                $newDefinition
             );
 
         /** @var MockInterface|Definition $getMiddlewareChain */
@@ -1258,7 +1405,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $definition,
+                    $newDefinition,
                 ]
             )->andReturn(
                 $getMiddlewareChain
@@ -1268,7 +1415,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $definition,
+                    $newDefinition,
                 ]
             )->andReturn(
                 $postMiddlewareChain
@@ -1285,7 +1432,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->shouldReceive('addMethodCall')
             ->once()
             ->withArgs(
-                function (string $methodName, array $parameters) use ($definition, $finalMiddlewareChain) {
+                function (string $methodName, array $parameters) use ($finalMiddlewareChain) {
                     if ($methodName !== 'registerPathMiddleware') {
                         return false;
                     }

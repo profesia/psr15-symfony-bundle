@@ -32,15 +32,7 @@ class MiddlewareChainResolver
                     throw new RuntimeException("Middleware with service alias: [{$middlewareAlias}] is not registered as a service");
                 }
 
-                $middlewareDefinition = $this->container->getDefinition($middlewareAlias);
-                if ($middlewareDefinition->getMethodCalls() !== []) {
-                    throw new RuntimeException(
-                        "Middleware with service alias: [{$middlewareAlias}] could not be included in chain. Only simple services (without additional calls) could be included"
-                    );
-                }
-
-                $middlewareChain[] = $middlewareDefinition;
-                //$middlewareChain[] = $this->container->getDefinition($middlewareAlias);
+                $middlewareChain[] = $this->container->getDefinition($middlewareAlias);
             }
 
 
@@ -78,15 +70,6 @@ class MiddlewareChainResolver
                 );
             }
 
-            /*$originalDefinition = $this->container->getDefinition($middlewareAlias);
-            $methodCalls        = $originalDefinition->getMethodCalls();
-            if ($methodCalls !== []) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware to prepend must not be a middleware chain"
-                );
-            }
-
-            $middlewaresToPrepend[] = $originalDefinition;*/
             $middlewaresToPrepend[] = $this->container->getDefinition($middlewareAlias);
         }
 
@@ -121,15 +104,6 @@ class MiddlewareChainResolver
                 );
             }
 
-            /*$originalDefinition = $this->container->getDefinition($middlewareAlias);
-            $methodCalls        = $originalDefinition->getMethodCalls();
-            if ($methodCalls !== []) {
-                throw new RuntimeException(
-                    "Error in condition config: [{$conditionName}]. Middleware to append must not be a middleware chain"
-                );
-            }
-
-            $middlewareCollection->addMethodCall('append', [$originalDefinition]);*/
             $middlewareCollection->addMethodCall(
                 'append',
                 [

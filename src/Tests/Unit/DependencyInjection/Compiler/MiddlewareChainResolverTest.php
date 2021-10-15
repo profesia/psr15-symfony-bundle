@@ -151,65 +151,6 @@ class MiddlewareChainResolverTest extends MockeryTestCase
     /**
      * @dataProvider getDefinitionConfig
      */
-    public function testCanIdentifyNonSimpleServiceDefinition(array $definitionConfig)
-    {
-        /** @var ContainerBuilder|MockInterface $container */
-        $container = Mockery::mock(ContainerBuilder::class);
-        $classes   = $definitionConfig['Group1'];
-
-        foreach ($classes as $class) {
-            $isLastClass = ($class === 'Class3');
-            $container
-                ->shouldReceive('hasDefinition')
-                ->times(1)
-                ->withArgs(
-                    [
-                        $class,
-                    ]
-                )
-                ->andReturn(
-                    true
-                );
-
-            /** @var MockInterface|Definition $definition */
-            $definition = Mockery::mock(Definition::class);
-            $definition
-                ->shouldReceive('getMethodCalls')
-                ->once()
-                ->andReturn(
-                    ($isLastClass === false)
-                        ? []
-                        : ['test']
-                );
-
-            $container
-                ->shouldReceive('getDefinition')
-                ->times(1)
-                ->withArgs(
-                    [
-                        $class,
-                    ]
-                )
-                ->andReturn(
-                    $definition
-                );
-        }
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            "Middleware with service alias: [Class3] could not be included in chain. Only simple services (without additional calls) could be included"
-        );
-        $resolver = new MiddlewareChainResolver(
-            $container
-        );
-        $resolver->resolve(
-            $definitionConfig
-        );
-    }
-
-    /**
-     * @dataProvider getDefinitionConfig
-     */
     public function testCanIdentifyNonExistingServiceDuringPrepend(array $definitionConfig)
     {
         $classes = $definitionConfig['Group1'];

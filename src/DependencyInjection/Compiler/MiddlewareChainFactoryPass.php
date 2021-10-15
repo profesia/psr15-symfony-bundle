@@ -53,6 +53,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
                 );
             }
 
+            $middleware = $this->copyDefinition($middlewareChains[$middlewareChainName]);
             if ($conditionConfig['conditions'] === []) {
                 throw new RuntimeException(
                     "Error in condition config: [{$conditionName}]. At least one condition has to be specified"
@@ -60,7 +61,7 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
             }
 
             $selectedMiddlewareChain = $this->chainResolver->resolveMiddlewaresToPrepend(
-                $middlewareChains[$middlewareChainName],
+                $middleware,
                 $conditionConfig['prepend'] ?? [],
                 $conditionName
             );
