@@ -86,5 +86,9 @@
             <argument key="$decoratedObject" type="service" id="MiddlewareChainResolverCaching"/>
             <argument key="$cache" type="service" id="cache.psr15-middleware"/>
         </service>
+
+        <service id="Profesia\Symfony\Psr15Bundle\Tests\Acceptance\Assets\TestController" public="true">
+            <tag name="container.service_subscriber"/>
+        </service>
     </services>
 </container>
