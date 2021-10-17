@@ -20,6 +20,15 @@ class TestKernel extends Kernel
 {
     use MicroKernelTrait;
 
+    private array $middlewaresConfig;
+
+    public function __construct(array $middlewaresConfig)
+    {
+        $this->middlewaresConfig = $middlewaresConfig;
+
+        parent::__construct('test', false);
+    }
+
     public function registerBundles()
     {
         return [
@@ -49,71 +58,7 @@ class TestKernel extends Kernel
 
         $container->extension(
             'profesia_psr15',
-            [
-                'use_cache'         => false,
-                'middleware_chains' => [
-                    'FirstChain' => [
-                        TestMiddleware1::class,
-                        TestMiddleware2::class,
-                        TestMiddleware3::class,
-                    ],
-                ],
-                'routing'           => [
-                    '1' => [
-                        'middleware_chain' => 'FirstChain',
-                        'prepend'          => [
-                            TestMiddleware2::class,
-                            TestMiddleware1::class,
-                        ],
-                        'append'           => [
-                            TestMiddleware3::class,
-                            TestMiddleware1::class,
-                        ],
-                        'conditions'       => [
-                            [
-                                'path'   => '/1',
-                                'method' => 'GET',
-                            ],
-                        ],
-                    ],
-                    '2' => [
-                        'middleware_chain' => 'FirstChain',
-                        'conditions'       => [
-                            [
-                                'path'   => '/2',
-                                'method' => 'GET|POST',
-                            ],
-                        ],
-                    ],
-                    '3' => [
-                        'middleware_chain' => 'FirstChain',
-                        'prepend'          => [
-                            TestMiddleware1::class,
-                            TestMiddleware1::class,
-                        ],
-                        'conditions'       => [
-                            [
-                                'path'   => '/3',
-                                'method' => 'GET|POST|PUT|DELETE',
-                            ],
-                        ],
-                    ],
-                    '4' => [
-                        'middleware_chain' => 'FirstChain',
-                        'append' => [
-                            TestMiddleware3::class,
-                            TestMiddleware1::class,
-                            TestMiddleware3::class,
-                        ],
-                        'conditions'       => [
-                            [
-                                'path'   => '/2',
-                                'method' => 'POST|DELETE',
-                            ],
-                        ],
-                    ],
-                ],
-            ]
+            $this->middlewaresConfig
         );
     }
 
