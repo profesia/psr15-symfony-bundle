@@ -17,6 +17,5 @@ Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ appl
 - [Middleware matching](03-middlewares.html#matching)
 - [Middleware resolving](03-middlewares.html#resolving)
 - [Middleware caching](03-middlewares.html#caching)
-- [Architecture](04-architecture.html)
-- [Console](05-console.html)
-- [Limitations](06-limitations.html)
+- [Console](04-console.html)
+- [Limitations](05-limitations.html)
