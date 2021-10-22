@@ -13,10 +13,10 @@ composer require profesia/psr15-symfony-bundle
 - Symfony 5+
 
 ## Latest version
-- [Version 2.0](/psr15-symfony-bundle/2.0)
+- [Version 2.0](/psr15-symfony-bundle/2.0/index.md)
 
 ## Older versions
-- [Version 1.0](/psr15-symfony-bundle/1.0)
+- [Version 1.0](/psr15-symfony-bundle/1.0/index.md)
 
 ## Author
 Matej Bádal - matejbadal@gmail.com

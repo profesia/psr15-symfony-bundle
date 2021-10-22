@@ -1,4 +1,4 @@
-`/`[Home](/psr15-symfony-bundle)`/`[1.0](/psr15-symfony-bundle/1.0)`/`[Architecture](/psr15-symfony-bundle/docs/04-architecture.html)
+`/`[Home](/psr15-symfony-bundle)`/`[1.0](/psr15-symfony-bundle/1.0/index.md)`/`[Architecture](/psr15-symfony-bundle/docs/04-architecture.html)
 
 ---
 **NOTE**
