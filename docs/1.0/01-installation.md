@@ -1,4 +1,10 @@
-`/`[Home](/psr15-symfony-bundle)`/`[Installation](/psr15-symfony-bundle/docs/01-installation.html)
+`/`[Home](/psr15-symfony-bundle)`/`[1.0](/psr15-symfony-bundle/1.0)`/`[Installation](/psr15-symfony-bundle/docs/01-installation.html)
+
+---
+**NOTE**
+
+You are not reading the most recent version of this documentation. [2.0](/psr15-symfony-bundle/2.0) is the latest version available.
+---
 
 # Installing Bundle
 ## Installation

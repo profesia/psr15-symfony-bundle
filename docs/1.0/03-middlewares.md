@@ -1,4 +1,10 @@
-`/`[Home](/psr15-symfony-bundle)`/`[Middlewares](/psr15-symfony-bundle/docs/03-middlewares.html)
+`/`[Home](/psr15-symfony-bundle)`/`[1.0](/psr15-symfony-bundle/1.0)`/`[Middlewares](/psr15-symfony-bundle/docs/03-middlewares.html)
+
+---
+**NOTE**
+
+You are not reading the most recent version of this documentation. [2.0](/psr15-symfony-bundle/2.0) is the latest version available.
+---
 
 # Middleware chains
 As for middleware classes [AbstractMiddlewareChainItem](https://github.com/mbadal/psr15/blob/master/src/Psr15/Middleware/AbstractMiddlewareChainItem.php) from package [delvesoft/psr15](https://github.com/mbadal/psr15) is being used as the base abstract class,
