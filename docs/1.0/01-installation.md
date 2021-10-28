@@ -10,7 +10,7 @@ You are not reading the most recent version of this documentation. [2.0](/psr15-
 ## Installation
 - Install the latest version by running the command:
 ```bash
-composer require profesia/psr15-symfony-bundle
+composer require profesia/psr15-symfony-bundle:1.x.y
 ```
 - create `psr15.yaml` config file in the config **packages** directory.
 - Do not forget to enable the installed bundle in the `bundles.php` file.
