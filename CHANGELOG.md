@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/profesia/psr15-symfony-bundle/tree/HEAD)
+## [v2.0.0](https://github.com/profesia/psr15-symfony-bundle/tree/v2.0.0) (2021-10-31)
 
-[Full Changelog](https://github.com/profesia/psr15-symfony-bundle/compare/v1.1.0...HEAD)
+[Full Changelog](https://github.com/profesia/psr15-symfony-bundle/compare/v1.1.0...v2.0.0)
 
 **Closed issues:**
 
