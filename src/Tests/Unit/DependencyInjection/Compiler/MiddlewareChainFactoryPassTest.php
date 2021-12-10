@@ -82,8 +82,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $adapterDefinition
             );
 
-        /** @var MockInterface|RouteNameResolver $routeNameStrategyResolver */
-        $routeNameStrategyResolver = Mockery::mock(RouteNameResolver::class);
+        /** @var MockInterface|Definition $routeNameStrategyResolver */
+        $routeNameStrategyResolver = Mockery::mock(Definition::class);
         $container
             ->shouldReceive('getDefinition')
             ->once()
@@ -96,8 +96,8 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 $routeNameStrategyResolver
             );
 
-        /** @var MockInterface|CompiledPathResolver $compiledPathStrategyResolver */
-        $compiledPathStrategyResolver = Mockery::mock(CompiledPathResolver::class);
+        /** @var MockInterface|Definition $compiledPathStrategyResolver */
+        $compiledPathStrategyResolver = Mockery::mock(Definition::class);
         $container
             ->shouldReceive('getDefinition')
             ->once()
@@ -206,7 +206,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                             $adapterDefinition,
                         ],
                     ]
-                );
+                )->andReturnSelf();
         }
 
         return [
@@ -327,7 +327,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
                         return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverCaching');
                     }
-                );
+                )->andReturnSelf();
 
             $container
                 ->shouldReceive('getDefinition')
@@ -1015,7 +1015,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                         $newDefinition,
                     ],
                 ]
-            );
+            )->andReturnSelf();
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -1216,7 +1216,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
                     return true;
                 }
-            );
+            )->andReturnSelf();
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,
@@ -1466,7 +1466,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
                     return true;
                 }
-            );
+            )->andReturnSelf();
 
         $compilerPass = new MiddlewareChainFactoryPass(
             $chainResolver,

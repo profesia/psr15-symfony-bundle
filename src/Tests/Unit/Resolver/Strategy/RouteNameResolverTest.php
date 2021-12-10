@@ -341,7 +341,7 @@ class RouteNameResolverTest extends MockeryTestCase
                 ]
             )
             ->andReturn(
-                true
+                new Route('/testing')
             );
         $routeCollection
             ->shouldReceive('get')

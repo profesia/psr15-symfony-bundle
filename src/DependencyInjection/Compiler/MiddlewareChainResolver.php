@@ -81,13 +81,6 @@ class MiddlewareChainResolver
         return $middlewareCollection;
     }
 
-    /**
-     * @param Definition       $middlewareCollection
-     * @param array            $appendConfig
-     * @param string           $conditionName
-     *
-     * @return Definition
-     */
     public function resolveMiddlewaresToAppend(
         Definition $middlewareCollection,
         array $appendConfig,

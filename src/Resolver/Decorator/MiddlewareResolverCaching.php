@@ -13,8 +13,8 @@ use Psr\Cache\InvalidArgumentException;
 
 class MiddlewareResolverCaching implements MiddlewareResolverInterface
 {
-    private MiddlewareResolverInterface        $resolver;
-    private CacheItemPoolInterface             $cache;
+    private MiddlewareResolverInterface $resolver;
+    private CacheItemPoolInterface $cache;
 
     public function __construct(MiddlewareResolverInterface $resolver, CacheItemPoolInterface $cache)
     {
@@ -35,10 +35,9 @@ class MiddlewareResolverCaching implements MiddlewareResolverInterface
             $cacheKey
         );
 
-        $isLoadedFromCache = false;
-        if ($cacheItem->isHit()) {
-            $isLoadedFromCache = true;
-            $request           = $request->withResolvedMiddlewareAccessCode(
+        $isLoadedFromCache = $cacheItem->isHit();
+        if ($isLoadedFromCache) {
+            $request = $request->withResolvedMiddlewareAccessCode(
                 ResolvedMiddlewareAccessKey::createFromArray(
                     $cacheItem->get()
                 )

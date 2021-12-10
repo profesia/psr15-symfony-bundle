@@ -255,7 +255,7 @@ class MiddlewareResolverCachingTest extends MockeryTestCase
                 [
                     $accessKey->toArray()
                 ]
-            );
+            )->andReturnSelf();
 
         /** @var MockInterface|CacheItemPoolInterface $cacheItemPool */
         $cacheItemPool = Mockery::mock(CacheItemPoolInterface::class);

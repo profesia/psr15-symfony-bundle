@@ -172,14 +172,6 @@ class MiddlewareChainFactoryPass implements CompilerPassInterface
         return $newDefinition;
     }
 
-    /**
-     * @param string $className
-     * @param bool   $isShared
-     * @param bool   $isPublic
-     * @param array  $arguments
-     *
-     * @return Definition
-     */
     private static function createDefinition(string $className, bool $isShared, bool $isPublic, array $arguments = []): Definition
     {
         $definition = new Definition($className, $arguments);

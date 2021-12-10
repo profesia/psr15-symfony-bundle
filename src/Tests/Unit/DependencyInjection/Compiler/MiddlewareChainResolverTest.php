@@ -300,7 +300,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
                             $oneDefinitionToPrepend,
                         ],
                     ]
-                );
+                )->andReturnSelf();
         }
 
         $this->assertEquals(
@@ -377,7 +377,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
                             $oneDefinitionToAppend,
                         ],
                     ]
-                );
+                )->andReturnSelf();
         }
 
         $this->assertEquals(

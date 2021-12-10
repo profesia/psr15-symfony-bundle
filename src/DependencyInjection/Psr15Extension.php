@@ -41,7 +41,7 @@ class Psr15Extension extends Extension
         return new Psr15Configuration();
     }
 
-    public function getAlias()
+    public function getAlias(): string
     {
         return 'profesia_psr15';
     }
