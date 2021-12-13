@@ -10,6 +10,7 @@ use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
 use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\InvalidAccessKeyException;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver;
@@ -21,6 +22,7 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
 
 class RouteNameResolverTest extends MockeryTestCase
@@ -38,6 +40,7 @@ class RouteNameResolverTest extends MockeryTestCase
             ->andReturn(
                 $routeCollection
             );
+
 
         $resolver = new RouteNameResolver(
             $router
@@ -63,7 +66,7 @@ class RouteNameResolverTest extends MockeryTestCase
 
         $routeCollection
             ->shouldReceive('get')
-            ->times(2)
+            ->times(3)
             ->withArgs(
                 [
                     'test1',
@@ -300,28 +303,22 @@ class RouteNameResolverTest extends MockeryTestCase
             ]
         );
 
-        $this->assertTrue($middlewareCollection === $resolver->getChain($accessKey));
+        $resolvedMiddlewareChain = ResolvedMiddlewareChain::createFromResolverContext(
+            $middlewareCollection,
+            $accessKey
+        );
+
+        $this->assertEquals($resolvedMiddlewareChain, $resolver->getChain($accessKey));
     }
 
     public function testWillIgnoreRulesAfterMagicRuleRegistration()
     {
         $routeName = 'test';
 
-        /** @var MockInterface|Route $route */
-        $route = Mockery::mock(Route::class);
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
         $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    $routeName,
-                ]
-            )->andReturn(
-                $route
-            );
+            ->shouldNotReceive('get');
 
         /** @var RouterInterface|MockInterface $router */
         $router = Mockery::mock(RouterInterface::class);
@@ -348,15 +345,11 @@ class RouteNameResolverTest extends MockeryTestCase
             $routeName
         );
 
-        $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
-        //$this->assertTrue($resolvedMiddlewareChain->getMiddlewareChain() === $middleware1);
+        $resolver->handle($middlewareResolvingRequest);
     }
 
     public function testWillNotOverwriteMagicRule()
     {
-        /** @var MockInterface|Route $route */
-        $route = Mockery::mock(Route::class);
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
 
@@ -385,7 +378,7 @@ class RouteNameResolverTest extends MockeryTestCase
             'test'
         );
 
-        $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
+        $resolver->handle($middlewareResolvingRequest);
     }
 
     public function testWillIgnoreDuplicityRules()
@@ -433,6 +426,6 @@ class RouteNameResolverTest extends MockeryTestCase
             $routeName
         );
 
-        $resolvedMiddlewareChain = $resolver->handle($middlewareResolvingRequest);
+        $resolver->handle($middlewareResolvingRequest);
     }
 }

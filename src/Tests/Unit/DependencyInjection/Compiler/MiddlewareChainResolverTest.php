@@ -56,13 +56,6 @@ class MiddlewareChainResolverTest extends MockeryTestCase
 
             /** @var MockInterface|Definition $definition */
             $definition = Mockery::mock(Definition::class);
-            $definition
-                ->shouldReceive('getMethodCalls')
-                ->once()
-                ->andReturn(
-                    []
-                );
-
             $container
                 ->shouldReceive('getDefinition')
                 ->times(1)
@@ -117,13 +110,6 @@ class MiddlewareChainResolverTest extends MockeryTestCase
             if ($isLastClass === false) {
                 /** @var MockInterface|Definition $definition */
                 $definition = Mockery::mock(Definition::class);
-                $definition
-                    ->shouldReceive('getMethodCalls')
-                    ->once()
-                    ->andReturn(
-                        []
-                    );
-
                 $container
                     ->shouldReceive('getDefinition')
                     ->times(1)

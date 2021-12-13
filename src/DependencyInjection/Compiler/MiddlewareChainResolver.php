@@ -35,7 +35,6 @@ class MiddlewareChainResolver
                 $middlewareChain[] = $this->container->getDefinition($middlewareAlias);
             }
 
-
             $chainDefinition = new Definition(MiddlewareCollection::class, [$middlewareChain]);
             $chainDefinition
                 ->setPublic(false)

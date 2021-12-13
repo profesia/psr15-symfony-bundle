@@ -14,7 +14,7 @@ use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 
 abstract class AbstractChainResolver
 {
-    private ?AbstractChainResolver     $next = null;
+    private ?AbstractChainResolver $next = null;
 
     public function setNext(AbstractChainResolver $chainItem): self
     {
@@ -25,7 +25,7 @@ abstract class AbstractChainResolver
 
     public abstract function handle(MiddlewareResolvingRequest $request): ResolvedMiddlewareChain;
 
-    public abstract function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection;
+    public abstract function getChain(ResolvedMiddlewareAccessKey $accessKey): ResolvedMiddlewareChain;
 
     /**
      * @return ExportedMiddleware[]
@@ -44,10 +44,10 @@ abstract class AbstractChainResolver
     /**
      * @param ResolvedMiddlewareAccessKey $accessKey
      *
-     * @return MiddlewareCollection
+     * @return ResolvedMiddlewareChain
      * @throws AbstractResolveException
      */
-    protected function getChainNext(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
+    protected function getChainNext(ResolvedMiddlewareAccessKey $accessKey): ResolvedMiddlewareChain
     {
         if ($this->next === null) {
             throw new ChainNotFoundException('No resolver was able to retrieve middleware chain');

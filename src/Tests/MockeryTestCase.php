@@ -14,6 +14,8 @@ abstract class MockeryTestCase extends TestCase
         $this->addToAssertionCount(
             Mockery::getContainer()->mockery_getExpectationCount()
         );
+
         parent::tearDown();
+        Mockery::close();
     }
 }

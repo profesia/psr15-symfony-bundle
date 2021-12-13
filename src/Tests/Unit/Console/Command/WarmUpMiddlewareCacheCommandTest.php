@@ -97,7 +97,11 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
      */
     public function testCanExecuteWithSpecifiedHttpMethods(array $inputHttpMethods, array $checkedHttpMethods)
     {
-        $routeCollection = new RouteCollection();
+        if ($inputHttpMethods !== []) {
+            $times = sizeof($inputHttpMethods) + 1;
+        } else {
+            $times = sizeof(HttpMethod::getPossibleValues()) + 1;
+        }
 
         /** @var Route|MockInterface $route1 */
         $route1 = Mockery::mock(Route::class);
@@ -109,12 +113,12 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         $compiledRoute1 = Mockery::mock(CompiledRoute::class);
         $compiledRoute1
             ->shouldReceive('getStaticPrefix')
-            ->once()
+            ->times($times)
             ->andReturn('/1');
 
         $route1
             ->shouldReceive('compile')
-            ->once()
+            ->times($times)
             ->andReturn(
                 $compiledRoute1
             );
@@ -131,15 +135,18 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
             ->once()
             ->andReturn('/_2');
 
-        $routeCollection->add(
-            '1',
-            $route1
-        );
+        /** @var MockInterface|RouteCollection $routeCollection */
+        $routeCollection = Mockery::mock(RouteCollection::class);
 
-        $routeCollection->add(
-            '2',
-            $route2
-        );
+        $routeCollection
+            ->shouldReceive('all')
+            ->once()
+            ->andReturn(
+                [
+                    $route1,
+                    $route2,
+                ]
+            );
 
         /** @var RouterInterface|MockInterface $router */
         $router = Mockery::mock(RouterInterface::class);
@@ -154,7 +161,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         $resolver = Mockery::mock(MiddlewareResolverCachingInterface::class);
         $resolver
             ->shouldReceive('resolveMiddlewareChain')
-            ->times(2)
+            ->times($times - 1)
             ->withArgs(
                 function (MiddlewareResolvingRequest $argument) use ($checkedHttpMethods, &$index) {
                     if ($argument->hasAccessKey()) {

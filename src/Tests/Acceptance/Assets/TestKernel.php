@@ -29,7 +29,7 @@ class TestKernel extends Kernel
         parent::__construct('test', false);
     }
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         return [
             new ProfesiaPsr15Bundle(),

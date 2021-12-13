@@ -93,7 +93,7 @@ class RouteNameResolver extends AbstractChainResolver
     /**
      * @inheritDoc
      */
-    public function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): ResolvedMiddlewareChain
     {
         if (!$accessKey->isSameResolver($this)) {
             return $this->getChainNext($accessKey);
@@ -112,7 +112,10 @@ class RouteNameResolver extends AbstractChainResolver
             throw new ChainNotFoundException("Chain with key: [{$key}] was not found in resolver: [{$class}]");
         }
 
-        return $this->registeredRouteMiddlewares[$key];
+        return ResolvedMiddlewareChain::createFromResolverContext(
+            $this->registeredRouteMiddlewares[$key],
+            $accessKey
+        );
     }
 
 

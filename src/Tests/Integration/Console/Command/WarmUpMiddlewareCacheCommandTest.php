@@ -15,6 +15,7 @@ use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware1;
 use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware2;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Routing\CompiledRoute;
@@ -26,19 +27,22 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
     public function testCanHandleNonNullMiddlewares()
     {
-        $route1 = static::createRouteMock(
-            '/route1',
-            '/route1',
-            [
+        $httpMethods = [
+            'route1' => [
                 'GET',
                 'POST'
-            ]
+            ],
+            'route2' => []
+        ];
+        $route1 = static::createRouteMock(
+            '/route1',
+            $httpMethods['route1']
         );
+
 
         $route2 = static::createRouteMock(
             '/route2',
-            '/route2',
-            []
+            $httpMethods['route2']
         );
 
         $routes =                 [
@@ -95,7 +99,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         foreach ($routes as $routeName => $route) {
             $resolverCacheProxy
                 ->shouldReceive('resolveMiddlewareChain')
-                ->once()
+                ->times($httpMethods[$routeName] === [] ? sizeof(HttpMethod::getPossibleValues()): sizeof($httpMethods[$routeName]))
                 ->withArgs(
                     function (MiddlewareResolvingRequest $request) use ($routeName) {
                         if ($request->getRouteName() !== $routeName) {
@@ -126,38 +130,12 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
         $this->assertEquals(1, $statusCode);
     }
 
-    private static function createRouteMock(string $path, string $staticPrefix, array $methods): MockInterface
+    private static function createRouteMock(string $path, array $methods): Route
     {
-        /** @var MockInterface|CompiledRoute $compiledRoute */
-        $compiledRoute = Mockery::mock(CompiledRoute::class);
-        $compiledRoute
-            ->shouldReceive('getStaticPrefix')
-            ->once()
-            ->andReturn(
-                $staticPrefix
-            );
-
-        /** @var MockInterface|Route $route */
-        $route = Mockery::mock(Route::class);
-        $route
-            ->shouldReceive('getPath')
-            ->once()
-            ->andReturn(
-                $path
-            );
-        $route
-            ->shouldReceive('compile')
-            ->once()
-            ->andReturn(
-                $compiledRoute
-            );
-        $route
-            ->shouldReceive('getMethods')
-            ->once()
-            ->andReturn(
-                $methods
-            );
-
-        return $route;
+        return (new Route(
+            $path
+        ))->setMethods(
+            $methods
+        );
     }
 }

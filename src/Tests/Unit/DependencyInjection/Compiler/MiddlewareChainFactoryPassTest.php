@@ -112,102 +112,13 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
 
         $newDefinitionArray = [];
         foreach ($middlewareChain as $alias) {
-            $container
-                ->shouldReceive('hasDefinition')
-                ->once()
-                ->withArgs(
-                    [
-                        $alias,
-                    ]
-                )
-                ->andReturn(true);
-
             /** @var MockInterface|Definition $middlewareDefinition */
             $middlewareDefinition = Mockery::mock(Definition::class);
-            $middlewareDefinition
-                ->shouldReceive('getMethodCalls')
-                ->once()
-                ->andReturn(
-                    []
-                );
-
-            $container
-                ->shouldReceive('getDefinition')
-                ->once()
-                ->withArgs(
-                    [
-                        $alias,
-                    ]
-                )
-                ->andReturn(
-                    $middlewareDefinition
-                );
-
-            /** @var MockInterface|Definition $newDefinition */
-            $newDefinition = Mockery::mock(Definition::class);
-            $newDefinition
-                ->shouldReceive('setPublic')
-                ->once()
-                ->withArgs(
-                    [
-                        false,
-                    ]
-                )->andReturn(
-                    $newDefinition
-                );
-
-            $newDefinition
-                ->shouldReceive('setPrivate')
-                ->once()
-                ->withArgs(
-                    [
-                        true,
-                    ]
-                )->andReturn(
-                    $newDefinition
-                );
-
-            $newDefinition
-                ->shouldReceive('setShared')
-                ->once()
-                ->withArgs(
-                    [
-                        false,
-                    ]
-                )
-                ->andReturn(
-                    $newDefinition
-                );
-
-            $newDefinitionArray[] = $newDefinition;
-            $deepCopy
-                ->shouldReceive('copy')
-                ->once()
-                ->withArgs(
-                    [
-                        $middlewareDefinition,
-                    ]
-                )
-                ->andReturn(
-                    $newDefinition
-                );
+            $newDefinitionArray[] = $middlewareDefinition;
         }
 
         $firstDefinition = $newDefinitionArray[0];
         unset($newDefinitionArray[0]);
-        foreach ($newDefinitionArray as $key => $adapterDefinition) {
-            $firstDefinition
-                ->shouldReceive('addMethodCall')
-                ->once()
-                ->withArgs(
-                    [
-                        'append',
-                        [
-                            $adapterDefinition,
-                        ],
-                    ]
-                )->andReturnSelf();
-        }
 
         return [
             'config'                       => $config,
@@ -286,30 +197,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             $deepCopy
         );
 
-        /** @var MockInterface|ContainerBuilder $container */
-        $container = Mockery::mock(ContainerBuilder::class);
-        $container
-            ->shouldReceive('hasParameter')
-            ->once()
-            ->withArgs(
-                [
-                    'profesia_psr15',
-                ]
-            )
-            ->andReturn(true);
-
-        $container
-            ->shouldReceive('getParameter')
-            ->once()
-            ->withArgs(
-                [
-                    'profesia_psr15',
-                ]
-            )
-            ->andReturn(
-                $config
-            );
-
         /** @var MockInterface|Definition $definition */
         $definition = Mockery::mock(Definition::class);
 
@@ -328,21 +215,10 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                         return ($argument instanceof Reference && (string)$argument === 'MiddlewareChainResolverCaching');
                     }
                 )->andReturnSelf();
-
-            $container
-                ->shouldReceive('getDefinition')
-                ->once()
-                ->withArgs(
-                    [
-                        SymfonyControllerAdapter::class,
-                    ]
-                )
-                ->andReturn(
-                    $definition
-                );
         }
 
         $compilerPass->turnOnCaching($definition, $config['use_cache']);
+        $this->assertTrue(true);
     }
 
     public function testCanHandleNonExistingMiddlewareDuringChainCreation()
@@ -414,23 +290,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             )
             ->andReturn(
                 new Definition()
-            );
-
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    RouteNameResolver::class,
-                ]
-            );
-        $container
-            ->shouldReceive('getDefinition')
-            ->once()
-            ->withArgs(
-                [
-                    CompiledPathResolver::class,
-                ]
             );
 
         $this->expectException(RuntimeException::class);
@@ -1141,17 +1000,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
                 );
 
             $httpMethodMiddlewareChain
-                ->shouldReceive('setPrivate')
-                ->once()
-                ->withArgs(
-                    [
-                        true,
-                    ]
-                )->andReturn(
-                    $httpMethodMiddlewareChain
-                );
-
-            $httpMethodMiddlewareChain
                 ->shouldReceive('setShared')
                 ->once()
                 ->withArgs(
@@ -1342,17 +1190,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             );
 
         $getMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
-                ]
-            )->andReturn(
-                $getMiddlewareChain
-            );
-
-        $getMiddlewareChain
             ->shouldReceive('setShared')
             ->once()
             ->withArgs(
@@ -1372,17 +1209,6 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
             ->withArgs(
                 [
                     false,
-                ]
-            )->andReturn(
-                $postMiddlewareChain
-            );
-
-        $postMiddlewareChain
-            ->shouldReceive('setPrivate')
-            ->once()
-            ->withArgs(
-                [
-                    true,
                 ]
             )->andReturn(
                 $postMiddlewareChain

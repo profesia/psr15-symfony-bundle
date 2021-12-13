@@ -92,7 +92,7 @@ class CompiledPathResolver extends AbstractChainResolver
     /**
      * @inheritDoc
      */
-    public function getChain(ResolvedMiddlewareAccessKey $accessKey): MiddlewareCollection
+    public function getChain(ResolvedMiddlewareAccessKey $accessKey): ResolvedMiddlewareChain
     {
         if (!$accessKey->isSameResolver($this)) {
             return $this->getChainNext($accessKey);
@@ -119,7 +119,10 @@ class CompiledPathResolver extends AbstractChainResolver
             throw new ChainNotFoundException("Chain with key: [{$pathLength}, {$pattern}, {$httpMethod}] was not found in resolver: [{$class}]");
         }
 
-        return $this->registeredPathMiddlewares[$pathLength][$pattern][$httpMethod];
+        return ResolvedMiddlewareChain::createFromResolverContext(
+            $this->registeredPathMiddlewares[$pathLength][$pattern][$httpMethod],
+            $accessKey
+        );
     }
 
     /**

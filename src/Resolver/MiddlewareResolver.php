@@ -26,11 +26,21 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     {
         if ($request->hasAccessKey()) {
             $accessKey       = $request->getAccessKey();
-            $middlewareChain = null;
             try {
-                $middlewareChain = $this->middlewareResolverChain->getChain(
+                $cachedMiddleware = $this->middlewareResolverChain->getChain(
                     $request->getAccessKey()
                 );
+
+                $this->log(
+                    LogLevel::INFO,
+                    'Fetched middleware chain from cache.',
+                    [
+                        'accessKey'       => $accessKey->toArray(),
+                        'middlewareChain' => $cachedMiddleware->listChainClassNames()
+                    ]
+                );
+
+                return $cachedMiddleware;
             } catch (AbstractResolveException $e) {
                 $this->log(
                     LogLevel::WARNING,
@@ -39,24 +49,6 @@ class MiddlewareResolver implements MiddlewareResolverInterface
                         'accessKey' => $accessKey->toArray()
                     ]
                 );
-            }
-
-            if ($middlewareChain !== null) {
-                $cachedMiddleware = ResolvedMiddlewareChain::createFromResolverContext(
-                    $middlewareChain,
-                    $accessKey
-                );
-
-                $this->log(
-                    LogLevel::INFO,
-                    'Fetched middleware chain from cache.',
-                    [
-                        'accessKey'       => $accessKey->toArray(),
-                        'middlewareChain' => $middlewareChain->listClassNames()
-                    ]
-                );
-
-                return $cachedMiddleware;
             }
         }
 

@@ -33,19 +33,8 @@ class RouteNameResolverTest extends MockeryTestCase
         /** @var MockInterface|Route $route */
         $route = Mockery::mock(Route::class);
 
-
         /** @var MockInterface|RouteCollection $routeCollection */
         $routeCollection = Mockery::mock(RouteCollection::class);
-        $routeCollection
-            ->shouldReceive('get')
-            ->once()
-            ->withArgs(
-                [
-                    '*',
-                ]
-            )->andReturn(
-                $route
-            );
 
         /** @var MockInterface|RouterInterface $router */
         $router = Mockery::mock(RouterInterface::class);
@@ -402,8 +391,8 @@ class RouteNameResolverTest extends MockeryTestCase
             ]
         );
 
-        /** @var MockInterface|MiddlewareCollection $expectedMiddlewareChain */
-        $expectedMiddlewareChain = Mockery::mock(MiddlewareCollection::class);
+        /** @var MockInterface|ResolvedMiddlewareChain $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
 
         /** @var MockInterface|AbstractChainResolver $handler */
         $handler = Mockery::mock(AbstractChainResolver::class);

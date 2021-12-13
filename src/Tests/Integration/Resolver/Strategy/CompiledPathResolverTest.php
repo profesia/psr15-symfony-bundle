@@ -11,6 +11,7 @@ use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware;
+use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\InvalidAccessKeyException;
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
@@ -408,6 +409,10 @@ class CompiledPathResolverTest extends MockeryTestCase
             ]
         );
 
-        $this->assertEquals(new MiddlewareCollection([$nullMiddleware]), $resolver->getChain($accessKey));
+        $resolvedMiddleware = ResolvedMiddlewareChain::createFromResolverContext(
+            new MiddlewareCollection([$nullMiddleware]),
+            $accessKey
+        );
+        $this->assertEquals($resolvedMiddleware, $resolver->getChain($accessKey));
     }
 }

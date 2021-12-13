@@ -52,6 +52,8 @@ class ConfigurationPathTest extends MockeryTestCase
             $configurationHttpMethod,
             '/test'
         );
+
+        $this->assertTrue(true);
     }
 
     public function testCanExportConfiguration()

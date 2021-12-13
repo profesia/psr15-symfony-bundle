@@ -44,6 +44,8 @@ class SymfonyControllerRequestHandlerFactoryTest extends MockeryTestCase
             $callable,
             $arguments
         );
+
+        $this->assertTrue(true);
     }
 }
 

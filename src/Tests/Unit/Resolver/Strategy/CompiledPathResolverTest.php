@@ -41,14 +41,14 @@ class CompiledPathResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareCollection2
+                    $middlewareCollection2,
                 ]
             )->andReturn(
                 $middlewareCollection1
             );
 
         $middlewares = [
-            'POST' => $middlewareCollection1
+            'POST' => $middlewareCollection1,
         ];
         $resolver->registerPathMiddleware(
             $configurationPath,
@@ -61,9 +61,13 @@ class CompiledPathResolverTest extends MockeryTestCase
             $middlewares
         );
 
+        $middlewares        = [];
         $middlewares['GET'] = $middlewareCollection2;
         $resolver->registerPathMiddleware(
-            $configurationPath,
+            ConfigurationPath::createFromConfigurationHttpMethodAndString(
+                ConfigurationHttpMethod::createFromString('GET'),
+                '/test'
+            ),
             $middlewares
         );
     }
@@ -92,7 +96,7 @@ class CompiledPathResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $middlewareResolvingRequest
+                    $middlewareResolvingRequest,
                 ]
             )
             ->andReturn(
@@ -117,15 +121,15 @@ class CompiledPathResolverTest extends MockeryTestCase
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => RouteNameResolver::class,
-                'accessPath' => [
+                'accessPath'    => [
                     '1',
-                    '2'
+                    '2',
                 ],
             ]
         );
 
-        /** @var MockInterface|MiddlewareCollection $expectedMiddlewareChain */
-        $expectedMiddlewareChain = Mockery::mock(MiddlewareCollection::class);
+        /** @var MockInterface|ResolvedMiddlewareChain $expectedMiddlewareChain */
+        $expectedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
 
         /** @var MockInterface|AbstractChainResolver $handler */
         $handler = Mockery::mock(AbstractChainResolver::class);
@@ -136,7 +140,7 @@ class CompiledPathResolverTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $accessKey
+                    $accessKey,
                 ]
             )
             ->andReturn(
@@ -161,9 +165,9 @@ class CompiledPathResolverTest extends MockeryTestCase
         $accessKey = ResolvedMiddlewareAccessKey::createFromArray(
             [
                 'resolverClass' => RouteNameResolver::class,
-                'accessPath' => [
+                'accessPath'    => [
                     '1',
-                    '2'
+                    '2',
                 ],
             ]
         );

@@ -29,18 +29,18 @@ final class ResolvedMiddlewareAccessKey
 
     public static function createFromArray(array $input): ResolvedMiddlewareAccessKey
     {
-        $accessPathKey = static::ACCESS_PATH;
+        $accessPathKey = self::ACCESS_PATH;
         if (!array_key_exists($accessPathKey, $input)) {
             throw new InvalidArgumentException("Key: [{$accessPathKey}] is not present in input argument");
         }
 
 
-        $resolverKey = static::RESOLVER_CLASS;
+        $resolverKey = self::RESOLVER_CLASS;
         if (!array_key_exists($resolverKey, $input)) {
             throw new InvalidArgumentException("Key: [{$resolverKey}] is not present in input argument");
         }
 
-        return static::create(
+        return self::create(
             $input[$resolverKey],
             $input[$accessPathKey]
         );
@@ -48,7 +48,7 @@ final class ResolvedMiddlewareAccessKey
 
     public static function createFromMiddlewareResolver(AbstractChainResolver $resolver, array $accessPath): ResolvedMiddlewareAccessKey
     {
-        return static::create(
+        return self::create(
             get_class($resolver),
             $accessPath
         );
@@ -56,11 +56,11 @@ final class ResolvedMiddlewareAccessKey
 
     private static function create(string $resolverClass, array $accessPath): ResolvedMiddlewareAccessKey
     {
-        if (!array_key_exists($resolverClass, static::RESOLVERS)) {
+        if (!array_key_exists($resolverClass, self::RESOLVERS)) {
             throw new InvalidArgumentException("Resolver: [{$resolverClass}] is not supported");
         }
 
-        return new static(
+        return new self(
             $accessPath,
             $resolverClass
         );
@@ -69,8 +69,8 @@ final class ResolvedMiddlewareAccessKey
     public function toArray(): array
     {
         return [
-            static::RESOLVER_CLASS => $this->resolverClass,
-            static::ACCESS_PATH    => $this->accessPath,
+            self::RESOLVER_CLASS => $this->resolverClass,
+            self::ACCESS_PATH    => $this->accessPath,
         ];
     }
 
