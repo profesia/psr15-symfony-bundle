@@ -8,6 +8,8 @@ use Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ErrorController;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
+use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class MiddlewareInjectionSubscriber implements EventSubscriberInterface
@@ -26,7 +28,7 @@ class MiddlewareInjectionSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$event->isMainRequest()) {
+        if (self::isMainRequest($event) === false) {
             return;
         }
 
@@ -47,5 +49,10 @@ class MiddlewareInjectionSubscriber implements EventSubscriberInterface
         return [
             KernelEvents::CONTROLLER_ARGUMENTS => ['onKernelControllerArguments', -1]
         ];
+    }
+
+    private static function isMainRequest(KernelEvent $event): bool
+    {
+        return ($event->getRequestType() === HttpKernel::MASTER_REQUEST);
     }
 }

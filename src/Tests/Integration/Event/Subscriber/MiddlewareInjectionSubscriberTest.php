@@ -80,7 +80,7 @@ class MiddlewareInjectionSubscriberTest extends MockeryTestCase
         $subscriber->onKernelControllerArguments($event);
     }
 
-    public function testCanOverrideControllerOnMasterRequest()
+    public function testCanOverrideControllerOnMainRequest()
     {
         $controllerCallable = function () {
             return new Response();
