@@ -15,6 +15,7 @@ use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SymfonyControllerRequestHandlerTest extends MockeryTestCase
 {
@@ -33,7 +34,7 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
         $statusCode  = 201;
         $contentType = 'abcd';
         $headers     = [
-            'Content-Type' => $contentType
+            'Content-Type' => $contentType,
         ];
 
         $response = new Response(
@@ -55,7 +56,7 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $psrRequest
+                    $psrRequest,
                 ]
             )
             ->andReturn(
@@ -69,14 +70,48 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $response
+                    $response,
                 ]
             )->andReturn(
                 $expectedResponse
             );
 
+        /** @var MockInterface|SessionInterface $session */
+        $session = Mockery::mock(SessionInterface::class);
+
+        /** @var MockInterface|Request $currentRequest */
+        $currentRequest = Mockery::mock(Request::class);
+        $currentRequest
+            ->shouldReceive('hasSession')
+            ->once()
+            ->andReturn(
+                true
+            );
+        $currentRequest
+            ->shouldReceive('getSession')
+            ->once()
+            ->andReturn(
+                $session
+            );
+
+        $transformedSymfonyRequest
+            ->shouldReceive('setSession')
+            ->once()
+            ->withArgs(
+                [
+                    $session
+                ]
+            );
+
         /** @var MockInterface|RequestStack $requestStack */
         $requestStack = Mockery::mock(RequestStack::class);
+        $requestStack
+            ->shouldReceive('getCurrentRequest')
+            ->twice()
+            ->andReturn(
+                $currentRequest
+            );
+
         $requestStack
             ->shouldReceive('pop')
             ->times(2)
@@ -89,7 +124,7 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
             ->once()
             ->withArgs(
                 [
-                    $transformedSymfonyRequest
+                    $transformedSymfonyRequest,
                 ]
             );
 
@@ -104,7 +139,7 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
             $originalController,
             [
                 0 => $request,
-                1 => $content
+                1 => $content,
             ]
         );
 

@@ -39,6 +39,12 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $symfonyRequest = $this->foundationHttpFactory->createRequest($request);
+        if ($this->requestStack->getCurrentRequest()->hasSession()) {
+            $symfonyRequest->setSession(
+                $this->requestStack->getCurrentRequest()->getSession()
+            );
+        }
+
         $requests       = [];
         while (($request = $this->requestStack->pop()) !== null) {
             $requests[] = $request;
