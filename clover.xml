@@ -1,0 +1,867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1648213057">
+  <project timestamp="1648213057">
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Adapter/SymfonyControllerAdapter.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" namespace="global">
+        <metrics complexity="5" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="28" coveredelements="28"/>
+      </class>
+      <line num="32" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="39" type="stmt" count="3"/>
+      <line num="40" type="stmt" count="3"/>
+      <line num="41" type="stmt" count="3"/>
+      <line num="42" type="stmt" count="3"/>
+      <line num="43" type="stmt" count="3"/>
+      <line num="46" type="method" name="setOriginalResources" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="48" type="stmt" count="3"/>
+      <line num="49" type="stmt" count="3"/>
+      <line num="50" type="stmt" count="3"/>
+      <line num="52" type="stmt" count="3"/>
+      <line num="55" type="method" name="__invoke" visibility="public" complexity="3" crap="3" count="3"/>
+      <line num="57" type="stmt" count="3"/>
+      <line num="58" type="stmt" count="3"/>
+      <line num="59" type="stmt" count="1"/>
+      <line num="62" type="stmt" count="3"/>
+      <line num="63" type="stmt" count="3"/>
+      <line num="64" type="stmt" count="1"/>
+      <line num="67" type="stmt" count="2"/>
+      <line num="68" type="stmt" count="2"/>
+      <line num="73" type="stmt" count="2"/>
+      <line num="74" type="stmt" count="2"/>
+      <line num="75" type="stmt" count="2"/>
+      <line num="76" type="stmt" count="2"/>
+      <line num="78" type="stmt" count="2"/>
+      <line num="79" type="stmt" count="2"/>
+      <line num="80" type="stmt" count="2"/>
+      <line num="84" type="stmt" count="2"/>
+      <metrics loc="87" ncloc="86" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="28" coveredelements="28"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Console/Command/ListMiddlewareRulesCommand.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Console\Command\ListMiddlewareRulesCommand" namespace="global">
+        <metrics complexity="6" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="29" elements="34" coveredelements="32"/>
+      </class>
+      <line num="21" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="23" type="stmt" count="3"/>
+      <line num="24" type="stmt" count="3"/>
+      <line num="26" type="stmt" count="3"/>
+      <line num="30" type="method" name="configure" visibility="protected" complexity="1" crap="1" count="3"/>
+      <line num="33" type="stmt" count="3"/>
+      <line num="34" type="stmt" count="3"/>
+      <line num="35" type="stmt" count="3"/>
+      <line num="38" type="method" name="execute" visibility="protected" complexity="1" crap="1" count="2"/>
+      <line num="40" type="stmt" count="2"/>
+      <line num="41" type="stmt" count="2"/>
+      <line num="42" type="stmt" count="2"/>
+      <line num="43" type="stmt" count="2"/>
+      <line num="45" type="stmt" count="2"/>
+      <line num="47" type="stmt" count="2"/>
+      <line num="49" type="stmt" count="2"/>
+      <line num="50" type="stmt" count="2"/>
+      <line num="51" type="stmt" count="2"/>
+      <line num="52" type="stmt" count="2"/>
+      <line num="54" type="stmt" count="2"/>
+      <line num="56" type="stmt" count="2"/>
+      <line num="58" type="stmt" count="2"/>
+      <line num="65" type="method" name="fillTableWithMiddlewareData" visibility="private" complexity="3" crap="3.01" count="2"/>
+      <line num="67" type="stmt" count="2"/>
+      <line num="68" type="stmt" count="2"/>
+      <line num="69" type="stmt" count="2"/>
+      <line num="70" type="stmt" count="2"/>
+      <line num="72" type="stmt" count="2"/>
+      <line num="73" type="stmt" count="2"/>
+      <line num="74" type="stmt" count="2"/>
+      <line num="76" type="stmt" count="2"/>
+      <line num="81" type="stmt" count="2"/>
+      <line num="82" type="stmt" count="0"/>
+      <line num="85" type="stmt" count="2"/>
+      <metrics loc="88" ncloc="84" classes="1" methods="4" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="30" coveredstatements="29" elements="34" coveredelements="32"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Console/Command/WarmUpMiddlewareCacheCommand.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand" namespace="global">
+        <metrics complexity="13" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="48" coveredstatements="47" elements="51" coveredelements="49"/>
+      </class>
+      <line num="25" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="5"/>
+      <line num="27" type="stmt" count="5"/>
+      <line num="28" type="stmt" count="5"/>
+      <line num="29" type="stmt" count="5"/>
+      <line num="30" type="stmt" count="3"/>
+      <line num="33" type="stmt" count="5"/>
+      <line num="35" type="stmt" count="5"/>
+      <line num="39" type="method" name="configure" visibility="protected" complexity="1" crap="1" count="5"/>
+      <line num="42" type="stmt" count="5"/>
+      <line num="43" type="stmt" count="5"/>
+      <line num="44" type="stmt" count="5"/>
+      <line num="47" type="method" name="execute" visibility="protected" complexity="11" crap="11" count="3"/>
+      <line num="49" type="stmt" count="3"/>
+      <line num="50" type="stmt" count="3"/>
+      <line num="52" type="stmt" count="3"/>
+      <line num="53" type="stmt" count="3"/>
+      <line num="54" type="stmt" count="3"/>
+      <line num="55" type="stmt" count="3"/>
+      <line num="56" type="stmt" count="3"/>
+      <line num="57" type="stmt" count="3"/>
+      <line num="58" type="stmt" count="2"/>
+      <line num="61" type="stmt" count="3"/>
+      <line num="62" type="stmt" count="3"/>
+      <line num="63" type="stmt" count="3"/>
+      <line num="64" type="stmt" count="3"/>
+      <line num="65" type="stmt" count="3"/>
+      <line num="67" type="stmt" count="3"/>
+      <line num="70" type="stmt" count="3"/>
+      <line num="73" type="stmt" count="3"/>
+      <line num="75" type="stmt" count="3"/>
+      <line num="76" type="stmt" count="1"/>
+      <line num="77" type="stmt" count="1"/>
+      <line num="78" type="stmt" count="1"/>
+      <line num="79" type="stmt" count="1"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="86" type="stmt" count="1"/>
+      <line num="93" type="stmt" count="3"/>
+      <line num="94" type="stmt" count="1"/>
+      <line num="97" type="stmt" count="3"/>
+      <line num="98" type="stmt" count="1"/>
+      <line num="99" type="stmt" count="1"/>
+      <line num="101" type="stmt" count="1"/>
+      <line num="102" type="stmt" count="1"/>
+      <line num="104" type="stmt" count="1"/>
+      <line num="105" type="stmt" count="1"/>
+      <line num="106" type="stmt" count="1"/>
+      <line num="107" type="stmt" count="1"/>
+      <line num="111" type="stmt" count="1"/>
+      <line num="112" type="stmt" count="0"/>
+      <line num="118" type="stmt" count="3"/>
+      <line num="120" type="stmt" count="3"/>
+      <metrics loc="123" ncloc="122" classes="1" methods="3" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="48" coveredstatements="47" elements="51" coveredelements="49"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/DependencyInjection/Compiler/MiddlewareChainFactoryPass.php">
+      <class name="Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainFactoryPass" namespace="global">
+        <metrics complexity="19" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="75" coveredelements="75"/>
+      </class>
+      <line num="24" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="13"/>
+      <line num="26" type="stmt" count="13"/>
+      <line num="27" type="stmt" count="13"/>
+      <line num="30" type="method" name="process" visibility="public" complexity="14" crap="14" count="11"/>
+      <line num="32" type="stmt" count="11"/>
+      <line num="33" type="stmt" count="1"/>
+      <line num="36" type="stmt" count="10"/>
+      <line num="37" type="stmt" count="10"/>
+      <line num="38" type="stmt" count="10"/>
+      <line num="39" type="stmt" count="10"/>
+      <line num="42" type="stmt" count="10"/>
+      <line num="43" type="stmt" count="10"/>
+      <line num="45" type="stmt" count="8"/>
+      <line num="46" type="stmt" count="8"/>
+      <line num="47" type="stmt" count="8"/>
+      <line num="48" type="stmt" count="7"/>
+      <line num="49" type="stmt" count="7"/>
+      <line num="50" type="stmt" count="7"/>
+      <line num="51" type="stmt" count="1"/>
+      <line num="52" type="stmt" count="1"/>
+      <line num="56" type="stmt" count="6"/>
+      <line num="57" type="stmt" count="6"/>
+      <line num="58" type="stmt" count="1"/>
+      <line num="59" type="stmt" count="1"/>
+      <line num="63" type="stmt" count="5"/>
+      <line num="65" type="stmt" count="5"/>
+      <line num="69" type="stmt" count="5"/>
+      <line num="71" type="stmt" count="5"/>
+      <line num="75" type="stmt" count="5"/>
+      <line num="76" type="stmt" count="5"/>
+      <line num="77" type="stmt" count="5"/>
+      <line num="79" type="stmt" count="5"/>
+      <line num="80" type="stmt" count="1"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="85" type="stmt" count="4"/>
+      <line num="86" type="stmt" count="2"/>
+      <line num="87" type="stmt" count="1"/>
+      <line num="88" type="stmt" count="1"/>
+      <line num="92" type="stmt" count="1"/>
+      <line num="95" type="stmt" count="1"/>
+      <line num="100" type="stmt" count="1"/>
+      <line num="103" type="stmt" count="2"/>
+      <line num="104" type="stmt" count="2"/>
+      <line num="105" type="stmt" count="2"/>
+      <line num="106" type="stmt" count="2"/>
+      <line num="113" type="stmt" count="2"/>
+      <line num="114" type="stmt" count="1"/>
+      <line num="116" type="stmt" count="1"/>
+      <line num="120" type="stmt" count="2"/>
+      <line num="122" type="stmt" count="1"/>
+      <line num="123" type="stmt" count="1"/>
+      <line num="124" type="stmt" count="1"/>
+      <line num="126" type="stmt" count="2"/>
+      <line num="127" type="stmt" count="2"/>
+      <line num="128" type="stmt" count="2"/>
+      <line num="133" type="stmt" count="2"/>
+      <line num="137" type="stmt" count="2"/>
+      <line num="138" type="stmt" count="2"/>
+      <line num="139" type="stmt" count="2"/>
+      <line num="142" type="stmt" count="2"/>
+      <line num="145" type="stmt" count="2"/>
+      <line num="154" type="method" name="turnOnCaching" visibility="public" complexity="2" crap="2" count="12"/>
+      <line num="156" type="stmt" count="12"/>
+      <line num="157" type="stmt" count="1"/>
+      <line num="159" type="stmt" count="1"/>
+      <line num="164" type="method" name="copyDefinition" visibility="private" complexity="1" crap="1" count="6"/>
+      <line num="167" type="stmt" count="6"/>
+      <line num="169" type="stmt" count="6"/>
+      <line num="170" type="stmt" count="6"/>
+      <line num="172" type="stmt" count="6"/>
+      <line num="175" type="method" name="createDefinition" visibility="private" complexity="1" crap="1" count="2"/>
+      <line num="177" type="stmt" count="2"/>
+      <line num="179" type="stmt" count="2"/>
+      <line num="180" type="stmt" count="2"/>
+      <line num="182" type="stmt" count="2"/>
+      <metrics loc="185" ncloc="184" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="70" coveredstatements="70" elements="75" coveredelements="75"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/DependencyInjection/Compiler/MiddlewareChainResolver.php">
+      <class name="Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainResolver" namespace="global">
+        <metrics complexity="14" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="33" elements="37" coveredelements="37"/>
+      </class>
+      <line num="15" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="8"/>
+      <line num="17" type="stmt" count="8"/>
+      <line num="25" type="method" name="resolve" visibility="public" complexity="4" crap="4" count="2"/>
+      <line num="27" type="stmt" count="2"/>
+      <line num="28" type="stmt" count="2"/>
+      <line num="29" type="stmt" count="2"/>
+      <line num="30" type="stmt" count="2"/>
+      <line num="31" type="stmt" count="2"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="2"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="40" type="stmt" count="1"/>
+      <line num="41" type="stmt" count="1"/>
+      <line num="42" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="55" type="method" name="resolveMiddlewaresToPrepend" visibility="public" complexity="5" crap="5" count="3"/>
+      <line num="60" type="stmt" count="3"/>
+      <line num="61" type="stmt" count="1"/>
+      <line num="64" type="stmt" count="2"/>
+      <line num="65" type="stmt" count="2"/>
+      <line num="66" type="stmt" count="2"/>
+      <line num="67" type="stmt" count="1"/>
+      <line num="68" type="stmt" count="1"/>
+      <line num="72" type="stmt" count="1"/>
+      <line num="76" type="stmt" count="1"/>
+      <line num="77" type="stmt" count="1"/>
+      <line num="80" type="stmt" count="1"/>
+      <line num="83" type="method" name="resolveMiddlewaresToAppend" visibility="public" complexity="4" crap="4" count="3"/>
+      <line num="88" type="stmt" count="3"/>
+      <line num="89" type="stmt" count="1"/>
+      <line num="92" type="stmt" count="2"/>
+      <line num="93" type="stmt" count="2"/>
+      <line num="94" type="stmt" count="1"/>
+      <line num="95" type="stmt" count="1"/>
+      <line num="99" type="stmt" count="1"/>
+      <line num="102" type="stmt" count="1"/>
+      <line num="107" type="stmt" count="1"/>
+      <metrics loc="110" ncloc="97" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="33" coveredstatements="33" elements="37" coveredelements="37"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Event/Subscriber/MiddlewareInjectionSubscriber.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Event\Subscriber\MiddlewareInjectionSubscriber" namespace="global">
+        <metrics complexity="6" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="15" coveredelements="15"/>
+      </class>
+      <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="21" type="stmt" count="3"/>
+      <line num="24" type="method" name="onKernelControllerArguments" visibility="public" complexity="3" crap="3" count="3"/>
+      <line num="26" type="stmt" count="3"/>
+      <line num="27" type="stmt" count="3"/>
+      <line num="28" type="stmt" count="1"/>
+      <line num="31" type="stmt" count="2"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="1"/>
+      <line num="36" type="stmt" count="1"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="47" type="method" name="getSubscribedEvents" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="50" type="stmt" count="1"/>
+      <line num="54" type="method" name="isMainRequest" visibility="private" complexity="1" crap="1" count="2"/>
+      <line num="56" type="stmt" count="2"/>
+      <metrics loc="59" ncloc="56" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="15" coveredelements="15"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Middleware/MiddlewareCollection.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection" namespace="global">
+        <metrics complexity="8" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="22" coveredelements="22"/>
+      </class>
+      <line num="18" type="method" name="__construct" visibility="public" complexity="2" crap="2" count="39"/>
+      <line num="20" type="stmt" count="39"/>
+      <line num="21" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="38"/>
+      <line num="27" type="method" name="append" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="29" type="stmt" count="1"/>
+      <line num="31" type="stmt" count="1"/>
+      <line num="34" type="method" name="appendCollection" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="36" type="stmt" count="1"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="41" type="method" name="prepend" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="48" type="method" name="transformToMiddlewareChainHandler" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="50" type="stmt" count="1"/>
+      <line num="52" type="stmt" count="1"/>
+      <line num="56" type="method" name="isNullMiddleware" visibility="public" complexity="1" crap="1" count="9"/>
+      <line num="58" type="stmt" count="9"/>
+      <line num="64" type="method" name="listClassNames" visibility="public" complexity="1" crap="1" count="10"/>
+      <line num="66" type="stmt" count="10"/>
+      <line num="67" type="stmt" count="10"/>
+      <line num="68" type="stmt" count="10"/>
+      <metrics loc="71" ncloc="67" classes="1" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="15" coveredstatements="15" elements="22" coveredelements="22"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Middleware/NullMiddleware.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware" namespace="global">
+        <metrics complexity="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+      </class>
+      <line num="14" type="method" name="process" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="16" type="stmt" count="1"/>
+      <metrics loc="19" ncloc="19" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="1" coveredstatements="1" elements="2" coveredelements="2"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/RequestHandler/Factory/SymfonyControllerRequestHandlerFactory.php">
+      <class name="Profesia\Symfony\Psr15Bundle\RequestHandler\Factory\SymfonyControllerRequestHandlerFactory" namespace="global">
+        <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="7" elements="9" coveredelements="9"/>
+      </class>
+      <line num="18" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="23" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="25" type="stmt" count="1"/>
+      <line num="28" type="method" name="create" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="30" type="stmt" count="1"/>
+      <line num="31" type="stmt" count="1"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="33" type="stmt" count="1"/>
+      <metrics loc="38" ncloc="38" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="7" coveredstatements="7" elements="9" coveredelements="9"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/RequestHandler/MiddlewareChainHandler.php">
+      <class name="Profesia\Symfony\Psr15Bundle\RequestHandler\MiddlewareChainHandler" namespace="global">
+        <metrics complexity="6" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="14" coveredelements="14"/>
+      </class>
+      <line num="18" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="2"/>
+      <line num="20" type="stmt" count="2"/>
+      <line num="21" type="stmt" count="2"/>
+      <line num="24" type="method" name="createFromFinalHandlerAndMiddlewares" visibility="public" complexity="4" crap="4" count="3"/>
+      <line num="26" type="stmt" count="3"/>
+      <line num="27" type="stmt" count="1"/>
+      <line num="30" type="stmt" count="2"/>
+      <line num="31" type="stmt" count="2"/>
+      <line num="32" type="stmt" count="2"/>
+      <line num="33" type="stmt" count="2"/>
+      <line num="38" type="stmt" count="2"/>
+      <line num="41" type="method" name="handle" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <metrics loc="49" ncloc="49" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="14" coveredelements="14"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/RequestHandler/SymfonyControllerRequestHandler.php">
+      <class name="Profesia\Symfony\Psr15Bundle\RequestHandler\SymfonyControllerRequestHandler" namespace="global">
+        <metrics complexity="6" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="26" coveredelements="26"/>
+      </class>
+      <line num="25" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="2"/>
+      <line num="32" type="stmt" count="2"/>
+      <line num="33" type="stmt" count="2"/>
+      <line num="34" type="stmt" count="2"/>
+      <line num="35" type="stmt" count="2"/>
+      <line num="36" type="stmt" count="2"/>
+      <line num="39" type="method" name="handle" visibility="public" complexity="5" crap="5" count="1"/>
+      <line num="41" type="stmt" count="1"/>
+      <line num="42" type="stmt" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="44" type="stmt" count="1"/>
+      <line num="48" type="stmt" count="1"/>
+      <line num="49" type="stmt" count="1"/>
+      <line num="50" type="stmt" count="1"/>
+      <line num="53" type="stmt" count="1"/>
+      <line num="54" type="stmt" count="1"/>
+      <line num="55" type="stmt" count="1"/>
+      <line num="58" type="stmt" count="1"/>
+      <line num="59" type="stmt" count="1"/>
+      <line num="60" type="stmt" count="1"/>
+      <line num="61" type="stmt" count="1"/>
+      <line num="62" type="stmt" count="1"/>
+      <line num="63" type="stmt" count="1"/>
+      <line num="66" type="stmt" count="1"/>
+      <line num="68" type="stmt" count="1"/>
+      <line num="72" type="stmt" count="1"/>
+      <metrics loc="75" ncloc="74" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="26" coveredelements="26"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Decorator/MiddlewareResolverCacheRemoval.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCacheRemoval" namespace="global">
+        <metrics complexity="2" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="7" coveredelements="7"/>
+      </class>
+      <line num="18" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="20" type="stmt" count="1"/>
+      <line num="21" type="stmt" count="1"/>
+      <line num="24" type="method" name="resolveMiddlewareChain" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="26" type="stmt" count="1"/>
+      <line num="27" type="stmt" count="1"/>
+      <line num="30" type="stmt" count="1"/>
+      <metrics loc="32" ncloc="32" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="5" coveredstatements="5" elements="7" coveredelements="7"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Decorator/MiddlewareResolverCaching.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Decorator\MiddlewareResolverCaching" namespace="global">
+        <metrics complexity="5" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="17" elements="19" coveredelements="19"/>
+      </class>
+      <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="21" type="stmt" count="3"/>
+      <line num="22" type="stmt" count="3"/>
+      <line num="31" type="method" name="resolveMiddlewareChain" visibility="public" complexity="4" crap="4" count="3"/>
+      <line num="33" type="stmt" count="3"/>
+      <line num="34" type="stmt" count="3"/>
+      <line num="38" type="stmt" count="3"/>
+      <line num="39" type="stmt" count="3"/>
+      <line num="40" type="stmt" count="2"/>
+      <line num="41" type="stmt" count="2"/>
+      <line num="42" type="stmt" count="2"/>
+      <line num="47" type="stmt" count="3"/>
+      <line num="48" type="stmt" count="3"/>
+      <line num="49" type="stmt" count="2"/>
+      <line num="52" type="stmt" count="1"/>
+      <line num="54" type="stmt" count="1"/>
+      <line num="55" type="stmt" count="1"/>
+      <line num="58" type="stmt" count="1"/>
+      <line num="60" type="stmt" count="1"/>
+      <metrics loc="63" ncloc="57" classes="1" methods="2" coveredmethods="2" conditionals="0" coveredconditionals="0" statements="17" coveredstatements="17" elements="19" coveredelements="19"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Factory/StrategyResolverFactory.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Factory\StrategyResolverFactory" namespace="global">
+        <metrics complexity="4" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="10" coveredelements="10"/>
+      </class>
+      <line num="16" type="method" name="create" visibility="public" complexity="4" crap="4" count="1"/>
+      <line num="19" type="stmt" count="1"/>
+      <line num="22" type="stmt" count="1"/>
+      <line num="23" type="stmt" count="1"/>
+      <line num="24" type="stmt" count="1"/>
+      <line num="25" type="stmt" count="1"/>
+      <line num="28" type="stmt" count="1"/>
+      <line num="29" type="stmt" count="1"/>
+      <line num="32" type="stmt" count="1"/>
+      <line num="35" type="stmt" count="1"/>
+      <metrics loc="37" ncloc="30" classes="1" methods="1" coveredmethods="1" conditionals="0" coveredconditionals="0" statements="9" coveredstatements="9" elements="10" coveredelements="10"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/MiddlewareResolver.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolver" namespace="global">
+        <metrics complexity="7" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="27" coveredelements="27"/>
+      </class>
+      <line num="19" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="21" type="stmt" count="4"/>
+      <line num="22" type="stmt" count="4"/>
+      <line num="25" type="method" name="resolveMiddlewareChain" visibility="public" complexity="4" crap="4" count="4"/>
+      <line num="27" type="stmt" count="4"/>
+      <line num="28" type="stmt" count="2"/>
+      <line num="30" type="stmt" count="2"/>
+      <line num="31" type="stmt" count="2"/>
+      <line num="34" type="stmt" count="1"/>
+      <line num="38" type="stmt" count="1"/>
+      <line num="39" type="stmt" count="1"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="44" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
+      <line num="49" type="stmt" count="1"/>
+      <line num="55" type="stmt" count="3"/>
+      <line num="59" type="stmt" count="3"/>
+      <line num="60" type="stmt" count="3"/>
+      <line num="66" type="stmt" count="3"/>
+      <line num="67" type="stmt" count="3"/>
+      <line num="70" type="stmt" count="3"/>
+      <line num="75" type="stmt" count="3"/>
+      <line num="78" type="method" name="log" visibility="private" complexity="2" crap="2" count="4"/>
+      <line num="80" type="stmt" count="4"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="84" type="stmt" count="3"/>
+      <metrics loc="87" ncloc="87" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="27" coveredelements="27"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/MiddlewareResolverCachingInterface.php">
+      <metrics loc="10" ncloc="10" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/MiddlewareResolverInterface.php">
+      <metrics loc="13" ncloc="13" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Request/MiddlewareResolvingRequest.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest" namespace="global">
+        <metrics complexity="9" methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="31" coveredelements="31"/>
+      </class>
+      <line num="21" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="24"/>
+      <line num="28" type="stmt" count="24"/>
+      <line num="29" type="stmt" count="24"/>
+      <line num="30" type="stmt" count="24"/>
+      <line num="31" type="stmt" count="24"/>
+      <line num="32" type="stmt" count="24"/>
+      <line num="35" type="method" name="createFromFoundationAssets" visibility="public" complexity="1" crap="1" count="24"/>
+      <line num="37" type="stmt" count="24"/>
+      <line num="38" type="stmt" count="24"/>
+      <line num="39" type="stmt" count="24"/>
+      <line num="41" type="stmt" count="24"/>
+      <line num="42" type="stmt" count="24"/>
+      <line num="43" type="stmt" count="24"/>
+      <line num="51" type="method" name="withResolvedMiddlewareAccessCode" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="53" type="stmt" count="4"/>
+      <line num="54" type="stmt" count="4"/>
+      <line num="55" type="stmt" count="4"/>
+      <line num="56" type="stmt" count="4"/>
+      <line num="57" type="stmt" count="4"/>
+      <line num="62" type="method" name="hasAccessKey" visibility="public" complexity="1" crap="1" count="11"/>
+      <line num="64" type="stmt" count="11"/>
+      <line num="67" type="method" name="getAccessKey" visibility="public" complexity="1" crap="1" count="6"/>
+      <line num="69" type="stmt" count="6"/>
+      <line num="72" type="method" name="getHttpMethod" visibility="public" complexity="1" crap="1" count="12"/>
+      <line num="74" type="stmt" count="12"/>
+      <line num="77" type="method" name="getRouteName" visibility="public" complexity="1" crap="1" count="13"/>
+      <line num="79" type="stmt" count="13"/>
+      <line num="82" type="method" name="getCompiledRoute" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="84" type="stmt" count="4"/>
+      <line num="87" type="method" name="getCacheKey" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="89" type="stmt" count="4"/>
+      <metrics loc="91" ncloc="91" classes="1" methods="9" coveredmethods="9" conditionals="0" coveredconditionals="0" statements="22" coveredstatements="22" elements="31" coveredelements="31"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/AbstractChainResolver.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\AbstractChainResolver" namespace="global">
+        <metrics complexity="5" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="11" coveredelements="11"/>
+      </class>
+      <line num="19" type="method" name="setNext" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="21" type="stmt" count="4"/>
+      <line num="23" type="stmt" count="4"/>
+      <line num="35" type="method" name="handleNext" visibility="protected" complexity="2" crap="2" count="4"/>
+      <line num="37" type="stmt" count="4"/>
+      <line num="38" type="stmt" count="2"/>
+      <line num="41" type="stmt" count="2"/>
+      <line num="50" type="method" name="getChainNext" visibility="protected" complexity="2" crap="2" count="4"/>
+      <line num="52" type="stmt" count="4"/>
+      <line num="53" type="stmt" count="2"/>
+      <line num="56" type="stmt" count="2"/>
+      <metrics loc="59" ncloc="50" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="11" coveredelements="11"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/CompiledPathResolver.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\CompiledPathResolver" namespace="global">
+        <metrics complexity="27" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="64" coveredstatements="64" elements="68" coveredelements="68"/>
+      </class>
+      <line num="28" type="method" name="registerPathMiddleware" visibility="public" complexity="7" crap="7" count="7"/>
+      <line num="30" type="stmt" count="7"/>
+      <line num="31" type="stmt" count="7"/>
+      <line num="32" type="stmt" count="7"/>
+      <line num="33" type="stmt" count="7"/>
+      <line num="36" type="stmt" count="7"/>
+      <line num="37" type="stmt" count="7"/>
+      <line num="38" type="stmt" count="7"/>
+      <line num="41" type="stmt" count="7"/>
+      <line num="42" type="stmt" count="7"/>
+      <line num="43" type="stmt" count="1"/>
+      <line num="45" type="stmt" count="7"/>
+      <line num="51" type="stmt" count="7"/>
+      <line num="54" type="method" name="handle" visibility="public" complexity="6" crap="6" count="4"/>
+      <line num="56" type="stmt" count="4"/>
+      <line num="57" type="stmt" count="4"/>
+      <line num="59" type="stmt" count="4"/>
+      <line num="60" type="stmt" count="4"/>
+      <line num="61" type="stmt" count="2"/>
+      <line num="63" type="stmt" count="2"/>
+      <line num="66" type="stmt" count="2"/>
+      <line num="67" type="stmt" count="2"/>
+      <line num="68" type="stmt" count="2"/>
+      <line num="70" type="stmt" count="2"/>
+      <line num="71" type="stmt" count="2"/>
+      <line num="73" type="stmt" count="2"/>
+      <line num="76" type="stmt" count="2"/>
+      <line num="78" type="stmt" count="2"/>
+      <line num="86" type="stmt" count="1"/>
+      <line num="89" type="stmt" count="2"/>
+      <line num="95" type="method" name="getChain" visibility="public" complexity="6" crap="6" count="9"/>
+      <line num="97" type="stmt" count="9"/>
+      <line num="98" type="stmt" count="2"/>
+      <line num="101" type="stmt" count="7"/>
+      <line num="102" type="stmt" count="7"/>
+      <line num="103" type="stmt" count="7"/>
+      <line num="104" type="stmt" count="2"/>
+      <line num="106" type="stmt" count="2"/>
+      <line num="109" type="stmt" count="5"/>
+      <line num="110" type="stmt" count="5"/>
+      <line num="111" type="stmt" count="2"/>
+      <line num="114" type="stmt" count="3"/>
+      <line num="115" type="stmt" count="1"/>
+      <line num="118" type="stmt" count="2"/>
+      <line num="119" type="stmt" count="1"/>
+      <line num="122" type="stmt" count="1"/>
+      <line num="123" type="stmt" count="1"/>
+      <line num="131" type="method" name="exportRules" visibility="public" complexity="8" crap="8" count="1"/>
+      <line num="133" type="stmt" count="1"/>
+      <line num="134" type="stmt" count="1"/>
+      <line num="135" type="stmt" count="1"/>
+      <line num="136" type="stmt" count="1"/>
+      <line num="137" type="stmt" count="1"/>
+      <line num="138" type="stmt" count="1"/>
+      <line num="143" type="stmt" count="1"/>
+      <line num="144" type="stmt" count="1"/>
+      <line num="145" type="stmt" count="1"/>
+      <line num="146" type="stmt" count="1"/>
+      <line num="147" type="stmt" count="1"/>
+      <line num="153" type="stmt" count="1"/>
+      <line num="154" type="stmt" count="1"/>
+      <line num="160" type="stmt" count="1"/>
+      <line num="161" type="stmt" count="1"/>
+      <line num="162" type="stmt" count="1"/>
+      <line num="163" type="stmt" count="1"/>
+      <line num="164" type="stmt" count="1"/>
+      <line num="165" type="stmt" count="1"/>
+      <line num="172" type="stmt" count="1"/>
+      <metrics loc="175" ncloc="161" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="64" coveredstatements="64" elements="68" coveredelements="68"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/Dto/ExportedMiddleware.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ExportedMiddleware" namespace="global">
+        <metrics complexity="5" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="14" coveredelements="14"/>
+      </class>
+      <line num="18" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="7"/>
+      <line num="24" type="stmt" count="7"/>
+      <line num="25" type="stmt" count="7"/>
+      <line num="26" type="stmt" count="7"/>
+      <line num="27" type="stmt" count="7"/>
+      <line num="33" type="method" name="listMiddlewareChainItems" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="35" type="stmt" count="3"/>
+      <line num="38" type="method" name="getIdentifier" visibility="public" complexity="1" crap="1" count="5"/>
+      <line num="40" type="stmt" count="5"/>
+      <line num="43" type="method" name="getHttpMethods" visibility="public" complexity="2" crap="2" count="5"/>
+      <line num="45" type="stmt" count="5"/>
+      <line num="46" type="stmt" count="1"/>
+      <line num="47" type="stmt" count="1"/>
+      <line num="51" type="stmt" count="5"/>
+      <metrics loc="54" ncloc="51" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="10" coveredstatements="10" elements="14" coveredelements="14"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/Dto/ResolvedMiddlewareChain.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain" namespace="global">
+        <metrics complexity="7" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="12" elements="19" coveredelements="19"/>
+      </class>
+      <line num="20" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="16"/>
+      <line num="22" type="stmt" count="16"/>
+      <line num="23" type="stmt" count="16"/>
+      <line num="26" type="method" name="createFromResolverContext" visibility="public" complexity="1" crap="1" count="12"/>
+      <line num="30" type="stmt" count="12"/>
+      <line num="36" type="method" name="createDefault" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="37" type="stmt" count="4"/>
+      <line num="38" type="stmt" count="4"/>
+      <line num="40" type="stmt" count="4"/>
+      <line num="46" type="method" name="process" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="48" type="stmt" count="1"/>
+      <line num="49" type="stmt" count="1"/>
+      <line num="50" type="stmt" count="1"/>
+      <line num="53" type="method" name="isNullMiddleware" visibility="public" complexity="1" crap="1" count="7"/>
+      <line num="55" type="stmt" count="7"/>
+      <line num="58" type="method" name="getMiddlewareAccessKey" visibility="public" complexity="1" crap="1" count="4"/>
+      <line num="60" type="stmt" count="4"/>
+      <line num="63" type="method" name="listChainClassNames" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="65" type="stmt" count="1"/>
+      <metrics loc="68" ncloc="68" classes="1" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="12" elements="19" coveredelements="19"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/Exception/AbstractResolveException.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\AbstractResolveException" namespace="global">
+        <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </class>
+      <metrics loc="12" ncloc="12" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/Exception/ChainNotFoundException.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\ChainNotFoundException" namespace="global">
+        <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </class>
+      <metrics loc="12" ncloc="12" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/Exception/InvalidAccessKeyException.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Exception\InvalidAccessKeyException" namespace="global">
+        <metrics complexity="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+      </class>
+      <metrics loc="10" ncloc="10" classes="0" methods="0" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="0" coveredstatements="0" elements="0" coveredelements="0"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Resolver/Strategy/RouteNameResolver.php">
+      <class name="Profesia\Symfony\Psr15Bundle\Resolver\Strategy\RouteNameResolver" namespace="global">
+        <metrics complexity="17" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="48" coveredstatements="48" elements="53" coveredelements="53"/>
+      </class>
+      <line num="27" type="method" name="__construct" visibility="public" complexity="1" crap="1" count="18"/>
+      <line num="30" type="stmt" count="18"/>
+      <line num="33" type="method" name="registerRouteMiddleware" visibility="public" complexity="6" crap="6" count="12"/>
+      <line num="35" type="stmt" count="12"/>
+      <line num="36" type="stmt" count="4"/>
+      <line num="37" type="stmt" count="1"/>
+      <line num="40" type="stmt" count="4"/>
+      <line num="42" type="stmt" count="4"/>
+      <line num="45" type="stmt" count="9"/>
+      <line num="46" type="stmt" count="1"/>
+      <line num="49" type="stmt" count="8"/>
+      <line num="50" type="stmt" count="1"/>
+      <line num="53" type="stmt" count="8"/>
+      <line num="54" type="stmt" count="1"/>
+      <line num="57" type="stmt" count="7"/>
+      <line num="59" type="stmt" count="7"/>
+      <line num="62" type="method" name="handle" visibility="public" complexity="3" crap="3" count="7"/>
+      <line num="64" type="stmt" count="7"/>
+      <line num="65" type="stmt" count="3"/>
+      <line num="66" type="stmt" count="3"/>
+      <line num="67" type="stmt" count="3"/>
+      <line num="70" type="stmt" count="3"/>
+      <line num="76" type="stmt" count="4"/>
+      <line num="77" type="stmt" count="4"/>
+      <line num="78" type="stmt" count="2"/>
+      <line num="79" type="stmt" count="2"/>
+      <line num="80" type="stmt" count="2"/>
+      <line num="83" type="stmt" count="2"/>
+      <line num="89" type="stmt" count="2"/>
+      <line num="96" type="method" name="getChain" visibility="public" complexity="4" crap="4" count="6"/>
+      <line num="98" type="stmt" count="6"/>
+      <line num="99" type="stmt" count="2"/>
+      <line num="102" type="stmt" count="4"/>
+      <line num="103" type="stmt" count="4"/>
+      <line num="104" type="stmt" count="4"/>
+      <line num="105" type="stmt" count="2"/>
+      <line num="107" type="stmt" count="2"/>
+      <line num="110" type="stmt" count="2"/>
+      <line num="111" type="stmt" count="2"/>
+      <line num="112" type="stmt" count="1"/>
+      <line num="115" type="stmt" count="1"/>
+      <line num="116" type="stmt" count="1"/>
+      <line num="125" type="method" name="exportRules" visibility="public" complexity="3" crap="3" count="5"/>
+      <line num="127" type="stmt" count="5"/>
+      <line num="128" type="stmt" count="5"/>
+      <line num="129" type="stmt" count="2"/>
+      <line num="130" type="stmt" count="2"/>
+      <line num="131" type="stmt" count="2"/>
+      <line num="134" type="stmt" count="1"/>
+      <line num="135" type="stmt" count="1"/>
+      <line num="136" type="stmt" count="1"/>
+      <line num="138" type="stmt" count="1"/>
+      <line num="144" type="stmt" count="4"/>
+      <metrics loc="147" ncloc="140" classes="1" methods="5" coveredmethods="5" conditionals="0" coveredconditionals="0" statements="48" coveredstatements="48" elements="53" coveredelements="53"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/ValueObject/CompoundHttpMethod.php">
+      <class name="Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod" namespace="global">
+        <metrics complexity="5" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="12" elements="16" coveredelements="16"/>
+      </class>
+      <line num="12" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="12"/>
+      <line num="14" type="stmt" count="12"/>
+      <line num="22" type="method" name="createFromStrings" visibility="public" complexity="2" crap="2" count="13"/>
+      <line num="24" type="stmt" count="13"/>
+      <line num="25" type="stmt" count="13"/>
+      <line num="26" type="stmt" count="13"/>
+      <line num="27" type="stmt" count="13"/>
+      <line num="30" type="stmt" count="12"/>
+      <line num="33" type="method" name="listMethods" visibility="public" complexity="1" crap="1" count="9"/>
+      <line num="35" type="stmt" count="9"/>
+      <line num="37" type="stmt" count="9"/>
+      <line num="38" type="stmt" count="9"/>
+      <line num="39" type="stmt" count="9"/>
+      <line num="41" type="stmt" count="9"/>
+      <line num="46" type="method" name="isEmpty" visibility="public" complexity="1" crap="1" count="5"/>
+      <line num="48" type="stmt" count="5"/>
+      <metrics loc="50" ncloc="44" classes="1" methods="4" coveredmethods="4" conditionals="0" coveredconditionals="0" statements="12" coveredstatements="12" elements="16" coveredelements="16"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/ValueObject/ConfigurationHttpMethod.php">
+      <class name="Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod" namespace="global">
+        <metrics complexity="16" methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="36" coveredelements="36"/>
+      </class>
+      <line num="14" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="15"/>
+      <line num="16" type="stmt" count="15"/>
+      <line num="19" type="method" name="createDefault" visibility="public" complexity="1" crap="1" count="5"/>
+      <line num="21" type="stmt" count="5"/>
+      <line num="22" type="stmt" count="5"/>
+      <line num="26" type="method" name="createFromArray" visibility="public" complexity="1" crap="1" count="2"/>
+      <line num="28" type="stmt" count="2"/>
+      <line num="30" type="stmt" count="2"/>
+      <line num="35" type="method" name="createFromString" visibility="public" complexity="1" crap="1" count="9"/>
+      <line num="37" type="stmt" count="9"/>
+      <line num="38" type="stmt" count="9"/>
+      <line num="47" type="method" name="validateAndSplit" visibility="public" complexity="1" crap="1" count="10"/>
+      <line num="49" type="stmt" count="10"/>
+      <line num="50" type="stmt" count="10"/>
+      <line num="52" type="stmt" count="9"/>
+      <line num="58" type="method" name="getPossibleValues" visibility="public" complexity="1" crap="1" count="18"/>
+      <line num="60" type="stmt" count="18"/>
+      <line num="68" type="method" name="assignMiddlewareChainToHttpMethods" visibility="public" complexity="3" crap="3" count="12"/>
+      <line num="70" type="stmt" count="12"/>
+      <line num="71" type="stmt" count="12"/>
+      <line num="72" type="stmt" count="1"/>
+      <line num="76" type="stmt" count="11"/>
+      <line num="79" type="method" name="toArray" visibility="public" complexity="1" crap="1" count="1"/>
+      <line num="81" type="stmt" count="1"/>
+      <line num="84" type="method" name="toString" visibility="public" complexity="1" crap="1" count="2"/>
+      <line num="86" type="stmt" count="2"/>
+      <line num="89" type="method" name="__toString" visibility="public" complexity="1" crap="1" count="2"/>
+      <line num="91" type="stmt" count="2"/>
+      <line num="93" type="stmt" count="2"/>
+      <line num="97" type="method" name="getValue" visibility="private" complexity="1" crap="1" count="2"/>
+      <line num="99" type="stmt" count="2"/>
+      <line num="102" type="method" name="validateAllValues" visibility="private" complexity="3" crap="3" count="12"/>
+      <line num="104" type="stmt" count="12"/>
+      <line num="105" type="stmt" count="12"/>
+      <line num="106" type="stmt" count="12"/>
+      <line num="107" type="stmt" count="1"/>
+      <metrics loc="112" ncloc="99" classes="1" methods="12" coveredmethods="12" conditionals="0" coveredconditionals="0" statements="24" coveredstatements="24" elements="36" coveredelements="36"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/ValueObject/ConfigurationPath.php">
+      <class name="Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationPath" namespace="global">
+        <metrics complexity="5" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="11" coveredelements="11"/>
+      </class>
+      <line num="15" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="7"/>
+      <line num="17" type="stmt" count="7"/>
+      <line num="18" type="stmt" count="7"/>
+      <line num="21" type="method" name="createFromConfigurationHttpMethodAndString" visibility="public" complexity="3" crap="3" count="9"/>
+      <line num="23" type="stmt" count="9"/>
+      <line num="24" type="stmt" count="9"/>
+      <line num="25" type="stmt" count="2"/>
+      <line num="28" type="stmt" count="7"/>
+      <line num="39" type="method" name="exportConfigurationForMiddleware" visibility="public" complexity="1" crap="1" count="8"/>
+      <line num="42" type="stmt" count="8"/>
+      <line num="43" type="stmt" count="8"/>
+      <metrics loc="48" ncloc="43" classes="1" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="8" coveredstatements="8" elements="11" coveredelements="11"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/ValueObject/HttpMethod.php">
+      <class name="Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod" namespace="global">
+        <metrics complexity="9" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="19" coveredelements="19"/>
+      </class>
+      <line num="24" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="40"/>
+      <line num="26" type="stmt" count="40"/>
+      <line num="32" type="method" name="getPossibleValues" visibility="public" complexity="1" crap="1" count="55"/>
+      <line num="35" type="stmt" count="55"/>
+      <line num="52" type="method" name="createFromString" visibility="public" complexity="2" crap="2" count="40"/>
+      <line num="54" type="stmt" count="40"/>
+      <line num="55" type="stmt" count="40"/>
+      <line num="56" type="stmt" count="2"/>
+      <line num="59" type="stmt" count="40"/>
+      <line num="62" type="method" name="equals" visibility="public" complexity="1" crap="1" count="11"/>
+      <line num="64" type="stmt" count="11"/>
+      <line num="72" type="method" name="extractMiddleware" visibility="public" complexity="1" crap="1" count="3"/>
+      <line num="74" type="stmt" count="3"/>
+      <line num="77" type="method" name="__toString" visibility="public" complexity="1" crap="1" count="15"/>
+      <line num="79" type="stmt" count="15"/>
+      <line num="82" type="method" name="toString" visibility="public" complexity="1" crap="1" count="15"/>
+      <line num="84" type="stmt" count="15"/>
+      <line num="87" type="method" name="getValue" visibility="private" complexity="1" crap="1" count="27"/>
+      <line num="89" type="stmt" count="27"/>
+      <metrics loc="92" ncloc="79" classes="1" methods="8" coveredmethods="8" conditionals="0" coveredconditionals="0" statements="11" coveredstatements="11" elements="19" coveredelements="19"/>
+    </file>
+    <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/ValueObject/ResolvedMiddlewareAccessKey.php">
+      <class name="Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey" namespace="global">
+        <metrics complexity="10" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" elements="27" coveredelements="27"/>
+      </class>
+      <line num="24" type="method" name="__construct" visibility="private" complexity="1" crap="1" count="23"/>
+      <line num="26" type="stmt" count="23"/>
+      <line num="27" type="stmt" count="23"/>
+      <line num="30" type="method" name="createFromArray" visibility="public" complexity="3" crap="3" count="21"/>
+      <line num="32" type="stmt" count="21"/>
+      <line num="33" type="stmt" count="21"/>
+      <line num="34" type="stmt" count="1"/>
+      <line num="38" type="stmt" count="20"/>
+      <line num="39" type="stmt" count="20"/>
+      <line num="40" type="stmt" count="1"/>
+      <line num="43" type="stmt" count="19"/>
+      <line num="44" type="stmt" count="19"/>
+      <line num="45" type="stmt" count="19"/>
+      <line num="49" type="method" name="createFromMiddlewareResolver" visibility="public" complexity="1" crap="1" count="7"/>
+      <line num="51" type="stmt" count="7"/>
+      <line num="52" type="stmt" count="7"/>
+      <line num="57" type="method" name="create" visibility="private" complexity="2" crap="2" count="24"/>
+      <line num="59" type="stmt" count="24"/>
+      <line num="60" type="stmt" count="1"/>
+      <line num="63" type="stmt" count="23"/>
+      <line num="69" type="method" name="toArray" visibility="public" complexity="1" crap="1" count="9"/>
+      <line num="72" type="stmt" count="9"/>
+      <line num="73" type="stmt" count="9"/>
+      <line num="80" type="method" name="listPathParts" visibility="public" complexity="1" crap="1" count="11"/>
+      <line num="82" type="stmt" count="11"/>
+      <line num="85" type="method" name="isSameResolver" visibility="public" complexity="1" crap="1" count="17"/>
+      <line num="87" type="stmt" count="17"/>
+      <metrics loc="90" ncloc="87" classes="1" methods="7" coveredmethods="7" conditionals="0" coveredconditionals="0" statements="20" coveredstatements="20" elements="27" coveredelements="27"/>
+    </file>
+    <metrics files="31" loc="2166" ncloc="2052" classes="26" methods="112" coveredmethods="110" conditionals="0" coveredconditionals="0" statements="569" coveredstatements="567" elements="681" coveredelements="677"/>
+  </project>
+</coverage>
