@@ -5,7 +5,8 @@ on:
         branches:
             - master
             - development
-            - /^v\d+\.\d+\.\d+/
+        tags:
+          - /^v\d+\.\d+\.\d+/
 
 jobs:
     build:
@@ -26,3 +27,10 @@ jobs:
 
             - name: Run tests
               run: composer test
+
+            - name: Generate test coverage badge
+              uses: timkrase/phpunit-coverage-badge@v1.2.0
+              with:
+                coverage_badge_path: 'badge-coverage.svg'
+                push_badge: true
+                repo_token: ${{ secrets.GITHUB_TOKEN }}
