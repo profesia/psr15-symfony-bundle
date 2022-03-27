@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1648213484">
-  <project timestamp="1648213484">
+<coverage generated="1648423601">
+  <project timestamp="1648423601">
     <file name="/home/runner/work/psr15-symfony-bundle/psr15-symfony-bundle/src/Adapter/SymfonyControllerAdapter.php">
       <class name="Profesia\Symfony\Psr15Bundle\Adapter\SymfonyControllerAdapter" namespace="global">
         <metrics complexity="5" methods="3" coveredmethods="3" conditionals="0" coveredconditionals="0" statements="25" coveredstatements="25" elements="28" coveredelements="28"/>
