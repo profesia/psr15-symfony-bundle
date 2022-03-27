@@ -5,3 +5,4 @@ composer.lock
 !.github
 !docker/.env.dist
 /build
+clover.xml
