@@ -28,13 +28,13 @@ jobs:
             - name: Run tests
               run: composer test
 
-            name: Create the Badge
-            uses: schneegans/dynamic-badges-action@v1.0.0
-            with:
-              auth: ${{ secrets.GIST_SECRET }}
-              gistID: f30cf27327041de83abdb908c100e45c
-              filename: profesia/psr15-symfony-bundle__${{ env.BRANCH }}.json
-              label: Test Coverage
-              message: ${{ env.COVERAGE }}
-              color: green
-              namedLogo: php
+            - name: Create the Badge
+              uses: schneegans/dynamic-badges-action@v1.0.0
+              with:
+                auth: ${{ secrets.GIST_SECRET }}
+                gistID: f30cf27327041de83abdb908c100e45c
+                filename: profesia/psr15-symfony-bundle__${{ env.BRANCH }}.json
+                label: Test Coverage
+                message: ${{ env.COVERAGE }}
+                color: green
+                namedLogo: php
