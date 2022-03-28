@@ -3,7 +3,6 @@ Symfony bundle designed to bring PSR-15 fashioned middlewares to Symfony 5+ appl
 
 [![Build and test](https://github.com/profesia/psr15-symfony-bundle/actions/workflows/test-runner.yml/badge.svg?branch=master)](https://github.com/profesia/psr15-symfony-bundle/actions/workflows/test-runner.yml)
 ![PHP Version](https://img.shields.io/packagist/php-v/profesia/psr15-symfony-bundle)
-[![Test Coverage](https://raw.githubusercontent.com/profesia/psr15-symfony-bundle/master/badge-coverage.svg)](https://packagist.org/packages/profesia/psr15-symfony-bundle)
 ![License](https://img.shields.io/packagist/l/profesia/psr15-symfony-bundle)
 
 ## Installation
