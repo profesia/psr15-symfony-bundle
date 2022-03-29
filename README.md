@@ -17,5 +17,6 @@ composer require profesia/psr15-symfony-bundle
 Documentation for the bundle can be found at https://profesia.github.io/psr15-symfony-bundle/
 ## Author
 Matej Bádal - matejbadal@gmail.com
+Profesia spol. s r.o.
 ## License
 This project is licensed under the MIT License
