@@ -1,19 +1,24 @@
 `/`[Home](/psr15-symfony-bundle)`/`[2.0](/psr15-symfony-bundle/docs/2.0)`/`[Console](/psr15-symfony-bundle/docs/2.0/04-console.html)
 
 # Console
+
 The bundle offers two console commands as part of its infrastructure:
+
 * [ListMiddlewareRulesCommand](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Console/Command/ListMiddlewareRulesCommand.php)
 * [WarmUpMiddlewareCacheCommand](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Console/Command/WarmUpMiddlewareCacheCommand.php)
 
 ## ListMiddlewareRulesCommand
+
 **Description**: Lists all registered middleware chains routing rules
 
-**Name**: 
+**Name**:
+
 ```bash
 profesia:psr15:middleware:list-rules
 ```
 
 **Sample output**:
+
 ```
 +------------+------------------------------------ Route rules ---------------------+----------------------------+
 | Route name | HTTP method                                                          | Middleware list            |
@@ -40,14 +45,17 @@ profesia:psr15:middleware:list-rules
 ```
 
 ## WarmUpMiddlewareCacheCommand
+
 **Description**: Warms up middleware cache
 
-**Name**: 
+**Name**:
+
 ```bash
 profesia:psr15:middleware:warm-up
 ```
 
 **Sample output**:
+
 ```
 +-------+-------------+-------------+----------------------------+
 | Route | Static Path | HTTP method | Middleware chain items     |
@@ -118,7 +126,9 @@ profesia:psr15:middleware:warm-up
 |       |             |             | App\Middleware\Middleware6 |
 +-------+-------------+-------------+----------------------------+
 ```
+
 ### Warning
+
 When defining routes, use of the key `methods` to limit available HTTP methods is advised.
 If there are none stated, the command resolves middleware to all HTTP methods.
 This can dramatically increase size of cache.
