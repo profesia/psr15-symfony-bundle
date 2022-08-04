@@ -41,8 +41,8 @@ psr15:
 ```
 ## Matching
 Matching of an incoming requests takes place in two clasess:
-* [RouteNameStrategyResolver](../src/Resolver/Strategy/RouteNameResolver.php)
-* [CompiledPathStrategyResolver](../src/Resolver/Strategy/CompiledPathResolver.php)
+* [RouteNameStrategyResolver](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Resolver/Strategy/RouteNameResolver.php)
+* [CompiledPathStrategyResolver](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Resolver/Strategy/CompiledPathResolver.php)
 ### RouteNameStrategyResolver
 Matching of an incoming request is straightforward in this strategy:
 1. Actual route name is being searched in the registered route middleware chains.
@@ -93,7 +93,7 @@ The incoming static prefix is `/abde`. Matching has three iterations:
 Resolving of a middleware chain to be used consists of o two steps:
 * passing resolving request to **RouteNameStrategyResolver**
 * passing resolving request to **CompiledPathStrategyResolver**
-* returning [NullMiddleware](../src/Middleware/NullMiddleware.php) on no middleware chain resolved
+* returning [NullMiddleware](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Middleware/NullMiddleware.php) on no middleware chain resolved
 
 Each step will return middleware chain and stop resolving on match found.
 ## Caching

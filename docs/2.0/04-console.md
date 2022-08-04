@@ -2,8 +2,8 @@
 
 # Console
 The bundle offers two console commands as part of its infrastructure:
-* [ListMiddlewareRulesCommand](../src/Console/Command/ListMiddlewareRulesCommand.php)
-* [WarmUpMiddlewareCacheCommand](../src/Console/Command/WarmUpMiddlewareCacheCommand.php)
+* [ListMiddlewareRulesCommand](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Console/Command/ListMiddlewareRulesCommand.php)
+* [WarmUpMiddlewareCacheCommand](https://github.com/profesia/psr15-symfony-bundle/blob/v2.0.0/src/Console/Command/WarmUpMiddlewareCacheCommand.php)
 
 ## ListMiddlewareRulesCommand
 **Description**: Lists all registered middleware chains routing rules
