@@ -12,10 +12,11 @@ composer require profesia/psr15-symfony-bundle
 - PHP 7.4+
 - Symfony 5+
 
-## Latest version
+## Documentation
+### Latest version
 - [Version 2.0](/psr15-symfony-bundle/docs/2.0)
 
-## Older versions
+### Older versions
 - [Version 1.0](/psr15-symfony-bundle/docs/1.0)
 
 ## Author
