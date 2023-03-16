@@ -26,7 +26,7 @@ class Psr15Extension extends Extension
             )
         );
 
-        $loader->load('services.xml');
+        $loader->load('services.php');
 
         $config = $this->processConfiguration(
             new Psr15Configuration(),

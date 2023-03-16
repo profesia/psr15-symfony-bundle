@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class SymfonyControllerRequestHandler implements RequestHandlerInterface
 {
     private HttpFoundationFactoryInterface $foundationHttpFactory;
-    private HttpMessageFactoryInterface    $psrHttpFactory;
-    private RequestStack                   $requestStack;
-    private array                          $symfonyCallableArguments;
+    private HttpMessageFactoryInterface $psrHttpFactory;
+    private RequestStack $requestStack;
+    private array $symfonyCallableArguments;
 
     /** @var callable */
     private $symfonyCallable;
@@ -39,13 +39,14 @@ class SymfonyControllerRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $symfonyRequest = $this->foundationHttpFactory->createRequest($request);
-        if ($this->requestStack->getCurrentRequest()->hasSession()) {
+        $currentRequest = $this->requestStack->getCurrentRequest();
+        if ($currentRequest !== null && $currentRequest->hasSession()) {
             $symfonyRequest->setSession(
-                $this->requestStack->getCurrentRequest()->getSession()
+                $currentRequest->getSession()
             );
         }
 
-        $requests       = [];
+        $requests = [];
         while (($request = $this->requestStack->pop()) !== null) {
             $requests[] = $request;
         }

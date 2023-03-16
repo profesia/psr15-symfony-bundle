@@ -107,7 +107,7 @@ class SymfonyControllerRequestHandlerTest extends MockeryTestCase
         $requestStack = Mockery::mock(RequestStack::class);
         $requestStack
             ->shouldReceive('getCurrentRequest')
-            ->twice()
+            ->once()
             ->andReturn(
                 $currentRequest
             );

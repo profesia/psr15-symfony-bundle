@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<routes xmlns="http://symfony.com/schema/routing"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://symfony.com/schema/routing
-        http://symfony.com/schema/routing/routing-1.0.xsd">
-    <route id="1" controller="Profesia\Symfony\Psr15Bundle\Tests\Acceptance\Assets\TestController::indexAction" path="/1" />
-    <route id="2" controller="Profesia\Symfony\Psr15Bundle\Tests\Acceptance\Assets\TestController::indexAction" path="/2" />
-    <route id="3" controller="Profesia\Symfony\Psr15Bundle\Tests\Acceptance\Assets\TestController::indexAction" path="/3" />
-</routes>

@@ -65,7 +65,7 @@ class TestKernel extends Kernel
 
     protected function configureRoutes(RoutingConfigurator $routes)
     {
-        $routes->import(__DIR__ . '/../../../Resources/config/test-routes.xml');
+        $routes->import(__DIR__ . '/../../../Resources/config/test-routes.php');
     }
 
     public function getCacheDir(): string
