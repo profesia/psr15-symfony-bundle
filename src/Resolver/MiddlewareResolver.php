@@ -28,7 +28,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
             $accessKey       = $request->getAccessKey();
             try {
                 $cachedMiddleware = $this->middlewareResolverChain->getChain(
-                    $request->getAccessKey()
+                    $accessKey
                 );
 
                 $this->log(

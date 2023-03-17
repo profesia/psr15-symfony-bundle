@@ -38,7 +38,7 @@ final class MiddlewareResolvingRequest
         $staticPrefix  = $compiledRoute->getStaticPrefix();
         $cacheKey      = urlencode("{$request->getRealMethod()}-{$staticPrefix}");
 
-        return new static(
+        return new self(
             HttpMethod::createFromString(
                 $request->getRealMethod()
             ),
@@ -50,7 +50,7 @@ final class MiddlewareResolvingRequest
 
     public function withResolvedMiddlewareAccessCode(ResolvedMiddlewareAccessKey $accessKey): MiddlewareResolvingRequest
     {
-        return new static(
+        return new self(
             $this->httpMethod,
             $this->compiledRoute,
             $this->routeName,
