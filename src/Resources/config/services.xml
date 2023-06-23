@@ -10,11 +10,13 @@
 
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>
 
+        <service id="Http\Discovery\Psr17Factory"/>
+
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory">
-            <argument key="$serverRequestFactory" type="service" id="nyholm.psr7.psr17_factory"/>
-            <argument key="$streamFactory" type="service" id="nyholm.psr7.psr17_factory"/>
-            <argument key="$uploadedFileFactory" type="service" id="nyholm.psr7.psr17_factory"/>
-            <argument key="$responseFactory" type="service" id="nyholm.psr7.psr17_factory"/>
+            <argument key="$serverRequestFactory" type="service" id="Http\Discovery\Psr17Factory"/>
+            <argument key="$streamFactory" type="service" id="Http\Discovery\Psr17Factory"/>
+            <argument key="$uploadedFileFactory" type="service" id="Http\Discovery\Psr17Factory"/>
+            <argument key="$responseFactory" type="service" id="Http\Discovery\Psr17Factory"/>
         </service>
 
         <service id="Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory"/>

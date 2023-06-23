@@ -35,15 +35,15 @@ case "$1" in
     ;;
   php)
     shift 1
-    ${COMPOSE} exec php bash -c "php $*"
+    ${COMPOSE} exec psr15_symfony_bundle bash -c "php $*"
     ;;
   bash)
     shift 1
-    ${COMPOSE} exec php bash -c "$*"
+    ${COMPOSE} exec psr15_symfony_bundle bash -c "$*"
     ;;
   container)
   	shift 1
-  	${COMPOSE} exec php "$@"
+  	${COMPOSE} exec psr15_symfony_bundle "$@"
   	;;
   *)
     print_help
