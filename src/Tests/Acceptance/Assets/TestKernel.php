@@ -37,7 +37,7 @@ class TestKernel extends Kernel
         ];
     }
 
-    protected function configureContainer(ContainerConfigurator $container)
+    protected function configureContainer(ContainerConfigurator $container): void
     {
         $container->services()->set(
             TestMiddleware1::class,
@@ -63,7 +63,7 @@ class TestKernel extends Kernel
     }
 
 
-    protected function configureRoutes(RoutingConfigurator $routes)
+    protected function configureRoutes(RoutingConfigurator $routes): void
     {
         $routes->import(__DIR__ . '/../../../Resources/config/test-routes.xml');
     }
