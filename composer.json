@@ -15,15 +15,15 @@
 		}
 	],
 	"require": {
-		"php": "~7.4 || ~8.0",
-		"symfony/psr-http-message-bridge": "^2.0",
-		"symfony/console": "~5.0 || ~6.0",
+		"php": "~7.4 || ~8.0 || ~8.1 || ~8.2",
+		"symfony/psr-http-message-bridge": "^2.0 || ~7.0",
+		"symfony/console": "~5.4 || ~6.0 || ~7.0",
 		"myclabs/deep-copy": "~1.10",
-		"symfony/dependency-injection": "~5.0 || ~6.0",
-		"symfony/http-kernel": "~5.0 || ~6.0",
-		"symfony/cache": "~5.0 || ~6.0",
-		"symfony/config": "~5.0 || ~6.0",
-		"symfony/routing": "~5.0 || ~6.0",
+		"symfony/dependency-injection": "~5.4 || ~6.0 || ~7.0",
+		"symfony/http-kernel": "~5.4 || ~6.0 || ~7.0",
+		"symfony/cache": "~5.4 || ~6.0 || ~7.0",
+		"symfony/config": "~5.4 || ~6.0 || ~7.0",
+		"symfony/routing": "~5.4 || ~6.0 || ~7.0",
 		"psr/http-server-handler": "^1.0",
 		"psr/http-server-middleware": "^1.0",
 		"php-http/discovery": "^1.19"
@@ -31,9 +31,9 @@
 	"require-dev": {
 		"phpstan/phpstan": "^0.12.29",
 		"mockery/mockery": "^1.4",
-		"symfony/browser-kit": "^5.3",
-		"symfony/framework-bundle": "^5.3",
-		"ext-json": "^7.4 || ^8.0",
+		"symfony/browser-kit": "^5.4 || ^6.0 || ^7.0",
+		"symfony/framework-bundle": "^5.4 || ^6.0 || ^7.0",
+		"ext-json": "^7.4 || ^8.0 || ^8.1 || ^8.2",
 		"nyholm/psr7": "^1.8",
 		"pestphp/pest": "^1.23"
 	},

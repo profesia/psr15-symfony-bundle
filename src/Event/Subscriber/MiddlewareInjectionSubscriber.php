@@ -53,6 +53,6 @@ class MiddlewareInjectionSubscriber implements EventSubscriberInterface
 
     private static function isMainRequest(KernelEvent $event): bool
     {
-        return ($event->getRequestType() === HttpKernelInterface::MASTER_REQUEST);
+        return ($event->getRequestType() === HttpKernelInterface::MAIN_REQUEST);
     }
 }
