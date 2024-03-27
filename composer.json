@@ -16,7 +16,7 @@
 	],
 	"require": {
 		"php": "~8.0 || ~8.1 || ~8.2",
-		"symfony/psr-http-message-bridge": "^2.0 || ~7.0",
+		"symfony/psr-http-message-bridge": "~2.0 || ~6.0 || ~7.0",
 		"symfony/console": "~5.4 || ~6.0 || ~7.0",
 		"myclabs/deep-copy": "~1.10",
 		"symfony/dependency-injection": "~5.4 || ~6.0 || ~7.0",
