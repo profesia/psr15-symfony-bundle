@@ -11,13 +11,13 @@ Install the latest version by running the command
 composer require profesia/psr15-symfony-bundle
 ```
 ## Requirements
-- PHP 7.4+
+- PHP 8.0+
 - Symfony 5+
 ## Documentation
 Documentation for the bundle can be found at https://profesia.github.io/psr15-symfony-bundle/
 ## Author
 Matej Bádal - matej.badal@profesia.sk
 
-Profesia spol. s r.o.
+Alma Career Slovakia s. r. o.
 ## License
 This project is licensed under the MIT License
