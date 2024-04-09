@@ -17,13 +17,13 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SymfonyControllerAdapter
 {
-    private HttpFoundationFactoryInterface $foundationHttpFactory;
-    private HttpMessageFactoryInterface $psrRequestFactory;
-    private MiddlewareResolverInterface $httpMiddlewareResolver;
+    private HttpFoundationFactoryInterface         $foundationHttpFactory;
+    private HttpMessageFactoryInterface            $psrRequestFactory;
+    private MiddlewareResolverInterface            $httpMiddlewareResolver;
     private SymfonyControllerRequestHandlerFactory $controllerRequestHandlerFactory;
-    private Request $request;
-    private RouteCollection $routeCollection;
-    private array $controllerArguments;
+    private Request                                $request;
+    private RouteCollection                        $routeCollection;
+    private array                                  $controllerArguments;
 
     /** @var callable */
     private $originalController;
@@ -35,7 +35,8 @@ class SymfonyControllerAdapter
         HttpMessageFactoryInterface $psrRequestFactory,
         RouterInterface $router,
         SymfonyControllerRequestHandlerFactory $controllerRequestHandlerFactory
-    ) {
+    )
+    {
         $this->httpMiddlewareResolver          = $httpMiddlewareResolver;
         $this->foundationHttpFactory           = $foundationFactory;
         $this->psrRequestFactory               = $psrRequestFactory;
@@ -54,12 +55,16 @@ class SymfonyControllerAdapter
 
     public function __invoke(): Response
     {
+        $route     = null;
         $routeName = $this->request->attributes->get('_route');
         if ($this->request->attributes->has('_locale')) {
-            $routeName = "{$routeName}.{$this->request->attributes->get('_locale')}";
+            $route = $this->routeCollection->get("{$routeName}.{$this->request->attributes->get('_locale')}");
         }
 
-        $route = $this->routeCollection->get($routeName);
+        if ($route === null) {
+            $route = $this->routeCollection->get($routeName);
+        }
+
         if ($route === null) {
             throw new RuntimeException("Route: [{$routeName}] is not registered");
         }
