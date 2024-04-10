@@ -55,10 +55,11 @@ class SymfonyControllerAdapter
 
     public function __invoke(): Response
     {
-        $route     = null;
-        $routeName = $this->request->attributes->get('_route');
+        $route          = null;
+        $finalRouteName = $routeName = $this->request->attributes->get('_route');
         if ($this->request->attributes->has('_locale')) {
-            $route = $this->routeCollection->get("{$routeName}.{$this->request->attributes->get('_locale')}");
+            $finalRouteName = "{$routeName}.{$this->request->attributes->get('_locale')}";
+            $route          = $this->routeCollection->get($finalRouteName);
         }
 
         if ($route === null) {
@@ -72,7 +73,7 @@ class SymfonyControllerAdapter
         $middlewareResolvingRequest = MiddlewareResolvingRequest::createFromFoundationAssets(
             $this->request,
             $route,
-            $routeName
+            $finalRouteName
         );
 
         $resolvedMiddlewareChain = $this->httpMiddlewareResolver->resolveMiddlewareChain($middlewareResolvingRequest);
