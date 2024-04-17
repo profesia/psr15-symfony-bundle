@@ -340,9 +340,6 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
         /** @var MockInterface|SymfonyControllerRequestHandler $requestHandler */
         $requestHandler = Mockery::mock(SymfonyControllerRequestHandler::class);
 
-        /** @var MockInterface|MiddlewareInterface $middleware */
-        $middleware = Mockery::mock(MiddlewareInterface::class);
-
         /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
         $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
         $resolvedMiddlewareChain
@@ -459,6 +456,215 @@ class SymfonyControllerAdapterTest extends MockeryTestCase
             ->withArgs(
                 [
                     $updatedRouteName
+                ]
+            )
+            ->andReturn(
+                $route
+            );
+
+        /** @var MockInterface|RouterInterface $router */
+        $router = Mockery::mock(RouterInterface::class);
+        $router
+            ->shouldReceive('getRouteCollection')
+            ->once()
+            ->andReturn(
+                $routeCollection
+            );
+
+        $adapter = new SymfonyControllerAdapter(
+            $middlewareResolver,
+            $foundationFactory,
+            $psrMessageFactory,
+            $router,
+            $requestHandlerFactory
+        );
+
+
+        $adapter->setOriginalResources(
+            $originalController,
+            $request,
+            [
+                0 => $request,
+                1 => $content
+            ]
+        );
+
+        $response = $adapter->__invoke();
+        $this->assertEquals($content, $response->getContent());
+        $this->assertEquals($statusCode, $response->getStatusCode());
+        $this->assertTrue($response->headers->has('Content-Type'));
+        $this->assertEquals($contentType, $response->headers->get('Content-Type'));
+    }
+
+    public function testWillFindRouteWithoutLocaleInDefinition(): void
+    {
+        $routeName = 'test';
+        $locale    = 'sk';
+        $updatedRouteName = "{$routeName}.{$locale}";
+        $request   = new Request(
+            [],
+            [],
+            [
+                '_route'  => $routeName,
+                '_locale' => $locale,
+            ],
+            [],
+            [],
+            [
+                'REQUEST_METHOD' => 'POST'
+            ]
+        );
+
+        /** @var MockInterface|ServerRequestInterface $psrRequest */
+        $psrRequest = Mockery::mock(ServerRequestInterface::class);
+
+        /** @var MockInterface|ResponseInterface $psrResponse */
+        $psrResponse = Mockery::mock(ResponseInterface::class);
+
+        $content     = 'Testing';
+        $statusCode  = 201;
+        $contentType = 'abcd';
+        $headers     = [
+            'Content-Type' => $contentType
+        ];
+
+        $response = new Response(
+            $content,
+            $statusCode,
+            $headers
+        );
+
+        /** @var MockInterface|SymfonyControllerRequestHandler $requestHandler */
+        $requestHandler = Mockery::mock(SymfonyControllerRequestHandler::class);
+
+        /** @var MockInterface|ResolvedMiddlewareChain $resolvedMiddlewareChain */
+        $resolvedMiddlewareChain = Mockery::mock(ResolvedMiddlewareChain::class);
+        $resolvedMiddlewareChain
+            ->shouldReceive('process')
+            ->once()
+            ->withArgs(
+                [
+                    $psrRequest,
+                    $requestHandler
+                ]
+            )
+            ->andReturn(
+                $psrResponse
+            );
+
+        /** @var MockInterface|MiddlewareResolverInterface $middlewareResolver */
+        $middlewareResolver = Mockery::mock(MiddlewareResolverInterface::class);
+        $middlewareResolver
+            ->shouldReceive('resolveMiddlewareChain')
+            ->once()
+            ->withArgs(
+                function (MiddlewareResolvingRequest $request) use ($routeName) {
+                    if ($request->hasAccessKey()) {
+                        return false;
+                    }
+
+                    $httpMethod = $request->getHttpMethod();
+                    if (!$httpMethod->equals(HttpMethod::createFromString('POST'))) {
+                        return false;
+                    }
+
+                    if ($request->getRouteName() !== $routeName) {
+                        return false;
+                    }
+
+                    return true;
+                }
+            )
+            ->andReturn(
+                $resolvedMiddlewareChain
+            );
+
+        /** @var MockInterface|HttpFoundationFactoryInterface $foundationFactory */
+        $foundationFactory = Mockery::mock(HttpFoundationFactoryInterface::class);
+        $foundationFactory
+            ->shouldReceive('createResponse')
+            ->once()
+            ->withArgs(
+                [
+                    $psrResponse
+                ]
+            )
+            ->andReturn(
+                $response
+            );
+
+        /** @var MockInterface|HttpMessageFactoryInterface $psrMessageFactory */
+        $psrMessageFactory = Mockery::mock(HttpMessageFactoryInterface::class);
+        $psrMessageFactory
+            ->shouldReceive('createRequest')
+            ->once()
+            ->withArgs(
+                [
+                    $request
+                ]
+            )
+            ->andReturn(
+                $psrRequest
+            );
+
+        $originalController = function (Request $request, string $content) use ($response) {
+            return $response;
+        };
+
+        /** @var MockInterface|SymfonyControllerRequestHandlerFactory $requestHandlerFactory */
+        $requestHandlerFactory = Mockery::mock(SymfonyControllerRequestHandlerFactory::class);
+        $requestHandlerFactory
+            ->shouldReceive('create')
+            ->once()
+            ->withArgs(
+                [
+                    $originalController,
+                    [
+                        0 => $request,
+                        1 => $content
+                    ]
+                ]
+            )->andReturn(
+                $requestHandler
+            );
+
+        /** @var MockInterface|CompiledRoute $compiledRoute */
+        $compiledRoute = Mockery::mock(CompiledRoute::class);
+        $compiledRoute
+            ->shouldReceive('getStaticPrefix')
+            ->once()
+            ->andReturn(
+                '/test'
+            );
+
+        /** @var MockInterface|Route $route */
+        $route = Mockery::mock(Route::class);
+        $route->shouldReceive('compile')
+            ->once()
+            ->andReturn(
+                $compiledRoute
+            );
+
+        /** @var MockInterface|RouteCollection $routeCollection */
+        $routeCollection = Mockery::mock(RouteCollection::class);
+        $routeCollection
+            ->shouldReceive('get')
+            ->once()
+            ->withArgs(
+                [
+                    $updatedRouteName
+                ]
+            )
+            ->andReturn(
+                null
+            );
+
+        $routeCollection
+            ->shouldReceive('get')
+            ->once()
+            ->withArgs(
+                [
+                    $routeName
                 ]
             )
             ->andReturn(

@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 
-class PathMiddlewareTestCase extends TestCase
+class PathMiddlewareTest extends TestCase
 {
     public static function tearDownAfterClass(): void
     {
@@ -90,47 +90,77 @@ class PathMiddlewareTestCase extends TestCase
                             ],
                         ],
                     ],
+                    '5' => [
+                        'middleware_chain' => 'FirstChain',
+                        'conditions'       => [
+                            [
+                                'path'   => '/4',
+                                'method' => 'POST',
+                            ],
+                        ],
+                    ],
+                    '6' => [
+                        'middleware_chain' => 'FirstChain',
+                        'conditions'       => [
+                            [
+                                'path'   => '/5',
+                                'method' => 'GET',
+                            ],
+                        ],
+                    ],
                 ],
             ]
         );
         $kernel->boot();
 
         return [
-            [
+            'test-not-matching-http-method' => [
                 $kernel,
                 ['POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
                 '/1',
                 '',
             ],
-            [
+            'test-matching-http-method' => [
                 $kernel,
                 ['GET'],
                 '/1',
                 '2 1 1 2 3 3 1',
             ],
-            [
+            'test-match' => [
                 $kernel,
                 ['GET'],
                 '/2',
                 '1 2 3',
             ],
-            [
+            'test-match-prepend' => [
                 $kernel,
                 ['GET', 'POST', 'PUT', 'DELETE'],
                 '/3',
                 '1 1 1 2 3',
             ],
-            [
+            'test-match-append' => [
                 $kernel,
                 ['DELETE'],
                 '/2',
                 '1 2 3 3 1 3',
             ],
-            [
+            'test-match-prepend-and-append' => [
                 $kernel,
                 ['POST'],
                 '/2',
                 '1 2 3 1 2 3 3 1 3',
+            ],
+            'test-match-localized-path' => [
+                $kernel,
+                ['POST'],
+                '/4',
+                '1 2 3',
+            ],
+            'test-match-localized-route-without-localized-path' => [
+                $kernel,
+                ['GET'],
+                '/5',
+                '1 2 3',
             ],
         ];
     }
@@ -148,7 +178,7 @@ class PathMiddlewareTestCase extends TestCase
         $client = new KernelBrowser(
             $kernel
         );
-        $client->catchExceptions(false);
+        $client->catchExceptions(true);
 
         foreach ($methods as $method) {
             $client->request($method, $route);

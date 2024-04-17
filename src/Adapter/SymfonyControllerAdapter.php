@@ -56,13 +56,14 @@ class SymfonyControllerAdapter
     public function __invoke(): Response
     {
         $route          = null;
-        $finalRouteName = $routeName = $this->request->attributes->get('_route');
+        $routeName = $this->request->attributes->get('_route');
         if ($this->request->attributes->has('_locale')) {
             $finalRouteName = "{$routeName}.{$this->request->attributes->get('_locale')}";
             $route          = $this->routeCollection->get($finalRouteName);
         }
 
         if ($route === null) {
+            $finalRouteName = $routeName;
             $route = $this->routeCollection->get($routeName);
         }
 

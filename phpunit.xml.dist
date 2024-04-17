@@ -16,8 +16,8 @@
             <directory>./src/Tests</directory>
         </testsuite>
     </testsuites>
-    <coverage includeUncoveredFiles="false"
-              processUncoveredFiles="false"
+    <coverage includeUncoveredFiles="true"
+              processUncoveredFiles="true"
               cacheDirectory="build/cache"
     >
         <include>
