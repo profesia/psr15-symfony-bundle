@@ -1,4 +1,8 @@
 # Changelog
+## [v3.2.2](https://github.com/profesia/psr15-symfony-bundle/tree/v3.2.2) (2024-04-17)
+
+[Full Changelog](https://github.com/profesia/psr15-symfony-bundle/compare/v3.2.1...v3.2.2)
+
 ## [v3.2.1](https://github.com/profesia/psr15-symfony-bundle/tree/v3.2.1) (2024-03-27)
 
 [Full Changelog](https://github.com/profesia/psr15-symfony-bundle/compare/v3.2.0...v3.2.1)
