@@ -1,4 +1,3 @@
-version: '3'
 services:
     psr15_symfony_bundle:
         image: webdevops/php-dev:${PHP_VERSION:-latest}
