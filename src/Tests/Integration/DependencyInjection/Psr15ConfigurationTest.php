@@ -10,7 +10,7 @@ use Symfony\Component\Config\Definition\Processor;
 
 class Psr15ConfigurationTest extends TestCase
 {
-    public function provideConfigsData(): array
+    public static function provideConfigsData(): array
     {
         return [
             [

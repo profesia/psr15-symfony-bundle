@@ -1,36 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
-         colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnFailure="false"
-         stopOnError="false"
-         beStrictAboutChangesToGlobalState="true"
->
-    <testsuites>
-        <testsuite name="all">
-            <directory>./src/Tests</directory>
-        </testsuite>
-    </testsuites>
-    <coverage includeUncoveredFiles="true"
-              processUncoveredFiles="true"
-              cacheDirectory="build/cache"
-    >
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-
-        <exclude>
-            <directory suffix=".php">src/Tests</directory>
-        </exclude>
-
-        <report>
-            <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="true"/>
-            <html outputDirectory="build/coverage" lowUpperBound="50" highLowerBound="90"/>
-        </report>
-    </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false" stopOnError="false" beStrictAboutChangesToGlobalState="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <testsuites>
+    <testsuite name="all">
+      <directory>./src/Tests</directory>
+    </testsuite>
+  </testsuites>
+  <coverage includeUncoveredFiles="true">
+    <report>
+      <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="true"/>
+      <html outputDirectory="build/coverage" lowUpperBound="50" highLowerBound="90"/>
+    </report>
+  </coverage>
+  <source>
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <exclude>
+      <directory suffix=".php">src/Tests</directory>
+    </exclude>
+  </source>
 </phpunit>

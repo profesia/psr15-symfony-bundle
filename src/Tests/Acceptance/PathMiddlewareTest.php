@@ -24,7 +24,7 @@ class PathMiddlewareTest extends TestCase
         }
     }
 
-    public function provideDataForIntegrationTest()
+    public static function provideDataForIntegrationTest(): array
     {
         $kernel = new TestKernel(
             [

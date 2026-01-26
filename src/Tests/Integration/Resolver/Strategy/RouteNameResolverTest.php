@@ -137,7 +137,7 @@ class RouteNameResolverTest extends MockeryTestCase
         $resolver->exportRules();
     }
 
-    public function getChainDataProvider()
+    public static function getChainDataProvider(): array
     {
         $class          = RouteNameResolver::class;
         $nullMiddleware = new NullMiddleware();

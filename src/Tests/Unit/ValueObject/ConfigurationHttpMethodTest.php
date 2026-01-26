@@ -15,7 +15,7 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class ConfigurationHttpMethodTest extends MockeryTestCase
 {
-    public function valuesDataProvider()
+    public static function valuesDataProvider(): array
     {
         return [
             [

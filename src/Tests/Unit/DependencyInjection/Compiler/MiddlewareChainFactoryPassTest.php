@@ -159,7 +159,7 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
         $compilerPass->process($container);
     }
 
-    public function provideDataForCachingTest(): array
+    public static function provideDataForCachingTest(): array
     {
         return [
             [

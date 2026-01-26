@@ -22,7 +22,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
-    public function httpMethodsDataProvider()
+    public static function httpMethodsDataProvider(): array
     {
         return [
             [['GET', 'POST'], ['GET', 'POST']],

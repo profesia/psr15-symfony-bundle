@@ -16,7 +16,7 @@ use Psr\Http\Server\MiddlewareInterface;
 
 class MiddlewareCollectionTest extends TestCase
 {
-    public function nullCheckDataProvider(): array
+    public static function nullCheckDataProvider(): array
     {
         return [
             [
@@ -46,7 +46,7 @@ class MiddlewareCollectionTest extends TestCase
         $this->assertEquals($assertValue, $collection->isNullMiddleware());
     }
 
-    public function listClassNamesDataProvider(): array
+    public static function listClassNamesDataProvider(): array
     {
         $m1 = new TestMiddleware1();
         $m2 = new TestMiddleware2();

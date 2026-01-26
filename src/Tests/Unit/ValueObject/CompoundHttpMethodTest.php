@@ -10,7 +10,7 @@ use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
 
 class CompoundHttpMethodTest extends TestCase
 {
-    public function valuesDataProvider()
+    public static function valuesDataProvider(): array
     {
         return [
             [['GET']],

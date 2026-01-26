@@ -12,7 +12,7 @@ use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 
 class ResolvedMiddlewareAccessKeyTest extends MockeryTestCase
 {
-    public function exceptionDataProvider()
+    public static function exceptionDataProvider(): array
     {
         return [
             [[], InvalidArgumentException::class, 'Key: [accessPath] is not present in input argument'],

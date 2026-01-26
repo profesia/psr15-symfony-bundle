@@ -227,7 +227,7 @@ class CompiledPathResolverTest extends MockeryTestCase
         $this->assertEquals('GET|POST', $exportedMiddleware->getHttpMethods()->listMethods('|'));
     }
 
-    public function getChainDataProvider()
+    public static function getChainDataProvider(): array
     {
         $class = CompiledPathResolver::class;
         $nullMiddleware = new NullMiddleware();
