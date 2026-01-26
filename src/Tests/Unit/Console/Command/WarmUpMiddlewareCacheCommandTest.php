@@ -7,8 +7,6 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\Console\Command;
 use Mockery;
 use Mockery\MockInterface;
 use Profesia\Symfony\Psr15Bundle\Console\Command\WarmUpMiddlewareCacheCommand;
-use Profesia\Symfony\Psr15Bundle\Middleware\MiddlewareCollection;
-use Profesia\Symfony\Psr15Bundle\Middleware\NullMiddleware;
 use Profesia\Symfony\Psr15Bundle\Resolver\MiddlewareResolverCachingInterface;
 use Profesia\Symfony\Psr15Bundle\Resolver\Request\MiddlewareResolvingRequest;
 use Profesia\Symfony\Psr15Bundle\Resolver\Strategy\Dto\ResolvedMiddlewareChain;
@@ -19,6 +17,7 @@ use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
 {
@@ -95,6 +94,7 @@ class WarmUpMiddlewareCacheCommandTest extends MockeryTestCase
      * @param array $inputHttpMethods
      * @param array $checkedHttpMethods
      */
+    #[DataProvider('httpMethodsDataProvider')]
     public function testCanExecuteWithSpecifiedHttpMethods(array $inputHttpMethods, array $checkedHttpMethods)
     {
         if ($inputHttpMethods !== []) {

@@ -12,6 +12,7 @@ use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainRes
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class MiddlewareChainResolverTest extends MockeryTestCase
 {
@@ -32,9 +33,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanResolveMiddlewareChains(array $definitionConfig)
     {
         /** @var ContainerBuilder|MockInterface $container */
@@ -84,9 +83,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         $this->assertCount(count($classes), $definition->getArguments()[0]);
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanIdentifyNonExistingMiddleware(array $definitionConfig)
     {
         /** @var ContainerBuilder|MockInterface $container */
@@ -134,9 +131,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         );
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanIdentifyNonExistingServiceDuringPrepend(array $definitionConfig)
     {
         $classes = $definitionConfig['Group1'];
@@ -178,9 +173,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         );
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanIdentifyNonExistingServiceDuringAppend(array $definitionConfig)
     {
         $classes = $definitionConfig['Group1'];
@@ -222,9 +215,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         );
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanPrependMiddlewares(array $definitionConfig)
     {
         $classes          = $definitionConfig['Group1'];
@@ -299,9 +290,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         );
     }
 
-    /**
-     * @dataProvider getDefinitionConfig
-     */
+    #[DataProvider('getDefinitionConfig')]
     public function testCanAppendMiddlewares(array $definitionConfig)
     {
         $classes          = $definitionConfig['Group1'];

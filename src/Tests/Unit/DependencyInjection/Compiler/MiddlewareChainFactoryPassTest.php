@@ -19,6 +19,7 @@ use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class MiddlewareChainFactoryPassTest extends MockeryTestCase
 {
@@ -180,10 +181,9 @@ class MiddlewareChainFactoryPassTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider provideDataForCachingTest
-     *
      * @param array $config
      */
+    #[DataProvider('provideDataForCachingTest')]
     public function testCanHandleCachingConfig(array $config)
     {
         /** @var MockInterface|DeepCopy $deepCopy */

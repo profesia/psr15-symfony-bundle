@@ -12,6 +12,7 @@ use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Server\MiddlewareInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ConfigurationHttpMethodTest extends MockeryTestCase
 {
@@ -156,10 +157,9 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider valuesDataProvider
-     *
      * @param array $httpMethods
      */
+    #[DataProvider('valuesDataProvider')]
     public function testCanCastToToString(array $httpMethods)
     {
         $httpMethod = ConfigurationHttpMethod::createFromArray(

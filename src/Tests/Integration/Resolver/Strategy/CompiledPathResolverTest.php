@@ -21,6 +21,7 @@ use Profesia\Symfony\Psr15Bundle\ValueObject\ResolvedMiddlewareAccessKey;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CompiledPathResolverTest extends MockeryTestCase
 {
@@ -352,13 +353,12 @@ class CompiledPathResolverTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider getChainDataProvider
-     *
      * @param string                      $exceptionClass
      * @param string                      $exceptionMessage
      * @param ResolvedMiddlewareAccessKey $accessKey
      * @param array                       $rulesToRegister
      */
+    #[DataProvider('getChainDataProvider')]
     public function testCanThrowExceptionDuringGettingOfChain(
         string $exceptionClass,
         string $exceptionMessage,

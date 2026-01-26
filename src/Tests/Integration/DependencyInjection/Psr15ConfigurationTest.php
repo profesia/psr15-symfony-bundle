@@ -7,6 +7,7 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Integration\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Configuration;
 use Symfony\Component\Config\Definition\Processor;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class Psr15ConfigurationTest extends TestCase
 {
@@ -88,9 +89,8 @@ class Psr15ConfigurationTest extends TestCase
     /**
      * @param array $configs
      * @return void
-     *
-     * @dataProvider provideConfigsData
      */
+    #[DataProvider('provideConfigsData')]
     public function testCanProcess(array $configs): void
     {
         $processor = new Processor();
@@ -110,9 +110,8 @@ class Psr15ConfigurationTest extends TestCase
     /**
      * @param array $configs
      * @return void
-     *
-     * @dataProvider provideConfigsData
      */
+    #[DataProvider('provideConfigsData')]
     public function testCanOverrideConfigCorrectly(array $configs): void
     {
         $processor = new Processor();

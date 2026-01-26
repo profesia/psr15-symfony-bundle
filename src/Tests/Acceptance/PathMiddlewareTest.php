@@ -13,6 +13,7 @@ use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware3;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PathMiddlewareTest extends TestCase
 {
@@ -170,9 +171,8 @@ class PathMiddlewareTest extends TestCase
      * @param string[]        $methods
      * @param string          $route
      * @param string          $toCompare
-     *
-     * @dataProvider provideDataForIntegrationTest
      */
+    #[DataProvider('provideDataForIntegrationTest')]
     public function testPathMiddlewares(KernelInterface $kernel, array $methods, string $route, string $toCompare)
     {
         $client = new KernelBrowser(
