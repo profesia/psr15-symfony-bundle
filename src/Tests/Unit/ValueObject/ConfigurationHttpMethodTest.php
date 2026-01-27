@@ -20,8 +20,12 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
     {
         return [
             [
-                ['GET'],
-                ['GET', 'POST'],
+                ['GET']
+            ],
+            [
+                ['GET', 'POST']
+            ],
+            [
                 ['GET', 'POST', 'DELETE', 'PUT']
             ]
         ];
@@ -156,9 +160,6 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $this->assertEquals($httpMethods, $configurationHttpMethod->toArray());
     }
 
-    /**
-     * @param array $httpMethods
-     */
     #[DataProvider('valuesDataProvider')]
     public function testCanCastToToString(array $httpMethods)
     {
