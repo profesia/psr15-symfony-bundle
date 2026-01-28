@@ -11,6 +11,7 @@ use Profesia\Symfony\Psr15Bundle\DependencyInjection\Compiler\MiddlewareChainRes
 use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class MiddlewareChainResolverTest extends MockeryTestCase
 {
@@ -26,9 +27,7 @@ class MiddlewareChainResolverTest extends MockeryTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDataForUnchangedTest
-     */
+    #[DataProvider('provideDataForUnchangedTest')]
     public function testChainRemainsUnchangedOnEmptyValues(string $methodName)
     {
         /** @var ContainerBuilder|MockInterface $container */

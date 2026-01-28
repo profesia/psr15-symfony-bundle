@@ -7,10 +7,11 @@ namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\ValueObject;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\CompoundHttpMethod;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CompoundHttpMethodTest extends TestCase
 {
-    public function valuesDataProvider()
+    public static function valuesDataProvider(): array
     {
         return [
             [['GET']],
@@ -34,10 +35,9 @@ class CompoundHttpMethodTest extends TestCase
     }
 
     /**
-     * @dataProvider valuesDataProvider
-     *
      * @param array $values
      */
+    #[DataProvider('valuesDataProvider')]
     public function testCanListMethods(array $values)
     {
         $returnValue = CompoundHttpMethod::createFromStrings($values)->listMethods('-delimiter-');

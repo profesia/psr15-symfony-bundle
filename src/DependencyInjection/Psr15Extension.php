@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 class Psr15Extension extends Extension
 {
@@ -19,14 +19,14 @@ class Psr15Extension extends Extension
             return;
         }
 
-        $loader = new XmlFileLoader(
+        $loader = new PhpFileLoader(
             $container,
             new FileLocator(
                 __DIR__ . '/../Resources/config'
             )
         );
 
-        $loader->load('services.xml');
+        $loader->load('services.php');
 
         $config = $this->processConfiguration(
             new Psr15Configuration(),

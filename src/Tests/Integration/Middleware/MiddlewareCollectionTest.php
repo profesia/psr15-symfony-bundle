@@ -13,10 +13,11 @@ use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware1;
 use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware2;
 use Profesia\Symfony\Psr15Bundle\Tests\Integration\TestMiddleware3;
 use Psr\Http\Server\MiddlewareInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class MiddlewareCollectionTest extends TestCase
 {
-    public function nullCheckDataProvider(): array
+    public static function nullCheckDataProvider(): array
     {
         return [
             [
@@ -33,9 +34,8 @@ class MiddlewareCollectionTest extends TestCase
     /**
      * @param MiddlewareInterface $middleware
      * @param bool                $assertValue
-     *
-     * @dataProvider nullCheckDataProvider
      */
+    #[DataProvider('nullCheckDataProvider')]
     public function testCanDetectNullMiddleware(MiddlewareInterface $middleware, bool $assertValue)
     {
         $collection = new MiddlewareCollection(
@@ -46,7 +46,7 @@ class MiddlewareCollectionTest extends TestCase
         $this->assertEquals($assertValue, $collection->isNullMiddleware());
     }
 
-    public function listClassNamesDataProvider(): array
+    public static function listClassNamesDataProvider(): array
     {
         $m1 = new TestMiddleware1();
         $m2 = new TestMiddleware2();
@@ -92,9 +92,8 @@ class MiddlewareCollectionTest extends TestCase
     /**
      * @param array $middlewares
      * @param array $classNames
-     *
-     * @dataProvider listClassNamesDataProvider
      */
+    #[DataProvider('listClassNamesDataProvider')]
     public function testCanListMiddlewareClassNames(array $middlewares, array $classNames)
     {
         $collection = new MiddlewareCollection(
@@ -127,9 +126,8 @@ class MiddlewareCollectionTest extends TestCase
 
     /**
      * @param array $namesToPrepend
-     *
-     * @dataProvider provideDataForChange
      */
+    #[DataProvider('provideDataForChange')]
     public function testCanPrepend(array $namesToPrepend)
     {
         $collection = new MiddlewareCollection(
@@ -161,9 +159,8 @@ class MiddlewareCollectionTest extends TestCase
 
     /**
      * @param array $namesToAppend
-     *
-     * @dataProvider provideDataForChange
      */
+    #[DataProvider('provideDataForChange')]
     public function testCanAppend(array $namesToAppend)
     {
         $collection = new MiddlewareCollection(
@@ -195,9 +192,8 @@ class MiddlewareCollectionTest extends TestCase
 
     /**
      * @param array $dataToChange
-     *
-     * @dataProvider provideDataForChange
      */
+    #[DataProvider('provideDataForChange')]
     public function testCanAppendCollection(array $dataToChange)
     {
         $collection = new MiddlewareCollection(

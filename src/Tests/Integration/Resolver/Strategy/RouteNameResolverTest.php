@@ -22,8 +22,8 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RouteNameResolverTest extends MockeryTestCase
 {
@@ -137,7 +137,7 @@ class RouteNameResolverTest extends MockeryTestCase
         $resolver->exportRules();
     }
 
-    public function getChainDataProvider()
+    public static function getChainDataProvider(): array
     {
         $class          = RouteNameResolver::class;
         $nullMiddleware = new NullMiddleware();
@@ -194,13 +194,12 @@ class RouteNameResolverTest extends MockeryTestCase
     }
 
     /**
-     * @dataProvider getChainDataProvider
-     *
      * @param string                      $exceptionClass
      * @param string                      $exceptionMessage
      * @param ResolvedMiddlewareAccessKey $accessKey
      * @param array                       $rulesToRegister
      */
+    #[DataProvider('getChainDataProvider')]
     public function testCanThrowExceptionDuringGettingOfChain(
         string $exceptionClass,
         string $exceptionMessage,

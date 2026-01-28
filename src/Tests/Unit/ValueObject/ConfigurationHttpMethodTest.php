@@ -12,15 +12,20 @@ use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
 use Profesia\Symfony\Psr15Bundle\ValueObject\ConfigurationHttpMethod;
 use Profesia\Symfony\Psr15Bundle\ValueObject\HttpMethod;
 use Psr\Http\Server\MiddlewareInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ConfigurationHttpMethodTest extends MockeryTestCase
 {
-    public function valuesDataProvider()
+    public static function valuesDataProvider(): array
     {
         return [
             [
-                ['GET'],
-                ['GET', 'POST'],
+                ['GET']
+            ],
+            [
+                ['GET', 'POST']
+            ],
+            [
                 ['GET', 'POST', 'DELETE', 'PUT']
             ]
         ];
@@ -155,11 +160,7 @@ class ConfigurationHttpMethodTest extends MockeryTestCase
         $this->assertEquals($httpMethods, $configurationHttpMethod->toArray());
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     *
-     * @param array $httpMethods
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testCanCastToToString(array $httpMethods)
     {
         $httpMethod = ConfigurationHttpMethod::createFromArray(
