@@ -24,7 +24,7 @@ php:
 	$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "php $(ARGS)"
 
 bash:
-	$(if $(strip $(ARGS)),$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "$(ARGS)",$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash)
+	@$(if $(strip $(ARGS)),$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "$(ARGS)",$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash)
 endif
 
 container:
