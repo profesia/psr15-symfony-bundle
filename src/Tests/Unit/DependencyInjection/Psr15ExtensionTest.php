@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Profesia\Symfony\Psr15Bundle\Tests\Integration\DependencyInjection;
+namespace Profesia\Symfony\Psr15Bundle\Tests\Unit\DependencyInjection;
 
-use PHPUnit\Framework\TestCase;
-use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Configuration;
-use Symfony\Component\Config\Definition\Processor;
+use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Configuration;
+use Profesia\Symfony\Psr15Bundle\DependencyInjection\Psr15Extension;
+use Profesia\Symfony\Psr15Bundle\Tests\MockeryTestCase;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class Psr15ConfigurationTest extends TestCase
+class Psr15ExtensionTest extends MockeryTestCase
 {
     public static function provideConfigsData(): array
     {
@@ -91,20 +95,22 @@ class Psr15ConfigurationTest extends TestCase
      * @return void
      */
     #[DataProvider('provideConfigsData')]
-    public function testCanProcess(array $configs): void
+    public function testCanLoadExtension(array $configs): void
     {
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = Mockery::spy(ContainerBuilder::class);
+
         $processor = new Processor();
+        $finalConfig = $processor->processConfiguration(new Psr15Configuration(), $configs);
+        $container
+            ->shouldReceive('setParameter')
+            ->once()
+            ->withArgs(function(string $key, array $mergedConfig) use ($finalConfig) {
+                return ($mergedConfig === $finalConfig);
+            });
 
-        $pickedUpConfigs = [
-            $configs[0],
-        ];
-        $config          = $processor->processConfiguration(
-            new Psr15Configuration(),
-            $pickedUpConfigs
-        );
-
-        $configToTest = $configs[0];
-        $this->assertEquals($config, $configToTest);
+        $extension = new Psr15Extension();
+        $extension->load($configs, $container);
     }
 
     /**
@@ -112,39 +118,35 @@ class Psr15ConfigurationTest extends TestCase
      * @return void
      */
     #[DataProvider('provideConfigsData')]
-    public function testCanOverrideConfigCorrectly(array $configs): void
+    public function testCanLoadExtensionOnEmptyMainConfig(array $configs): void
     {
-        $processor = new Processor();
-
-        $config = $processor->processConfiguration(
-            new Psr15Configuration(),
-            $configs
-        );
-
-        $overrideConfig = $configs[1];
-        $this->assertEquals($config['use_cache'], $overrideConfig['use_cache']);
-        $this->assertEquals($config['middleware_chains'], $overrideConfig['middleware_chains']);
-        $this->assertEquals($config['routing'], $overrideConfig['routing']);
-    }
-
-    /**
-     * @param array $configs
-     * @return void
-     */
-    #[DataProvider('provideConfigsData')]
-    public function testWillBootEvenOnEmptyMainConfig(array $configs): void
-    {
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = Mockery::spy(ContainerBuilder::class);
         $configs[0] = [];
+
         $processor = new Processor();
+        $finalConfig = $processor->processConfiguration(new Psr15Configuration(), $configs);
+        $container
+            ->shouldReceive('setParameter')
+            ->once()
+            ->withArgs(function(string $key, array $mergedConfig) use ($finalConfig) {
+                return ($mergedConfig === $finalConfig);
+            });
 
-        $config = $processor->processConfiguration(
-            new Psr15Configuration(),
-            $configs
-        );
+        $extension = new Psr15Extension();
+        $extension->load($configs, $container);
+    }
 
-        $overrideConfig = $configs[1];
-        $this->assertEquals($config['use_cache'], $overrideConfig['use_cache']);
-        $this->assertEquals($config['middleware_chains'], $overrideConfig['middleware_chains']);
-        $this->assertEquals($config['routing'], $overrideConfig['routing']);
+    public function testWillNotBootOnEmptyConfigs(): void
+    {
+        /** @var MockInterface|ContainerBuilder $container */
+        $container = Mockery::spy(ContainerBuilder::class);
+
+        $configs = [[], []];
+        $container
+            ->shouldNotReceive('setParameter');
+
+        $extension = new Psr15Extension();
+        $extension->load($configs, $container);
     }
 }

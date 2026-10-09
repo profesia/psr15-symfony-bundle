@@ -14,7 +14,10 @@ class Psr15Extension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        if (current($configs) === []) {
+        $areAllConfigsEmpty = array_filter($configs, function (array $config) {
+                return ($config !== []);
+            }) === [];
+        if ($areAllConfigsEmpty === true) {
             //cache:clear should not fail during installation
             return;
         }
