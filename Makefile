@@ -6,18 +6,23 @@ DOCKER_COMPOSE = cd docker && docker-compose
 .PHONY: up down php bash container
 
 up:
-	cd docker && docker-compose down --remove-orphans && \
+	$(if $(filter container,$(MAKECMDGOALS)),true,cd docker && docker-compose down --remove-orphans && \
 	docker-compose pull && \
-	docker-compose up -d
+	docker-compose up -d)
 
 down:
-	$(DOCKER_COMPOSE) down --remove-orphans
+	$(if $(filter container,$(MAKECMDGOALS)),true,$(DOCKER_COMPOSE) down --remove-orphans)
 
 php:
-	$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "php $(ARGS)"
+	$(if $(filter container,$(MAKECMDGOALS)),true,$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "php $(ARGS)")
 
 bash:
-	$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "$(ARGS)"
+	$(if $(filter container,$(MAKECMDGOALS)),true,$(if $(strip $(ARGS)),$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash -c "$(ARGS)",$(DOCKER_COMPOSE) exec psr15_symfony_bundle bash))
 
 container:
-	$(DOCKER_COMPOSE) exec psr15_symfony_bundle $(ARGS)
+	$(DOCKER_COMPOSE) exec psr15_symfony_bundle $(if $(strip $(ARGS)),$(ARGS),$(if $(filter-out container,$(MAKECMDGOALS)),$(filter-out container,$(MAKECMDGOALS)),bash))
+
+ifneq ($(filter container,$(MAKECMDGOALS)),)
+%:
+	@:
+endif
