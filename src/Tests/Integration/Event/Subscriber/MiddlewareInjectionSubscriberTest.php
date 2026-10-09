@@ -46,7 +46,7 @@ class MiddlewareInjectionSubscriberTest extends MockeryTestCase
                 Mockery::mock(ErrorRendererInterface::class)
             ),
             [],
-            Mockery::mock(Request::class),
+            new Request(),
             HttpKernelInterface::SUB_REQUEST
         );
 
@@ -72,7 +72,7 @@ class MiddlewareInjectionSubscriberTest extends MockeryTestCase
             Mockery::mock(KernelInterface::class),
             $controllerCallable,
             [],
-            Mockery::mock(Request::class),
+            new Request(),
             HttpKernelInterface::SUB_REQUEST
         );
 
@@ -88,8 +88,7 @@ class MiddlewareInjectionSubscriberTest extends MockeryTestCase
 
         $arguments = ['a', 'b', 'c'];
 
-        /** @var MockInterface|Request $request */
-        $request = Mockery::mock(Request::class);
+        $request = new Request();
 
         /** @var MockInterface|SymfonyControllerAdapter $adapter */
         $adapter = Mockery::mock(SymfonyControllerAdapter::class);
