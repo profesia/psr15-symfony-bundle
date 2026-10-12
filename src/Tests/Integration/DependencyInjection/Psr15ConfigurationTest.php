@@ -126,4 +126,25 @@ class Psr15ConfigurationTest extends TestCase
         $this->assertEquals($config['middleware_chains'], $overrideConfig['middleware_chains']);
         $this->assertEquals($config['routing'], $overrideConfig['routing']);
     }
+
+    /**
+     * @param array $configs
+     * @return void
+     */
+    #[DataProvider('provideConfigsData')]
+    public function testWillBootEvenOnEmptyMainConfig(array $configs): void
+    {
+        $configs[0] = [];
+        $processor = new Processor();
+
+        $config = $processor->processConfiguration(
+            new Psr15Configuration(),
+            $configs
+        );
+
+        $overrideConfig = $configs[1];
+        $this->assertEquals($config['use_cache'], $overrideConfig['use_cache']);
+        $this->assertEquals($config['middleware_chains'], $overrideConfig['middleware_chains']);
+        $this->assertEquals($config['routing'], $overrideConfig['routing']);
+    }
 }
